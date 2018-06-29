@@ -10,5 +10,5 @@ print(repo)
 ## first parameter is the path
 ## Commit comment
 ## 3. parameter is content of the file
-file = repo.create_file("/path.txt", "initial commit", "içerik\n2. satır")
+file = repo.create_file("/path.txt", "initial commit", "content\nsecond content")
 print(file)
