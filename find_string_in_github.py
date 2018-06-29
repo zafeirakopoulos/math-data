@@ -2,12 +2,11 @@ import pybase64
 import requests
 import json
 
-url_api = 'https://api.github.com/repos/yilmazedis/newRepository/contents/'
-access_token = 'access_token b678440c02e85ae287d3ec8ececedf4f4c208920'
+def find_string_in_github(str,file_path,access_token):
 
-def find_string_in_github(str):
+    git_url = 'https://api.github.com/repos/' + file_path + '/contents/'
 
-    r_repo = requests.get(url_api, headers={'Authorization': access_token})
+    r_repo = requests.get(git_url,headers={'Authorization': 'access_token ' + access_token})
     list = []
     for i in range(len(r_repo.json())):
         repo_name = json.loads(json.dumps(r_repo.json()[i]))["name"]
@@ -15,7 +14,7 @@ def find_string_in_github(str):
             continue
         print(repo_name)
 
-        r_name = requests.get(url_api + repo_name,headers={'Authorization': access_token})
+        r_name = requests.get(git_url + repo_name,headers={'Authorization': access_token})
 
         resp_dict = json.loads(json.dumps(r_name.json()))
 
@@ -27,6 +26,6 @@ def find_string_in_github(str):
     return list
 
 
-list = find_string_in_github("units")
+list = find_string_in_github("units", 'yilmazedis/newRepository', 'b678440c02e85ae287d3ec8ececedf4f4c208920')
 
 print(*list,sep='\n')
