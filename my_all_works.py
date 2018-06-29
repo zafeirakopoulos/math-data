@@ -105,10 +105,10 @@ user = g.get_user()
 repo = g.get_user().get_repo(new_repo)
 print(repo)
 
-## İlk argümanda dosyanın tam yolu belirtilmeli
-## Commit belirtilmedi
-## 3. parametre ise dosyanın içeriği
-file = repo.create_file("/path.txt", "initial commit", "içerik\n2. satır")
+## first parameter is the path
+## Commit comment
+## 3. parameter is content of the file
+file = repo.create_file("/path.txt", "initial commit", "content\n second line")
 print(file)
 '''
 '''
