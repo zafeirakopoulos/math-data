@@ -1,8 +1,7 @@
 import os
 from git import Repo
 
-
-class math_data:
+class Manage:
     __sha_list = []
 
     def __get_sha(self, path):
@@ -75,3 +74,31 @@ class math_data:
             os.chdir("..")
             os.chdir("..")
             return ""
+
+    def definitions(self):
+    """Return the list of all object definitions in the mathdatabase.
+    """
+    return []
+
+
+    def definition(self, key):
+    """Return the definition corresponding to the given key.
+    """
+    return {}
+
+    def status(self):
+    """Return the current status of the mathdatabase.
+    """
+    return 0
+
+
+    def sanitize(self):
+    """Sanitize the mathdatabase.
+    """
+    return 0
+
+    def statistics(self):
+    """Return a set of statistics about the mathdatabase.
+    """
+    return {"instances":2000}
+    
