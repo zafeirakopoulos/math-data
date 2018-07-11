@@ -1,17 +1,15 @@
 import os
 from git import Repo
 
-class IO:
-
-    def add_instance(self,datatype, instance):
+def add_instance(mdb, datatype, instance):
     """Add an instance in the mathdatabase.
     """
 
-    def remove_instance(self, instance):
+def remove_instance(mdb,  instance):
     """Remove an instance from the mathdatabase.
     """
 
-    def retrieve_instance(self, key):
+def retrieve_instance(mdb,  key):
     """Retrieve an instance from the mathdatabase.
     """
     instance = {}

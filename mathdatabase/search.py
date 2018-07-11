@@ -1,19 +1,18 @@
 import os
 from git import Repo
 
-class Search:
 
-    def find(self, datatype, text):
+def find(mdb,  datatype, text):
     """Return the keys of instances matching text.
     """
     # Return SHA keys
     return []
 
-    def search(self, text):
+def search(mdb,  text):
     """Return the instances matching text.
     """
 
-    def filter(self, criteria):
+def filter(mdb,  criteria):
     """Retrieve instances from the mathdatabase matching criteria.
     """
     instances = []
