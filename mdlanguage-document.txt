@@ -1,0 +1,32 @@
+POSSIBLE FEATURES ABOUT A GRAPH
+
+GRAPH TYPE = {"DYNAMIC", "STATIC", "BIPARTITE", "SPARSE", "DENSE"}
+
+NODES = {NUMBER, {"WEIGHTED", "UNWEIGHTED"}
+
+EDGES = {NUMBER, {"DIRECTED", "UNDIRECTED"}, {"WEIGHTED", "UNWEIGHTED"}}
+
+RAW FORMAT = {http://graphstream-project.org/doc/Tutorials/Reading-files-using-FileSource/}
+
+GRAPH FORMAT TYPES: 
+
+http://vlado.fmf.uni-lj.si/pub/networks/data/UciNet/UciData.htm
+
+http://vlado.fmf.uni-lj.si/pub/networks/pajek/data/gphs.htm
+
+http://iv.slis.indiana.edu/db/index.html
+
+http://snap.stanford.edu/data/
+
+https://www.weizmann.ac.il/mcb/UriAlon/download/collection-complex-networks
+
+https://math.nist.gov/~RPozo/complex_datasets.html
+
+https://networkdata.ics.uci.edu/resources.php
+
+https://sites.google.com/site/santofortunato/inthepress2
+
+https://sites.google.com/site/andrealancichinetti/files
+
+https://www.cise.ufl.edu/research/sparse/matrices/list_by_id.html
+
