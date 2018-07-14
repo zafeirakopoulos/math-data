@@ -2,7 +2,6 @@ import os
 import json
 from git import Repo
 
-
 class math_data:
     __sha_list = []
     __status = 0
@@ -16,12 +15,25 @@ class math_data:
 
         return commits[0].hexsha
 
+    def __find_last_file_number(self, files):
+
+        max_num = 1
+        for filename in files:
+
+            if filename == ".git":
+                continue
+            # 5 is number of file number char index
+            if int(filename[4]) > max_num:
+                max_num = int(filename[4])
+
+        return max_num + 1
+
     def __create_file(self, content, path, commit_message):
 
         repo = Repo.init(path).git
         index = Repo.init(path).index
-
-        filename = "file" + str(len(os.listdir(path))) + ".txt"
+        max_number = self.__find_last_file_number(os.listdir(path))
+        filename = "file" + str(max_number) + ".txt"
         file_path = os.path.join(path, filename)
 
         with open(file_path, 'w') as outfile:
