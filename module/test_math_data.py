@@ -16,10 +16,11 @@ r = {
     "commit": "something..."
 }
 
+#firstly add some file after and store its index sha, And you can remove after that
 #response = data.add_instance(r)
 #print(response)
 
-# I added five datatype as graph and I will delete third graph its sha kes as fallow.
+
 
 r = {
     "datatype": "graph",
