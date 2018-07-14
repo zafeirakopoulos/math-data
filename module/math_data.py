@@ -7,10 +7,11 @@ class math_data:
     __sha_list = []
     __status = 1
 
+
     def __get_sha(self, path, filename):
 
         repo = Repo(path)
-        commits = list(repo.iter_commits('master',filename))
+        commits = list(repo.iter_commits('master', filename))
         commits.reverse()
 
         return commits[0].hexsha
@@ -63,6 +64,8 @@ class math_data:
         return response
 
     def remove_instance(self,data):
+
+
         print("")
 
     def retrieve_instance(self,data):
