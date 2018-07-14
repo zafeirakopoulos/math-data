@@ -5,8 +5,8 @@ from git import Repo
 
 class math_data:
     __sha_list = []
-    __status = 1
-
+    __status = 0
+    __attributes = ("raw", "semantics", "typeset", "context", "features", "index")
 
     def __get_sha(self, path, filename):
 
@@ -40,14 +40,12 @@ class math_data:
 
     def __initial_setup(self, data):
 
-        attributes = ("raw", "semantics", "typeset", "context", "features", "index")
-
         datatype = data["datatype"]
 
         if not os.path.exists(datatype):
             os.makedirs(datatype)
 
-        for attribute in attributes:
+        for attribute in self.__attributes:
             dir_attribute = os.path.join(os.path.curdir, datatype, attribute)
 
             if not os.path.exists(dir_attribute):
@@ -56,17 +54,49 @@ class math_data:
 
     def add_instance(self, data):
         self.__initial_setup(data)
+        self.__status = 1
+        print(self.__sha_list)
         response = {
             "sha": self.__sha_list[len(self.__sha_list)-1],    # index represent all of datatype to perform on it.
             "status": self.__status                            # if successful otherwise 0
         }
-
+        self.__sha_list = []
         return response
 
-    def remove_instance(self,data):
+    def remove_instance(self, data):
 
+        datatype = data["datatype"]
 
-        print("")
+        if os.path.exists(datatype):
+
+            input_sha = data["sha"]
+
+            dir_index = os.path.join(os.path.curdir, datatype, "index")
+
+            for filename in os.listdir(dir_index):
+
+                if filename == ".git":
+                    continue
+                print(input_sha, self.__get_sha(dir_index, filename))
+                if input_sha == self.__get_sha(dir_index, filename):
+
+                    for attribute in self.__attributes:
+                        file_path = os.path.join(os.path.curdir, datatype, attribute, filename)
+                        os.remove(file_path)
+                        path = os.path.join(os.path.curdir, datatype, attribute)
+                        index = Repo.init(path).index
+                        index.commit("deleted repo")
+                    self.__status = 1
+                    break
+
+        else:
+            self.__status = 0
+
+        response = {
+            "status": self.__status  # if successful otherwise 0
+        }
+
+        return response
 
     def retrieve_instance(self,data):
         print("")
