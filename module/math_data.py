@@ -138,15 +138,19 @@ class math_data:
     def update_instance(self, data):
 
         datatype = data["datatype"]
+        print(datatype)
 
-        if os.path.exists(datatype):
+        if not os.path.exists(datatype):
+            self.__status = 0
 
+        else:
             input_sha = data["sha"]
 
             dir_index = os.path.join(os.path.curdir, datatype, "index")
 
             for filename in os.listdir(dir_index):
 
+                print(filename)
                 if filename == ".git":
                     continue
 
@@ -157,9 +161,6 @@ class math_data:
                         self.__update_file(data[attribute], dir_attribute, data["commit"], filename)
                     self.__status = 1
                     break
-
-        else:
-            self.__status = 0
 
         response = {
             "status": self.__status  # if successful otherwise 0
@@ -187,3 +188,6 @@ class math_data:
             os.chdir("..")
             return ""
     '''
+
+    ##def retrieve_instance(self,data):
+        
