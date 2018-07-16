@@ -3,8 +3,8 @@ import json
 from git import Repo
 
 class math_data:
+
     __sha_list = []
-    __status = 0
     __attributes = ("raw", "semantics", "typeset", "context", "features", "index")
 
     def __get_sha(self, path, filename):
@@ -88,17 +88,19 @@ class math_data:
 
     def add_instance(self, data):
         self.__initial_setup(data)
-        self.__status = 1
+        status = 1
+
         print(self.__sha_list)
         response = {
             "sha": self.__sha_list[len(self.__sha_list)-1],    # index represent all of datatype to perform on it.
-            "status": self.__status                            # if successful otherwise 0
+            "status": status                            # if successful otherwise 0
         }
         self.__sha_list = []
         return response
 
     def remove_instance(self, data):
 
+        status = 0
         datatype = data["datatype"]
 
         if os.path.exists(datatype):
@@ -120,14 +122,11 @@ class math_data:
                         path = os.path.join(os.path.curdir, datatype, attribute)
                         index = Repo(path).index
                         index.commit("deleted repo")
-                    self.__status = 1
+                    status = 1
                     break
 
-        else:
-            self.__status = 0
-
         response = {
-            "status": self.__status  # if successful otherwise 0
+            "status": status  # if successful otherwise 0
         }
 
         return response
@@ -140,8 +139,10 @@ class math_data:
         datatype = data["datatype"]
         print(datatype)
 
+        status = -1
+
         if not os.path.exists(datatype):
-            self.__status = 0
+            status = 0
 
         else:
             input_sha = data["sha"]
@@ -159,11 +160,11 @@ class math_data:
                         dir_attribute = os.path.join(os.path.curdir, datatype, attribute)
 
                         self.__update_file(data[attribute], dir_attribute, data["commit"], filename)
-                    self.__status = 1
+                    status = 1
                     break
 
         response = {
-            "status": self.__status  # if successful otherwise 0
+            "status": status  # if successful otherwise 0
         }
 
         return response
@@ -190,4 +191,4 @@ class math_data:
     '''
 
     ##def retrieve_instance(self,data):
-        
+
