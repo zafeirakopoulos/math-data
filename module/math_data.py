@@ -87,7 +87,7 @@ class math_data:
 
             if not os.path.exists(dir_attribute):
                 os.makedirs(dir_attribute)
-                sha_list.append(self.__create_file(data[attribute], dir_attribute, data["commit"]))
+            sha_list.append(self.__create_file(data[attribute], dir_attribute, data["commit"]))
 
 
     def add_instance(self, data):
@@ -207,6 +207,9 @@ class math_data:
         }
 
         return response
+
+    def history_instance(self):
+        print("")
 
     '''
     def list_repo(self,datatype, repo, sha):
