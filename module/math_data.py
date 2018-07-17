@@ -4,7 +4,6 @@ from git import Repo
 
 class math_data:
 
-    __sha_list = []
     __attributes = ("raw", "semantics", "typeset", "context", "features", "index")
 
     def __get_sha(self, path, filename):
@@ -17,17 +16,20 @@ class math_data:
 
     def __find_last_file_number(self, files):
 
-        max_num = 1
+        max_num = 0
         for filename in files:
 
             if filename == ".git":
                 continue
-            # 5 is number of file number char index
+            # 4 is number of file number char index
             if int(filename[4]) > max_num:
                 max_num = int(filename[4])
 
         return max_num + 1
 
+    # param : content  This
+    # param : path
+    # param : commit_massage
     def __create_file(self, content, path, commit_message):
 
         max_number = self.__find_last_file_number(os.listdir(path))
@@ -56,7 +58,8 @@ class math_data:
         index.commit(commit_message)
 
         # get repo sha
-        self.__sha_list.append(self.__get_sha(path=path, filename=filename))
+
+        return self.__get_sha(path=path, filename=filename)
 
     def __update_file(self, content, path, commit_message, filename):
 
@@ -72,7 +75,7 @@ class math_data:
         repo.add(filename)
         index.commit(commit_message)
 
-    def __initial_setup(self, data):
+    def __initial_setup(self, data, sha_list):
 
         datatype = data["datatype"]
 
@@ -84,18 +87,21 @@ class math_data:
 
             if not os.path.exists(dir_attribute):
                 os.makedirs(dir_attribute)
-            self.__create_file(data[attribute], dir_attribute, data["commit"])
+                sha_list.append(self.__create_file(data[attribute], dir_attribute, data["commit"]))
+
 
     def add_instance(self, data):
-        self.__initial_setup(data)
+
+        sha_list = []
+        self.__initial_setup(data, sha_list)
+
         status = 1
 
-        print(self.__sha_list)
         response = {
-            "sha": self.__sha_list[len(self.__sha_list)-1],    # index represent all of datatype to perform on it.
+            "sha": sha_list[len(sha_list)-1],    # index represent all of datatype to perform on it.
             "status": status                            # if successful otherwise 0
         }
-        self.__sha_list = []
+
         return response
 
     def remove_instance(self, data):
@@ -132,7 +138,40 @@ class math_data:
         return response
 
     def retrieve_instance(self, data):
-        print("")
+
+        datatype = data["datatype"]
+
+        response = {"datatype": datatype}
+
+        status = -1
+
+        if not os.path.exists(datatype):
+            status = 0
+
+        else:
+            input_sha = data["sha"]
+
+            dir_index = os.path.join(os.path.curdir, datatype, "index")
+
+            for filename in os.listdir(dir_index):
+
+                print(filename)
+                if filename == ".git":
+                    continue
+
+                if input_sha == self.__get_sha(dir_index, filename):
+                    for attribute in self.__attributes:
+                        file_path = os.path.join(os.path.curdir, datatype, attribute, filename)
+
+                        with open(file_path) as json_file:
+                            response[attribute] = json.load(json_file)
+
+                    status = 1
+                    break
+
+        response["status"] = status
+
+        return response
 
     def update_instance(self, data):
 
