@@ -8,6 +8,13 @@ class math_data:
 
     def __get_sha(self, path, filename):
 
+        """ Private Helper Function.
+        To get first commit sha key which we can access it permanently.
+        :param path:
+        :param filename:
+        :return: firs commit sha key
+        """
+
         repo = Repo(path)
         commits = list(repo.iter_commits('master', filename))
         commits.reverse()
@@ -27,10 +34,15 @@ class math_data:
 
         return max_num + 1
 
-    # param : content  This
-    # param : path
-    # param : commit_massage
     def __create_file(self, content, path, commit_message):
+
+        """ Private Helper Function.
+        Create a file that is specified with its file number.
+        :param content: content of the marked file
+        :param path: path of the repo
+        :param commit_message:
+        :return: accessed repository sha key
+        """
 
         max_number = self.__find_last_file_number(os.listdir(path))
         filename = "file" + str(max_number) + ".txt"
@@ -63,11 +75,21 @@ class math_data:
 
     def __update_file(self, content, path, commit_message, filename):
 
+        """Private Helper Function.
+        Write new data to target file. Add repository with new commit message
+        :param content: New content to edit target file
+        :param path: repository path
+        :param commit_message:
+        :param filename:
+        :return: none
+        """
         repo = Repo(path).git
         index = Repo(path).index
 
+        # generate path
         file_path = os.path.join(path, filename)
 
+        # write target file
         with open(file_path, 'w') as outfile:
             json.dump(content, outfile)
 
@@ -76,7 +98,12 @@ class math_data:
         index.commit(commit_message)
 
     def __initial_setup(self, data, sha_list):
-
+        """ Private Helper Function.
+        Go through target path and creates new data type
+        :param data: incoming json file.
+        :param sha_list: sha list of all attribute such as context
+        :return: none
+        """
         datatype = data["datatype"]
 
         if not os.path.exists(datatype):
@@ -91,7 +118,39 @@ class math_data:
 
 
     def add_instance(self, data):
+        """
+        It is dependent to name of data type.
+        if new data type required to add new file structure is created.
+        Otherwise, add just a new file.
 
+        input example;
+
+            r = {
+                "datatype": "graph",   # may be polynomial
+                "index": "index example",
+                "raw": "raw example",
+                "features": "features example",
+                "semantics": "semantics example",
+                "context":  {"edge": {"1": 100, "2": 2000},
+                             "vertex": [{"first": 4, "second": 4},
+                                        {"first": 3, "second": 55}]},
+                "typeset": "typeset example",
+                "commit": "update_repo"
+            }
+
+
+        return example;
+
+            {sha : a63813d76910623f2b92ca7343682fe9ee2230a1 , 'status': 1}
+
+            if removal is unsuccessful;
+
+            {'status': 0} # this line will be rewrite
+
+
+        :param data: incoming json file.
+        :return: sha key of index of datatype.
+        """
         sha_list = []
         self.__initial_setup(data, sha_list)
 
@@ -105,7 +164,35 @@ class math_data:
         return response
 
     def remove_instance(self, data):
+        """
+        It is dependent to name of data type and its sha key.
+        An example as fallow;
 
+        input example;
+
+            r = {
+                "datatype": "graph",
+                "sha": "a9f870b98077b86f4cff2afbb90c3255c8f9a923"
+            }
+
+            other example
+
+            r = {
+                "datatype": "polynomial",
+                "sha": "12b8a0b98077b86f4cff2afbb90c3255c8f9affc"
+            }
+
+        return example;
+
+            {'status': 1}
+
+            if removal is unsuccessful;
+
+            {'status': 0}
+
+        :param data: incoming json file.
+        :return: control status
+        """
         status = 0
         datatype = data["datatype"]
 
@@ -119,7 +206,7 @@ class math_data:
 
                 if filename == ".git":
                     continue
-                print(input_sha, self.__get_sha(dir_index, filename))
+
                 if input_sha == self.__get_sha(dir_index, filename):
 
                     for attribute in self.__attributes:
@@ -138,6 +225,40 @@ class math_data:
         return response
 
     def retrieve_instance(self, data):
+
+        """ Fetches an instance which match with "input" sha key
+
+        input example;
+
+            r = {
+                "datatype": "graph",
+                "sha": "18e8b2047eeefe9d45fa01a2f15b26bb62a3c471"
+            }
+
+            other example
+
+            r = {
+                "datatype": "polynomial",
+                "sha": "21fa767a68101f4b7e75ffe50001954d0ee37a74"
+            }
+
+        return example;
+
+            r = {
+                "datatype": "graph",   # may be polynomial
+                "index": "index example",
+                "raw": "raw example",
+                "features": "features example",
+                "semantics": "semantics example",
+                "context":  {"edge": {"1": 100, "2": 2000},
+                             "vertex": [{"first": 4, "second": 4},
+                                        {"first": 3, "second": 55}]},
+                "typeset": "typeset example"
+            }
+
+        :param data: incoming json file.
+        :return: desired instance
+        """
 
         datatype = data["datatype"]
 
@@ -174,6 +295,37 @@ class math_data:
         return response
 
     def update_instance(self, data):
+        """
+        update instance which match with "input" sha key
+
+        input example;
+
+            r = {
+                "datatype": "graph",   # may be polynomial
+                "sha": "12b8a0b98077b86f4cff2afbb90c3255c8f9affc",
+                "index": "index example",
+                "raw": "raw example",
+                "features": "features example",
+                "semantics": "semantics example",
+                "context":  {"edge": {"1": 100, "2": 2000},
+                             "vertex": [{"first": 4, "second": 4},
+                                        {"first": 3, "second": 55}]},
+                "typeset": "typeset example",
+                "commit": "update_repo"
+            }
+
+
+        return example;
+
+            {'status': 1}
+
+            if removal is unsuccessful;
+
+            {'status': 0}
+
+        :param data: incoming json file.
+        :return:
+        """
 
         datatype = data["datatype"]
         print(datatype)
@@ -231,6 +383,3 @@ class math_data:
             os.chdir("..")
             return ""
     '''
-
-    ##def retrieve_instance(self,data):
-
