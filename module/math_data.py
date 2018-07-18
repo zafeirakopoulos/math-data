@@ -210,10 +210,17 @@ class math_data:
                 if input_sha == self.__get_sha(dir_index, filename):
 
                     for attribute in self.__attributes:
-                        file_path = os.path.join(os.path.curdir, datatype, attribute, filename)
-                        os.remove(file_path)
+
+                        #file_path = os.path.join(os.path.curdir, datatype, attribute, filename)
+
                         path = os.path.join(os.path.curdir, datatype, attribute)
+
                         index = Repo(path).index
+                        repo = Repo(path).git
+                        repo.rm(filename)
+
+                        #os.remove(file_path)
+
                         index.commit("deleted repo")
                     status = 1
                     break
