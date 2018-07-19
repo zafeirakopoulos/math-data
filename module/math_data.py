@@ -1,10 +1,15 @@
 import os
 import json
 from git import Repo
+from threading import Lock
+
+mutex = Lock()
+
 
 class math_data:
 
     __attributes = ("raw", "semantics", "typeset", "context", "features", "index")
+
 
     def __get_sha(self, path, filename):
 
@@ -21,18 +26,18 @@ class math_data:
 
         return commits[0].hexsha
 
-    def __find_last_file_number(self, files):
+    def __find_last_file_number(self, path):
 
-        max_num = 0
-        for filename in files:
+        repo = Repo(path)
 
-            if filename == ".git":
-                continue
-            # 4 is number of file number char index
-            if int(filename[4]) > max_num:
-                max_num = int(filename[4])
+        exist = str(repo.git.execute("git ls-files")).splitlines()
+        exist = ' '.join(exist).split()
 
-        return max_num + 1
+        de = str(repo.git.log("--all", "--pretty=format:", "--name-only", "--diff-filter=D")).splitlines()
+
+        de = ' '.join(de).split()
+
+        return len(de) + len(exist) + 1
 
     def __create_file(self, content, path, commit_message):
 
@@ -44,13 +49,14 @@ class math_data:
         :return: accessed repository sha key
         """
 
-        max_number = self.__find_last_file_number(os.listdir(path))
+        max_number = self.__find_last_file_number(path)
         filename = "file" + str(max_number) + ".txt"
         file_path = os.path.join(path, filename)
 
         # write file
         with open(file_path, 'w') as outfile:
             json.dump(content, outfile)
+
 
         found = 0
         for file in os.listdir(path):
@@ -152,9 +158,14 @@ class math_data:
         :return: sha key of index of datatype.
         """
         sha_list = []
-        self.__initial_setup(data, sha_list)
 
-        status = 1
+        mutex.acquire()
+        try:
+            self.__initial_setup(data, sha_list)
+        finally:
+            mutex.release()
+
+        status = 1  # will be fix
 
         response = {
             "sha": sha_list[len(sha_list)-1],    # index represent all of datatype to perform on it.
@@ -337,7 +348,7 @@ class math_data:
         datatype = data["datatype"]
         print(datatype)
 
-        status = -1
+        status = 0
 
         if not os.path.exists(datatype):
             status = 0
