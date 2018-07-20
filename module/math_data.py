@@ -9,6 +9,19 @@ mutex = Lock()
 class math_data:
 
     __attributes = ("raw", "semantics", "typeset", "context", "features", "index")
+    __file_number = {}
+    __current_path = ""
+
+    def __init__(self, datatypes, path):
+
+        self.__initial_setup(datatypes=datatypes, path=path)
+        self.__current_path = path
+
+        dir_file = os.path.join(path, "log.txt")
+
+        with open(dir_file) as json_file:
+            self.__file_number = json.load(json_file)
+
 
 
     def __get_sha(self, path, filename):
@@ -26,58 +39,26 @@ class math_data:
 
         return commits[0].hexsha
 
-    def __find_last_file_number(self, path):
-
-        repo = Repo(path)
-
-        exist = str(repo.git.execute("git ls-files")).splitlines()
-        exist = ' '.join(exist).split()
-
-        de = str(repo.git.log("--all", "--pretty=format:", "--name-only", "--diff-filter=D")).splitlines()
-
-        de = ' '.join(de).split()
-
-        return len(de) + len(exist) + 1
-
-    def __create_file(self, content, path, commit_message):
+    def __create_file(self, file_path, filename, content, dir_attribute, commit_message):
 
         """ Private Helper Function.
         Create a file that is specified with its file number.
         :param content: content of the marked file
-        :param path: path of the repo
+        :param dir_attribute: path of the repo
         :param commit_message:
         :return: accessed repository sha key
         """
-
-        max_number = self.__find_last_file_number(path)
-        filename = "file" + str(max_number) + ".txt"
-        file_path = os.path.join(path, filename)
-
         # write file
         with open(file_path, 'w') as outfile:
             json.dump(content, outfile)
-
-
-        found = 0
-        for file in os.listdir(path):
-            if file == ".git":
-                found = 1
-                break
-
-        # add repo
-        if found == 0:
-            repo = Repo.init(path).git
-            index = Repo(path).index
-        else:
-            repo = Repo(path).git
-            index = Repo(path).index
+        repo = Repo.init(dir_attribute).git
+        index = Repo(dir_attribute).index
 
         repo.add(filename)
         index.commit(commit_message)
 
         # get repo sha
-
-        return self.__get_sha(path=path, filename=filename)
+        return self.__get_sha(path=dir_attribute, filename=filename)
 
     def __update_file(self, content, path, commit_message, filename):
 
@@ -103,25 +84,78 @@ class math_data:
         repo.add(filename)
         index.commit(commit_message)
 
-    def __initial_setup(self, data, sha_list):
+    def __initial_setup(self, datatypes, path):
+
+        for datatype in datatypes:
+            dir_datatype = os.path.join(path, datatype)
+
+            if not os.path.exists(dir_datatype):
+                os.makedirs(dir_datatype)
+
+            for attribute in self.__attributes:
+                dir_attribute = os.path.join(dir_datatype, attribute)
+
+                if not os.path.exists(dir_attribute):
+                    os.makedirs(dir_attribute)
+
+                    dir_git = os.path.join(dir_attribute, ".git")
+
+                    if not os.path.exists(dir_git):
+                        repo = Repo.init(dir_attribute)
+
+        dir_log = os.path.join(path, "log.txt")
+
+        if not os.path.exists(dir_log):
+            dic = {}
+            for key in datatypes:
+                dic[key] = 0
+
+            with open(dir_log, 'w') as outfile:
+                json.dump(dic, outfile)
+        else:
+            dic = {}
+            with open(dir_log) as json_file:
+                dic = json.load(json_file)
+
+            new_datatype = list(set(datatypes) - set(dic.keys()))
+            #  print(new_datatype)
+            if new_datatype:
+
+                dic[new_datatype[0]] = 0
+
+                with open(dir_log, 'w') as outfile:
+                    json.dump(dic, outfile)
+
+    def __add_helper(self, data, sha_list):
         """ Private Helper Function.
         Go through target path and creates new data type
         :param data: incoming json file.
         :param sha_list: sha list of all attribute such as context
         :return: none
         """
+
         datatype = data["datatype"]
 
-        if not os.path.exists(datatype):
-            os.makedirs(datatype)
+        if os.path.exists(datatype):
 
-        for attribute in self.__attributes:
-            dir_attribute = os.path.join(os.path.curdir, datatype, attribute)
+            self.__file_number[datatype] += 1
 
-            if not os.path.exists(dir_attribute):
-                os.makedirs(dir_attribute)
-            sha_list.append(self.__create_file(data[attribute], dir_attribute, data["commit"]))
+            filename = "file" + str(self.__file_number[datatype]) + ".txt"
 
+            for attribute in self.__attributes:
+
+                dir_attribute = os.path.join(self.__current_path, datatype, attribute)
+                file_path = os.path.join(dir_attribute, filename)
+                if os.path.exists(dir_attribute):
+                    sha_list.append(self.__create_file(file_path, filename, data[attribute], dir_attribute, data["commit"]))
+
+            # update log file according to data type
+            dir_log = os.path.join(self.__current_path, "log.txt")
+            with open(dir_log, 'w') as outfile:
+                json.dump(self.__file_number, outfile)
+
+        else:
+            pass
 
     def add_instance(self, data):
         """
@@ -161,7 +195,7 @@ class math_data:
 
         mutex.acquire()
         try:
-            self.__initial_setup(data, sha_list)
+            self.__add_helper(data, sha_list)
         finally:
             mutex.release()
 
@@ -211,10 +245,11 @@ class math_data:
 
             input_sha = data["sha"]
 
-            dir_index = os.path.join(os.path.curdir, datatype, "index")
+            dir_index = os.path.join(self.__current_path, datatype, "index")
 
             for filename in os.listdir(dir_index):
 
+                # we ignore .git file
                 if filename == ".git":
                     continue
 
@@ -224,7 +259,7 @@ class math_data:
 
                         #file_path = os.path.join(os.path.curdir, datatype, attribute, filename)
 
-                        path = os.path.join(os.path.curdir, datatype, attribute)
+                        path = os.path.join(self.__current_path, datatype, attribute)
 
                         index = Repo(path).index
                         repo = Repo(path).git
@@ -234,7 +269,17 @@ class math_data:
 
                         index.commit("deleted repo")
                     status = 1
+
+                    # decrease log file data type and write log again
+                    self.__file_number[datatype] -= 1
+                    with open(os.path.join(self.__current_path, "log.txt"), 'w') as outfile:
+                        json.dump(self.__file_number, outfile)
+
                     break
+
+
+
+
 
         response = {
             "status": status  # if successful otherwise 0
@@ -290,17 +335,16 @@ class math_data:
         else:
             input_sha = data["sha"]
 
-            dir_index = os.path.join(os.path.curdir, datatype, "index")
+            dir_index = os.path.join(self.__current_path, datatype, "index")
 
             for filename in os.listdir(dir_index):
 
-                print(filename)
                 if filename == ".git":
                     continue
 
                 if input_sha == self.__get_sha(dir_index, filename):
                     for attribute in self.__attributes:
-                        file_path = os.path.join(os.path.curdir, datatype, attribute, filename)
+                        file_path = os.path.join(self.__current_path, datatype, attribute, filename)
 
                         with open(file_path) as json_file:
                             response[attribute] = json.load(json_file)
@@ -346,7 +390,6 @@ class math_data:
         """
 
         datatype = data["datatype"]
-        print(datatype)
 
         status = 0
 
@@ -356,17 +399,16 @@ class math_data:
         else:
             input_sha = data["sha"]
 
-            dir_index = os.path.join(os.path.curdir, datatype, "index")
+            dir_index = os.path.join(self.__current_path, datatype, "index")
 
             for filename in os.listdir(dir_index):
 
-                print(filename)
                 if filename == ".git":
                     continue
 
                 if input_sha == self.__get_sha(dir_index, filename):
                     for attribute in self.__attributes:
-                        dir_attribute = os.path.join(os.path.curdir, datatype, attribute)
+                        dir_attribute = os.path.join(self.__current_path, datatype, attribute)
 
                         self.__update_file(data[attribute], dir_attribute, data["commit"], filename)
                     status = 1
