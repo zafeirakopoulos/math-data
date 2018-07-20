@@ -1,0 +1,13 @@
+{
+        "datatype": "graph",
+        "sha": "12b8a0b98077b86f4cff2afbb90c3255c8f9affc",
+        "index": "second test",
+        "raw": "something...",
+        "features": "safdfsdg",
+        "semantics": "something...",
+        "context":  {"edge": {"1": 100, "2": 2000},
+                     "vertex": [{"first": 4, "second": 4},
+                                {"first": 3, "second": 55}]},
+        "typeset": "something...",
+        "commit": "update_repo"
+}
