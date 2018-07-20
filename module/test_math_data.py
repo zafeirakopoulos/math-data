@@ -59,8 +59,7 @@ def test_retrieve_instance(sha):
 
     r = {
         "datatype": "graph",
-        "sha": sha,
-
+        "sha": sha
     }
 
     response = data.retrieve_instance(r)
@@ -73,15 +72,6 @@ if __name__ == "__main__":
     datatypes = ["graph"]
     path = "."
 
-    # preparation to sample
-    # removing old data types
-    for datatype in datatypes:
-        dir_datatype = os.path.join(path, datatype)
-
-        if os.path.exists(dir_datatype):
-            shutil.rmtree(dir_datatype, ignore_errors=True)
-            os.remove(os.path.join(path, "log.txt"))
-
     data = math_data(datatypes=datatypes, path=path)
 
     print("------  OPERATIONS  ------")
@@ -92,7 +82,7 @@ if __name__ == "__main__":
     print("------ -1. exit     ------")
 
     operation = input("Which operation do you want : ")
-
+    total = 0
     while operation != "-1":
         while not operation.isdigit():
             print("Please enter a digit which are represented as table!")
@@ -101,28 +91,27 @@ if __name__ == "__main__":
         if operation == "1":
             # add operation
             test_add_instance()
-
+            total += 1
         elif operation == "2":
 
-            print("Before remove operation we add a new data type")
-            sha = test_add_instance()
-
-            # remove operation
-            test_remove_instance(sha["sha"])
+            if total == 0:
+                print("Before remove operation we add a new data type")
+            else:
+                # remove operation
+                test_remove_instance(input("Enter sha key : "))
         elif operation == "3":
 
-            print("Before update operation we add a new data type")
-            sha = test_add_instance()
-
-            # update operation
-            test_update_instance(sha["sha"])
+            if total == 0:
+                print("Before update operation we add a new data type")
+            else:
+                # update operation
+                test_update_instance(input("Enter sha key : "))
         elif operation == "4":
-
-            print("Before retrieve operation we add a new data type")
-            sha = test_add_instance()
-
-            # operation operation
-            test_retrieve_instance(sha["sha"])
+            if total == 0:
+                print("Before retrieve operation we add a new data type")
+            else:
+                # operation operation
+                test_retrieve_instance(input("Enter sha key : "))
         else:
             print(operation, "is not supported!")
 
