@@ -39,26 +39,6 @@ class math_data:
 
         return commits[0].hexsha
 
-    def __create_file(self, file_path, filename, content, dir_attribute, commit_message):
-
-        """ Private Helper Function.
-        Create a file that is specified with its file number.
-        :param content: content of the marked file
-        :param dir_attribute: path of the repo
-        :param commit_message:
-        :return: accessed repository sha key
-        """
-        # write file
-        with open(file_path, 'w') as outfile:
-            json.dump(content, outfile)
-        repo = Repo.init(dir_attribute).git
-        index = Repo(dir_attribute).index
-
-        repo.add(filename)
-        index.commit(commit_message)
-
-        # get repo sha
-        return self.__get_sha(path=dir_attribute, filename=filename)
 
     def __update_file(self, content, path, commit_message, filename):
 
@@ -105,28 +85,38 @@ class math_data:
 
         dir_log = os.path.join(path, "log.txt")
 
+        # create log.txt json
         if not os.path.exists(dir_log):
             dic = {}
             for key in datatypes:
                 dic[key] = 0
+                dic["remaining-" + key] = 0
 
+            # write dic to log.txt
             with open(dir_log, 'w') as outfile:
                 json.dump(dic, outfile)
+
+        # if log.txt already exist
+        # if new data type will be add, it should be add log.txt
         else:
-            dic = {}
+            # read log.txt to dic
             with open(dir_log) as json_file:
                 dic = json.load(json_file)
 
+            # difference between new and old data types
             new_datatype = list(set(datatypes) - set(dic.keys()))
-            #  print(new_datatype)
+
             if new_datatype:
 
+                # add new data type log.txt
                 dic[new_datatype[0]] = 0
+                dic["remaining-" + new_datatype[0]] = 0
 
+                # write all changed in log.txt
                 with open(dir_log, 'w') as outfile:
                     json.dump(dic, outfile)
 
-    def __add_helper(self, data, sha_list):
+    def __add_helper(self, data):
         """ Private Helper Function.
         Go through target path and creates new data type
         :param data: incoming json file.
@@ -138,7 +128,9 @@ class math_data:
 
         if os.path.exists(datatype):
 
+            # update static log to update log.txt
             self.__file_number[datatype] += 1
+            self.__file_number["remaining-" + datatype] += 1
 
             filename = "file" + str(self.__file_number[datatype]) + ".txt"
 
@@ -146,13 +138,29 @@ class math_data:
 
                 dir_attribute = os.path.join(self.__current_path, datatype, attribute)
                 file_path = os.path.join(dir_attribute, filename)
-                if os.path.exists(dir_attribute):
-                    sha_list.append(self.__create_file(file_path, filename, data[attribute], dir_attribute, data["commit"]))
 
-            # update log file according to data type
+                if os.path.exists(dir_attribute):
+
+                    # create new file and add to repo
+                    with open(file_path, 'w') as outfile:
+                        json.dump(data[attribute], outfile)
+
+                    # open repo
+                    repo = Repo.init(dir_attribute).git
+                    index = Repo(dir_attribute).index
+
+                    # add file to repo
+                    repo.add(filename)
+                    index.commit(data["commit"])
+                    # --------------------------------
+
+            # update log file according to data type file_number
             dir_log = os.path.join(self.__current_path, "log.txt")
             with open(dir_log, 'w') as outfile:
                 json.dump(self.__file_number, outfile)
+
+            # return index sha key
+            return self.__get_sha(os.path.join(self.__current_path, datatype, "index"), filename)
 
         else:
             pass
@@ -191,18 +199,17 @@ class math_data:
         :param data: incoming json file.
         :return: sha key of index of datatype.
         """
-        sha_list = []
 
         mutex.acquire()
         try:
-            self.__add_helper(data, sha_list)
+            index_sha = self.__add_helper(data)
         finally:
             mutex.release()
 
         status = 1  # will be fix
 
         response = {
-            "sha": sha_list[len(sha_list)-1],    # index represent all of datatype to perform on it.
+            "sha": index_sha,    # index represent all of datatype to perform on it.
             "status": status                            # if successful otherwise 0
         }
 
@@ -257,29 +264,21 @@ class math_data:
 
                     for attribute in self.__attributes:
 
-                        #file_path = os.path.join(os.path.curdir, datatype, attribute, filename)
-
                         path = os.path.join(self.__current_path, datatype, attribute)
 
                         index = Repo(path).index
                         repo = Repo(path).git
                         repo.rm(filename)
 
-                        #os.remove(file_path)
-
                         index.commit("deleted repo")
                     status = 1
 
-                    # decrease log file data type and write log again
-                    self.__file_number[datatype] -= 1
+                    # decrease log file data type and write to log again
+                    self.__file_number["remaining-" + datatype] -= 1
                     with open(os.path.join(self.__current_path, "log.txt"), 'w') as outfile:
                         json.dump(self.__file_number, outfile)
 
                     break
-
-
-
-
 
         response = {
             "status": status  # if successful otherwise 0
