@@ -1,7 +1,6 @@
 from math_data import math_data
 import os
-import shutil
-
+import json
 
 def test_add_instance():
 
@@ -66,23 +65,34 @@ def test_retrieve_instance(sha):
     print(response)
     return response
 
+def test_statistics():
+
+    return data.statistics()
+
 
 if __name__ == "__main__":
 
     datatypes = ["graph"]
     path = "."
 
+    with open(os.path.join(path, "log.txt")) as json_file:
+        dic = json.load(json_file)
+
+    total = dic["remaining-graph"]
+    print(total)
+
     data = math_data(datatypes=datatypes, path=path)
 
-    print("------  OPERATIONS  ------")
-    print("------  1. add      ------")
-    print("------  2. remove   ------")
-    print("------  3. update   ------")
-    print("------  4. retrieve ------")
-    print("------ -1. exit     ------")
+    print("------  OPERATIONS    ------")
+    print("------  1. add        ------")
+    print("------  2. remove     ------")
+    print("------  3. update     ------")
+    print("------  4. retrieve   ------")
+    print("------  5. statistics ------")
+    print("------ -1. exit       ------")
 
     operation = input("Which operation do you want : ")
-    total = 0
+
     while operation != "-1":
         while not operation.isdigit():
             print("Please enter a digit which are represented as table!")
@@ -91,7 +101,7 @@ if __name__ == "__main__":
         if operation == "1":
             # add operation
             test_add_instance()
-            total += 1
+
         elif operation == "2":
 
             if total == 0:
@@ -112,6 +122,8 @@ if __name__ == "__main__":
             else:
                 # operation operation
                 test_retrieve_instance(input("Enter sha key : "))
+        elif operation == "5":
+            print(test_statistics())
         else:
             print(operation, "is not supported!")
 
