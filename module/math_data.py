@@ -11,11 +11,13 @@ class math_data:
     __attributes = ("raw", "semantics", "typeset", "context", "features", "index")
     __file_number = {}
     __current_path = ""
+    __datatypes = []
 
     def __init__(self, datatypes, path):
 
         self.__initial_setup(datatypes=datatypes, path=path)
         self.__current_path = path
+        self.__datatypes = datatypes
 
         dir_file = os.path.join(path, "log.txt")
 
@@ -172,7 +174,6 @@ class math_data:
         Otherwise, add just a new file.
 
         input example;
-
             r = {
                 "datatype": "graph",   # may be polynomial
                 "index": "index example",
@@ -185,16 +186,11 @@ class math_data:
                 "typeset": "typeset example",
                 "commit": "update_repo"
             }
-
-
         return example;
 
             {sha : a63813d76910623f2b92ca7343682fe9ee2230a1 , 'status': 1}
-
             if removal is unsuccessful;
-
             {'status': 0} # this line will be rewrite
-
 
         :param data: incoming json file.
         :return: sha key of index of datatype.
@@ -421,6 +417,18 @@ class math_data:
 
     def history_instance(self):
         print("")
+
+    def statistics(self):
+
+        with open(os.path.join(self.__current_path, "log.txt")) as json_file:
+            dic = json.load(json_file)
+
+        instance = {}
+        print(dic)
+        for datatype in self.__datatypes:
+            instance[datatype] = dic["remaining-" + datatype]
+
+        return instance
 
     '''
     def list_repo(self,datatype, repo, sha):
