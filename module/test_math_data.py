@@ -1,4 +1,5 @@
 from math_data import math_data
+import search
 import os
 import json
 
@@ -72,6 +73,11 @@ def test_statistics():
     return data.statistics()
 
 
+def test_find():
+    search.find(data,"asdas","asdasd")
+    pass
+
+
 if __name__ == "__main__":
 
     datatypes = ["graph"]
@@ -92,6 +98,7 @@ if __name__ == "__main__":
     print("------  3. update     ------")
     print("------  4. retrieve   ------")
     print("------  5. statistics ------")
+    print("------  6. find       ------")
     print("------ -1. exit       ------")
 
     operation = input("Which operation do you want : ")
@@ -101,6 +108,7 @@ if __name__ == "__main__":
             print("Please enter a digit which are represented as table!")
             operation = input("Which operation do you want : ")
 
+        print(total)
         if operation == "1":
             # add operation
             test_add_instance()
@@ -112,6 +120,7 @@ if __name__ == "__main__":
             else:
                 # remove operation
                 test_remove_instance(input("Enter sha key : "))
+                total -= 1
         elif operation == "3":
 
             if total == 0:
@@ -127,6 +136,9 @@ if __name__ == "__main__":
                 test_retrieve_instance(input("Enter sha key : "))
         elif operation == "5":
             print(test_statistics())
+
+        elif operation == "6":
+            test_find()
         else:
             print(operation, "is not supported!")
 
