@@ -2,19 +2,20 @@ from math_data import math_data
 import os
 import json
 
+
 def test_add_instance():
 
     r = {
         "datatype": "graph",
-        "index": "yeni...",
-        "raw": "something...",
-        "features": "something...",
-        "semantics": "something...",
-        "context":  {"edge": {"1": 1, "2": 2},
-                     "vertex": [{"first": 2, "second": 1},
-                                {"first": 23, "second": 55}]},
-        "typeset": "something...",
-        "commit": "something..."
+        "index": "something-"+str(file_num),
+        "raw": "something-"+str(file_num),
+        "features": "something-"+str(file_num),
+        "semantics": "something-"+str(file_num),
+        "context":  {"edge": {"1": file_num, "2": file_num},
+                     "vertex": [{"first": file_num, "second": file_num},
+                                {"first": file_num, "second": file_num}]},
+        "typeset": "something-"+str(file_num),
+        "commit": "something-"+str(file_num)
     }
 
     response = data.add_instance(r)
@@ -39,15 +40,15 @@ def test_update_instance(sha):
     r = {
         "datatype": "graph",
         "sha": sha,
-        "index": "second test",
-        "raw": "something...",
-        "features": "safdfsdg",
-        "semantics": "something...",
-        "context":  {"edge": {"1": 100, "2": 2000},
-                     "vertex": [{"first": 4, "second": 4},
-                                {"first": 3, "second": 55}]},
-        "typeset": "something...",
-        "commit": "update_repo"
+        "index": "updated",
+        "raw": "updated",
+        "features": "updated",
+        "semantics": "updated",
+        "context":  {"edge": {"1": 99, "2": 2000},
+                     "vertex": [{"first": 0, "second": 99},
+                                {"first": 0, "second": 99}]},
+        "typeset": "updated",
+        "commit": "updated_repo"
     }
 
     response = data.update_instance(r)
@@ -65,6 +66,7 @@ def test_retrieve_instance(sha):
     print(response)
     return response
 
+
 def test_statistics():
 
     return data.statistics()
@@ -75,13 +77,14 @@ if __name__ == "__main__":
     datatypes = ["graph"]
     path = "."
 
+    data = math_data(datatypes=datatypes, path=path)
+
     with open(os.path.join(path, "log.txt")) as json_file:
         dic = json.load(json_file)
 
     total = dic["remaining-graph"]
-    print(total)
 
-    data = math_data(datatypes=datatypes, path=path)
+    file_num = dic["graph"] + 1
 
     print("------  OPERATIONS    ------")
     print("------  1. add        ------")
