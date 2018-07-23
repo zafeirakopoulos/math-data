@@ -416,7 +416,7 @@ class math_data:
         return response
 
     def history_instance(self):
-        print("")
+        pass
 
     def statistics(self):
 
@@ -424,29 +424,11 @@ class math_data:
             dic = json.load(json_file)
 
         instance = {}
-        print(dic)
+
         for datatype in self.__datatypes:
             instance[datatype] = dic["remaining-" + datatype]
 
         return instance
 
-    '''
-    def list_repo(self,datatype, repo, sha):
-
-        os.chdir(datatype)
-        os.chdir(repo)
-
-        actual_sha = self.__get_sha(path='.')
-
-        if actual_sha == sha:
-            f = open("file1.txt", "r")
-            repo_content = f.read()
-            f.close()
-            os.chdir("..")
-            os.chdir("..")
-            return repo_content
-        else:
-            os.chdir("..")
-            os.chdir("..")
-            return ""
-    '''
+    def status(self):
+        pass
