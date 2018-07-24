@@ -114,6 +114,7 @@ if __name__ == "__main__":
             operation = input("Which operation do you want : ")
 
         if operation == "1":
+            total += 1
             # add operation
             test_add_instance()
 
