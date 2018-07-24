@@ -105,6 +105,11 @@ class mdb:
         :param datatype: data type
         :return: none
         """
+
+        self.__file_number[datatype] = 0
+        self.__file_number["remaining-" + datatype] = 0
+
+        self.__datatypes.append(datatype)
         self.__initial_setup([datatype], self.__current_path)
 
     def history_instance(self):
