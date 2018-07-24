@@ -97,6 +97,16 @@ class mdb:
                 with open(dir_log, 'w') as outfile:
                     json.dump(dic, outfile)
 
+    def add_datatype(self, datatype):
+        """
+        This method add a new data type in working directory.
+        You can add mdb constructor when you start your packet again
+
+        :param datatype: data type
+        :return: none
+        """
+        self.__initial_setup([datatype], self.__current_path)
+
     def history_instance(self):
         pass
 
