@@ -4,6 +4,6 @@
   "generator": {
     "deterministic": true,
     "executable": "python3",
-    "parameters": ["gen.py", "-M", "100", "-N", "10"]
+    "parameters": ["./example files/gen.py", "-M", "100", "-N", "10"]
   }
 }

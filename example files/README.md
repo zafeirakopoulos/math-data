@@ -18,4 +18,10 @@ This is an example for generator based data-set file.
 
 ## gen.py
 
-Simple random number generating script to demonstrate the generator.
+A simple random number generating script to demonstrate the generator.
+
+## dataset_example_output.py
+
+A simple demo file to show the current form of output from datasets. note that python interpreter should start at project root in order to work right now. This will generate two files named _generator\_dataset\_output.txt_ and _static\_dataset\_output.txt_ . These files contains the output of the dataset in runtime.
+
+`${project_root} > python3 "./example files/dataset_example_output.py"`
