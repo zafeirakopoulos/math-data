@@ -83,6 +83,12 @@ def test_find(text):
     print(response)
 
 
+def test_add_datatype(datatype):
+
+    data.add_datatype(datatype)
+    print("New data type added")
+
+
 if __name__ == "__main__":
 
     datatypes = ["graph"]
@@ -97,14 +103,15 @@ if __name__ == "__main__":
 
     file_num = dic["graph"] + 1
 
-    print("------  OPERATIONS    ------")
-    print("------  1. add        ------")
-    print("------  2. remove     ------")
-    print("------  3. update     ------")
-    print("------  4. retrieve   ------")
-    print("------  5. statistics ------")
-    print("------  6. find       ------")
-    print("------ -1. exit       ------")
+    print("------    OPERATIONS       ------")
+    print("------    1. add           ------")
+    print("------    2. remove        ------")
+    print("------    3. update        ------")
+    print("------    4. retrieve      ------")
+    print("------    5. statistics    ------")
+    print("------    6. find          ------")
+    print("------    7. add datatype  ------")
+    print("------    -1. exit         ------")
 
     operation = input("Which operation do you want : ")
 
@@ -147,6 +154,9 @@ if __name__ == "__main__":
                 print("Before find operation we add a new data type")
             else:
                 test_find(input("What do you want to find: "))
+        elif operation == "7":
+
+            test_add_datatype(input("Which data type do you want to add : "))
         else:
             print(operation, "is not supported!")
 
