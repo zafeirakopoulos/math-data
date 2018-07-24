@@ -1,187 +1,121 @@
 import os
+import json
 from git import Repo
-import hashlib
 
-class MDB:
-    __attributes = ("raw", "semantics", "typeset", "context", "features")
-    __repos = {}
-    ############################################################################
-    ############################################################################
-    ###  Functions to initialize and delete database
-    ############################################################################
-    ############################################################################
-    def __init__(self, basedir, datatype,debug=False):
-        datatypepath = os.path.join(basedir,datatype)
-        # Check if the folder for the datatype already exists
-        for file in os.listdir(basedir):
-            datatype_exists = False
-            if file == datatype:
-                datatype_exists = True
-                # The datatype folder exists
-                is_git = False
-                for file2 in os.listdir(datatypepath):
-                    # if it is a git repo, just return it
-                    if file2 == ".git":
-                        if debug: print("Folder exists and is git initialized")
-                        self.__repo = Repo(datatypepath).git
-                        self.__index = Repo(datatypepath).index
-                        if debug: print("Datatype exists and repository is initialized")
-                        is_git = True
-                        break
-                if not is_git:
-                    # If the folder is not a git repo, then initialize it
-                    if debug: print("Folder exists but not git initialized")
-                    self.__repo = Repo.init(datatypepath).git
-                    self.__index = Repo(datatypepath).index
-                    if debug: print("Initialized datatype: " + datatype)
-                break
-        # If the folder does not exist
-        if not datatype_exists:
-            if debug: print("Folder does not exist")
-            os.makedirs(datatypepath)
-            self.__repo = Repo.init(datatypepath).git
-            self.__index = Repo(datatypepath).index
-            if debug: print("Created folder and initialized datatype: " + datatype)
 
-        # Now we have to check or create the repos.
+class mdb:
 
-        # We want to ingore these folders because they are repos themselves and
-        # they are tracked separately
-        #First check the .gitignore for the folders
-        hasher = hashlib.md5()
-        if os.path.exists(os.path.join(datatypepath,".gitignore")):
-            with open(os.path.join(datatypepath,".gitignore"), 'rb') as afile:
-                buf = afile.read()
-                hasher.update(buf)
-            if hasher.hexdigest()!="8f0b9d7f9079e1a2433447b16731cf86":
-                raise Exception(".gitignore not ok")
-        else:
-            # TODO Create the .gitignore
-            if debug: print(".gitignore does not exist. I will create it")
-            file = open(os.path.join(datatypepath,".gitignore"),"w")
+    __attributes = ("raw", "semantics", "typeset", "context", "features", "index")
+    __file_number = {}
+    __current_path = ""
+    __datatypes = []
+
+    def __init__(self, datatypes, path):
+
+        self.__initial_setup(datatypes=datatypes, path=path)
+        self.__current_path = path
+        self.__datatypes = datatypes
+
+        dir_file = os.path.join(path, "log.txt")
+
+        with open(dir_file) as json_file:
+            self.__file_number = json.load(json_file)
+
+    def get_attributes(self):
+        return self.__attributes
+
+    def get_current_path(self):
+        return self.__current_path
+
+    def get_file_number(self):
+        return self.__file_number
+
+    def get_sha(self, path, filename):
+
+        """ Private Helper Function.
+        To get first commit sha key which we can access it permanently.
+        :param path:
+        :param filename:
+        :return: firs commit sha key
+        """
+
+        repo = Repo(path)
+        commits = list(repo.iter_commits('master', filename))
+        commits.reverse()
+
+        return commits[0].hexsha
+
+    def __initial_setup(self, datatypes, path):
+
+        for datatype in datatypes:
+            dir_datatype = os.path.join(path, datatype)
+
+            if not os.path.exists(dir_datatype):
+                os.makedirs(dir_datatype)
+
             for attribute in self.__attributes:
-                file.write(attribute)
-            file.close()
-            self.__repo.add(os.path.join(datatypepath,".gitignore"))
-            self.__index.commit("commit .gitignore for datatype " + datatype)
+                dir_attribute = os.path.join(dir_datatype, attribute)
 
+                if not os.path.exists(dir_attribute):
+                    os.makedirs(dir_attribute)
 
-        if not os.path.exists(os.path.join(datatypepath,"index")):
-            open(os.path.join(datatypepath,"index"), 'a').close()
-            self.__repo.add(os.path.join(datatypepath,"index"))
-            self.__index.commit("commit index for datatype " + datatype)
+                    dir_git = os.path.join(dir_attribute, ".git")
 
+                    if not os.path.exists(dir_git):
+                        repo = Repo.init(dir_attribute)
 
-        # Now check the 5 repos
-        for attribute in self.__attributes:
-            attribute_path = os.path.join(datatypepath,attribute)
-            # Check if the folder for the datatype already exists
-            for file in os.listdir(datatypepath):
-                attribute_exists = False
-                if file == attribute:
-                    attribute_exists = True
-                    # The datatype folder exists
-                    is_git = False
-                    for file2 in os.listdir(attribute_path):
-                        # if it is a git repo, just return it
-                        if file2 == ".git":
-                            if debug: print("Folder exists and is git initialized")
-                            self.__repos[attribute] = Repo(attribute_path).git
-                            if debug: print("Attribute exists and repository is initialized")
-                            is_git = True
-                            break
-                    if not is_git:
-                        # If the folder is not a git repo, then initialize it
-                        if debug: print("Folder exists but not git initialized")
-                        self.__repos[attribute] = Repo.init(attribute_path).git
-                        if debug: print("Initialized attribute: " + attribute)
-                    break
-            # If the folder does not exist
-            if not attribute_exists:
-                if debug: print("Folder does not exist")
-                os.makedirs(attribute_path)
-                self.__repos[attribute] = Repo.init(attribute_path).git
-                if debug: print("Created folder and initialized attribute: " + attribute)
+        dir_log = os.path.join(path, "log.txt")
 
-        if debug: print(self.__repos)
-        return None
+        # create log.txt json
+        if not os.path.exists(dir_log):
+            dic = {}
+            for key in datatypes:
+                dic[key] = 0
+                dic["remaining-" + key] = 0
 
-    def __get_sha(self, path):
+            # write dic to log.txt
+            with open(dir_log, 'w') as outfile:
+                json.dump(dic, outfile)
 
-        master = Repo(path).head.reference
-
-        return master.commit.hexsha
-
-    def __create_file(self, filename,repo_content,commit_message):
-
-        path = '.'
-        repo = Repo.init(path).git
-        index = Repo.init(path).index
-
-        # fill in the file
-        f = open(filename, "w")
-        f.write(repo_content)
-        f.close()
-
-        # add repo
-        repo.add(filename)
-        index.commit(commit_message)
-
-        # get repo sha
-
-        self.__sha_list.append(self.__get_sha(path=path))
-
-    def initial_setup(self, datatype, content):
-
-        repos = ("raw", "semantics", "typeset", "context", "features", "index")
-        try:
-            os.makedirs(datatype)
-            os.chdir(datatype)
-            for repo in repos:
-                os.makedirs(repo)
-                os.chdir(repo)
-                self.__create_file("file1.txt", content[repo], content["commit"])
-                os.chdir("..")
-            os.chdir("..")
-            return self.__sha_list
-        except OSError as e:
-            raise ValueError('Cannot create! ', e.filename, ' is already exist')
-
-    def log_repo(self, datatype, repo):
-        r = Repo('graph/features').git
-        print(r.log(p=True))
-
-    def edit_repo(self, datatype, repo, sha, commit):
-
-        os.chdir(datatype)
-        os.chdir(repo)
-
-        os.open("file1.txt", os.O_CREAT)
-
-    def list_repo(self,datatype, repo, sha):
-
-        os.chdir(datatype)
-        os.chdir(repo)
-
-        actual_sha = self.__get_sha(path='.')
-
-        if actual_sha == sha:
-            f = open("file1.txt", "r")
-            repo_content = f.read()
-            f.close()
-            os.chdir("..")
-            os.chdir("..")
-            return repo_content
+        # if log.txt already exist
+        # if new data type will be add, it should be add log.txt
         else:
-            os.chdir("..")
-            os.chdir("..")
-            return ""
+            # read log.txt to dic
+            with open(dir_log) as json_file:
+                dic = json.load(json_file)
+
+            # difference between new and old data types
+            new_datatype = list(set(datatypes) - set(dic.keys()))
+
+            if new_datatype:
+
+                # add new data type log.txt
+                dic[new_datatype[0]] = 0
+                dic["remaining-" + new_datatype[0]] = 0
+
+                # write all changed in log.txt
+                with open(dir_log, 'w') as outfile:
+                    json.dump(dic, outfile)
+
+    def history_instance(self):
+        pass
+
+    def statistics(self):
+
+        with open(os.path.join(self.__current_path, "log.txt")) as json_file:
+            dic = json.load(json_file)
+
+        instance = {}
+
+        for datatype in self.__datatypes:
+            instance[datatype] = dic["remaining-" + datatype]
+
+        return instance
 
     def definitions(self):
         """Return the list of all object definitions in the mathdatabase.
         """
         return []
-
 
     def definition(self, key):
         """Return the definition corresponding to the given key.
@@ -193,13 +127,7 @@ class MDB:
         """
         return 0
 
-
     def sanitize(self):
         """Sanitize the mathdatabase.
         """
         return 0
-
-    def statistics(self):
-        """Return a set of statistics about the mathdatabase.
-        """
-        return {"instances":2000}
