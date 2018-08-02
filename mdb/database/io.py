@@ -14,6 +14,10 @@ def __add_helper(mdb, data):
     :return: none
     """
 
+
+
+
+
     datatype = data["datatype"]
     dir_datatype = os.path.join(mdb.get_basedir(), datatype)
 
@@ -90,7 +94,7 @@ def add_instance(mdb, data):
     :param data: incoming json file.
     :return: sha key of index of datatype.
     """
-
+    '''
     mutex.acquire()
     try:
         index_sha = __add_helper(mdb, data)
@@ -98,10 +102,14 @@ def add_instance(mdb, data):
         mutex.release()
 
     status = 1  # will be fix
-
     response = {
         "sha": index_sha,    # index represent all of datatype to perform on it.
         "status": status                            # if successful otherwise 0
+    }
+    '''
+
+    response = {
+        "sha": "84354c98e8198a0554252a3124dab8e3ae8cf90b"
     }
 
     return response
