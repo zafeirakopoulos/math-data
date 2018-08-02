@@ -61,9 +61,8 @@ def __add_helper(mdb, data):
     with open(index_file_path, "r") as json_file:
         index_list = json.load(json_file)
 
-    index_sha["repo"] = mdb.instance_repo
-
-    index_list.append(index_sha)
+    index_list.append({"sha": index_sha,
+                       "repo": mdb.instance_repo})
 
     with open(os.path.join(index_file_path), 'w') as outfile:
         json.dump(index_list, outfile)
