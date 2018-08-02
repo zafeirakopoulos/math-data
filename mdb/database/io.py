@@ -14,57 +14,62 @@ def __add_helper(mdb, data):
     :return: none
     """
 
+    sha_dic = {}
 
+    if not os.path.exists(mdb.basedir):
+        return "Base directory are not found", 0
 
+    for aspect in mdb.aspects:
+        # check if aspect exist
 
+        filename = str(mdb.next_file[aspect]) + ".txt"
 
-    datatype = data["datatype"]
-    dir_datatype = os.path.join(mdb.get_basedir(), datatype)
+        mdb.next_file[aspect] += 1
 
-    if os.path.exists(dir_datatype):
+        repo_path = os.path.join(mdb.basedir, aspect, mdb.current_repos[aspect])
 
-        # update static log to update log.txt
-        with open(os.path.join(mdb.get_basedir(), datatype, "index")) as json_file:
-            total = json.load(json_file)
+        file_path = os.path.join(mdb.basedir, aspect, mdb.current_repos[aspect], filename)
 
-        filename = "file" + str(len(total) + 1) + ".txt"
+        with open(file_path, 'w') as outfile:
+            json.dump(data[aspect], outfile)
 
-        sha_dic = {}
+        mdb.git_add(repo_path, filename, data["commit"])
 
-        for attribute in mdb.get_attributes():
+        sha_dic[aspect] = mdb.get_last_sha(repo_path, filename)
 
-            dir_attribute = os.path.join(mdb.get_basedir(), datatype, attribute)
-            file_path = os.path.join(dir_attribute, filename)
+    # Instance part
 
-            if os.path.exists(dir_attribute):
+    instance_file_path = os.path.join(mdb.basedir, "instance", mdb.instance_repo, "1.txt")
+    instance_repo_path = os.path.join(mdb.basedir, "instance", mdb.instance_repo)
+    with open(instance_file_path, "r") as json_file:
+        sha_list = json.load(json_file)
 
-                # create new file and add to repo
-                with open(file_path, 'w') as outfile:
-                    json.dump(data[attribute], outfile)
+    sha_list.append(sha_dic)
 
-                # git add
-                mdb.git_add(dir_attribute, filename, data["commit"])
+    mdb.git_add(instance_repo_path, "1.txt", data["commit"])
 
-                sha_dic[attribute] = mdb.get_first_sha(dir_attribute, filename)
-                # --------------------------------
+    with open(os.path.join(instance_file_path), 'w') as outfile:
+        json.dump(sha_list, outfile)
 
-        # add new dictionary to index list
-        total.append(sha_dic)
+    # Index part
 
-        #                  #
-        # index operations #
-        #                  #
-        with open(os.path.join(mdb.get_basedir(), datatype, "index"), 'w') as outfile:
-            json.dump(total, outfile)
+    index_sha = mdb.get_last_sha(instance_repo_path, "1.txt")
 
-        # git add
-        mdb.git_add(dir_datatype, "index", data["commit"])
+    index_repo_path = os.path.join(mdb.basedir, "index")
+    index_file_path = os.path.join(mdb.basedir, "index", "1.txt")
 
-        # return index sha key
-        return mdb.get_last_sha(os.path.join(mdb.get_basedir(), datatype), "index")
+    with open(index_file_path, "r") as json_file:
+        index_list = json.load(json_file)
 
-    else:
-        pass
+    index_list.append({"sha": index_sha,
+                       "repo": mdb.instance_repo})
+
+    with open(os.path.join(index_file_path), 'w') as outfile:
+        json.dump(index_list, outfile)
+
+    status = "True"
+
+    return status, index_sha
 
 
 def add_instance(mdb, data):
@@ -94,24 +99,18 @@ def add_instance(mdb, data):
     :param data: incoming json file.
     :return: sha key of index of datatype.
     """
-    '''
+
     mutex.acquire()
     try:
-        index_sha = __add_helper(mdb, data)
+        status, index_sha = __add_helper(mdb, data)
     finally:
         mutex.release()
 
-    status = 1  # will be fix
     response = {
         "sha": index_sha,    # index represent all of datatype to perform on it.
         "status": status                            # if successful otherwise 0
     }
-    '''
-
-    response = {
-        "sha": "84354c98e8198a0554252a3124dab8e3ae8cf90b"
-    }
-
+    
     return response
 
 
