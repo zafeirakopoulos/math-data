@@ -1,97 +1,155 @@
-from flask import Flask,render_template,request,json
-
-import requests
+from flask import Flask,render_template,request, jsonify, json
+from database import manage, io, search
+import os
 app = Flask(__name__)
 
-@app.route('/')
-def hello():
-    return render_template("selection.html")
+
+jsonType = {
+
+    "raw": {"dense": {"structure": "matrix"},
+            "sparse": {"structure": "list"}
+            },
+
+    "typeset": {},
+
+    "features": {"directed": {"structure": "boolean"}
+                     }
+}
 
 
-@app.route("/create",methods= ["GET" , "POST"])
-def create():
-    if request.method == "POST" :
-        return render_template("create.html")
-    else:
-        print("get")
-        return render_template("saving.html")
+r = {
+        "raw": "something-",
+        "features": "something-",
+        "semantics": "something-",
+        "context":  {"edge": {"1": 99, "2": 3},
+                     "vertex": [{"first": 1, "second": 2},
+                                {"first": 2, "second": 3}]},
+        "typeset": "something-",
+        "commit": "commit-message"
+    }
 
 
-@app.route("/saving",methods= ["GET" , "POST"])
-def saving():
-    if request.method == "POST" :
-        data = {};
-
-        data = request.form.get("jsonFile")
-
-        print(data)
-
-        return render_template("saving.html")
-    else:
-        print("get")
-        return render_template("saving.html")
+@app.route("/", methods=["GET"  "POST"])
+def start():
+    basedir = os.path.join(os.getcwd(), "data")
+    global data
+    data = manage.mdb(basedir=basedir)
 
 
+@app.route('/add_instance', methods=["POST"])
+def add_instance():
 
-@app.route("/edit",methods= ["GET" , "POST"])
-def edit():
-    if request.method == "POST" :
-        return  render_template("edit.html")
-    else:
-        return render_template("edit.html")
+    basedir = os.path.join(os.getcwd(), "data")
+    global data
+    data = manage.mdb(basedir=basedir)
 
+    instance = request.json
 
-@app.route("/list",methods= ["GET" , "POST"])
-def list():
-    if request.method == "POST" :
-        return  render_template("list.html")
-    else:
-        return render_template("list.html")
+    response = io.add_instance(data, instance)
 
+    js = json.dumps(response)
+
+    return js
 
 
+@app.route('/filter', methods=["POST"])
+def filter():
 
-@app.route("/listed",methods= ["GET" , "POST"])
-def listed():
-    if request.method == "POST" :
-        graph = request.form.get("username")
-        repo = request.form.get("valueOfRepo")
-        shaKey = request.form.get("valueOfSHAkey")
+    basedir = os.path.join(os.getcwd(), "data")
+    global data
+    data = manage.mdb(basedir=basedir)
 
-        print(graph)
-        print(repo)
-        print(shaKey)
+    instance = request.json
 
-        data = {
-            "operate" : "list",
-            "datatype" : graph,
-            "repo" : repo,
-            "sha" : shaKey,
+    # filter method are not written yet
+    response = search.filter(data, instance)
+
+    js = json.dumps(response)
+
+    return js
+
+
+@app.route('/dataset', methods=["POST"])
+def dataset():
+
+    basedir = os.path.join(os.getcwd(), "data")
+    global data
+    data = manage.mdb(basedir=basedir)
+
+    instance = request.json
+
+    # dataset method are not written yet
+    response = search.search(data, instance)
+
+    js = json.dumps(response)
+
+    return js
+
+
+@app.route('/datatypes', methods=["GET"])
+def datatypes():
+
+    # it is an example
+    data = [
+        {"datatype": "graph"},
+        {"datatype": "polynomial"},
+        {"datatype": "list"}
+    ]
+
+    js = json.dumps(data)
+
+    return js
+
+
+@app.route('/datasets', methods=["GET"])
+def datasets():
+
+    # it is an example
+    data = [
+        {"vertex": "20"},
+        {"edge": "10"},
+    ]
+
+    js = json.dumps(data)
+
+    return js
+
+
+@app.route('/instances', methods=["GET"])
+def instances():
+
+    # it is an example
+    instance = [
+        {
+            "raw": "something-",
+            "features": "something-",
+            "semantics": "something-",
+            "context": {"edge": {"1": 99, "2": 3},
+                        "vertex": [{"first": 1, "second": 2},
+                                   {"first": 2, "second": 3}]},
+            "typeset": "something-",
+            "commit": "commit-message"
+        },
+
+        {
+            "raw": "1",
+            "features": "2-",
+            "semantics": "2-",
+            "context": {"edge": {"1": 99, "2": 3},
+                        "vertex": [{"first": 1, "second": 2},
+                                   {"first": 2, "second": 3}]},
+            "typeset": "3-",
+            "commit": "commit-message"
         }
+    ]
 
-        header = {'content-type': "application/json"}
+    js = json.dumps(instance)
 
-        req = requests.post('http://10.1.40.164:8080/',data=json.dumps(data),headers = header)
-
-        print(req.status_code)
-        print(req.json())
-
-
-        return render_template("listed.html",req = req.json())
-    else:
-        print("get")
-        return render_template("listed.html")
-
-@app.route("/delete",methods= ["GET" , "POST"])
-def delete():
-    if request.method == "POST" :
-        return  render_template("delete.html")
-    else:
-        return render_template("delete.html")
+    return js
 
 
 if __name__ == '__main__':
-   app.run(debug = True)
+   app.run(debug=True)
 
 
 
