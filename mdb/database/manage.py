@@ -52,8 +52,6 @@ class mdb:
     def next_file(self, num):
         self.__next_file = num
 
-
-
     def __init__(self, basedir):
 
         self.__aspects = ["raw", "semantics", "typeset", "context", "features"]
@@ -116,10 +114,7 @@ class mdb:
 
         index.commit(message)
 
-    def get_file_number(self):
-        return self.__file_number
-
-    def get_last_sha(self,path, filename):
+    def get_last_sha(self, path, filename):
         """
         To get last commit sha key which we can access it permanently.
         :param path:
@@ -211,13 +206,22 @@ class mdb:
 
     def statistics(self):
 
-        with open(os.path.join(self.__basedir, "log.txt")) as json_file:
-            dic = json.load(json_file)
+        context_path = os.path.join(self.basedir, "context", self.current_repos["context"])
 
         instance = {}
 
-        for datatype in self.__datatypes:
-            instance[datatype] = dic["remaining-" + datatype]
+        for filename in os.listdir(context_path):
+
+            if filename == ".git":
+                continue
+
+            with open(os.path.join(context_path, filename), "r") as json_file:
+                datatype = json.load(json_file)
+
+            if datatype in instance:
+                instance[datatype] += 1
+            else:
+                instance[datatype] = 1
 
         return instance
 
