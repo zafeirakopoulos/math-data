@@ -27,7 +27,9 @@ if __name__ == '__main__':
 
             print(db['test'].add(path, "this is a test"))
         elif operation == "2":
-            print("not implemented")
+            sha = input("Please enter commit SHA:")
+
+            db['test'].remove(sha)
         elif operation == "3":
             sha = input("Please enter commit SHA:")
             content = input("Please enter new content:")

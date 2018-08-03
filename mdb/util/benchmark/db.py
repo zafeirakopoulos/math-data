@@ -1,7 +1,7 @@
 import json
 
 from git import Repo
-from os import makedirs
+from os import makedirs, remove
 from os.path import exists, join, splitext
 from shutil import copy
 from uuid import uuid4
@@ -22,8 +22,9 @@ class Table:
         return '{"success":1,"sha":"%s"}' % self.index.commit(commit_msg).hexsha
 
     def remove(self, sha):
-        # TODO stub code
-        return True
+        commit_msg = json.loads(self.repo.git.execute(["git", "log", "--format=%B", "-n", "1", sha]))
+        remove(join(self.repo.working_dir, commit_msg['file']))
+        return '{"success":1,"sha":"%s"}' % self.index.commit("").hexsha
 
     def update(self, sha, file, msg):
         for commit in self.repo.iter_commits():
