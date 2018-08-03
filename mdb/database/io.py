@@ -7,11 +7,13 @@ mutex = Lock()
 
 
 def __add_helper(mdb, data):
-    """ Private Helper Function.
+    r""" Private Helper Function.
     Go through target path and creates new data type
+
     :param data: incoming json file.
     :param sha_list: sha list of all attribute such as context
     :return: none
+
     """
 
     sha_dic = {}
@@ -73,7 +75,7 @@ def __add_helper(mdb, data):
 
 
 def add_instance(mdb, data):
-    """
+    r"""
     It is dependent to name of data type.
     if new data type required to add new file structure is created.
     Otherwise, add just a new file.
@@ -84,12 +86,11 @@ def add_instance(mdb, data):
             "raw": "raw example",
             "features": "features example",
             "semantics": "semantics example",
-            "context":  {"edge": {"1": 100, "2": 2000},
-                         "vertex": [{"first": 4, "second": 4},
-                                    {"first": 3, "second": 55}]},
+            "context":  {"edge": {"1": 100, "2": 2000},"vertex": [{"first": 4, "second": 4}, {"first": 3, "second": 55}]},
             "typeset": "typeset example",
             "commit": "update_repo"
         }
+
     return example;
 
         {sha : a63813d76910623f2b92ca7343682fe9ee2230a1 , 'status': 1}
@@ -97,7 +98,9 @@ def add_instance(mdb, data):
         {'status': 0} # this line will be rewrite
 
     :param data: incoming json file.
+    
     :return: sha key of index of datatype.
+
     """
 
     mutex.acquire()
@@ -110,40 +113,41 @@ def add_instance(mdb, data):
         "sha": index_sha,    # index represent all of datatype to perform on it.
         "status": status                            # if successful otherwise 0
     }
-    
+
     return response
 
 
 def remove_instance(mdb, data):
-    """
-    It is dependent to name of data type and its sha key.
-    An example as fallow;
-
-    input example;
-
-        r = {
-            "datatype": "graph",
-            "sha": "a9f870b98077b86f4cff2afbb90c3255c8f9a923"
-        }
-
-        other example
-
-        r = {
-            "datatype": "polynomial",
-            "sha": "12b8a0b98077b86f4cff2afbb90c3255c8f9affc"
-        }
-
-    return example;
-
-        {'status': 1}
-
-        if removal is unsuccessful;
-
-        {'status': 0}
-
-    :param data: incoming json file.
-    :return: control status
-    """
+    # r"""
+    # It is dependent to name of data type and its sha key.
+    # An example as fallow;
+    #
+    # input example;
+    #
+    #     r = {
+    #         "datatype": "graph",
+    #         "sha": "a9f870b98077b86f4cff2afbb90c3255c8f9a923"
+    #     }
+    #
+    #     other example
+    #
+    #     r = {
+    #         "datatype": "polynomial",
+    #         "sha": "12b8a0b98077b86f4cff2afbb90c3255c8f9affc"
+    #     }
+    #
+    # return example;
+    #
+    #     {'status': 1}
+    #
+    #     if removal is unsuccessful;
+    #
+    #     {'status': 0}
+    #
+    # :param data: incoming json file.
+    # :return: control status
+    #
+    # """
     status = 0
     datatype = data["datatype"]
 
@@ -184,39 +188,39 @@ def remove_instance(mdb, data):
 
 
 def retrieve_instance(mdb, data):
-
-    """ Fetches an instance which match with "input" sha key
-
-    input example;
-
-        r = {
-            "datatype": "graph",
-            "sha": "18e8b2047eeefe9d45fa01a2f15b26bb62a3c471"
-        }
-
-        other example
-
-        r = {
-            "datatype": "polynomial",
-            "sha": "21fa767a68101f4b7e75ffe50001954d0ee37a74"
-        }
-
-    return example;
-
-        r = {
-            "datatype": "graph",   # may be polynomial
-            "raw": "raw example",
-            "features": "features example",
-            "semantics": "semantics example",
-            "context":  {"edge": {"1": 100, "2": 2000},
-                         "vertex": [{"first": 4, "second": 4},
-                                    {"first": 3, "second": 55}]},
-            "typeset": "typeset example"
-        }
-
-    :param data: incoming json file.
-    :return: desired instance
-    """
+    # r""" Fetches an instance which match with "input" sha key
+    #
+    # input example;
+    #
+    #     r = {
+    #         "datatype": "graph",
+    #         "sha": "18e8b2047eeefe9d45fa01a2f15b26bb62a3c471"
+    #     }
+    #
+    #     other example
+    #
+    #     r = {
+    #         "datatype": "polynomial",
+    #         "sha": "21fa767a68101f4b7e75ffe50001954d0ee37a74"
+    #     }
+    #
+    # return example;
+    #
+    #     r = {
+    #         "datatype": "graph",   # may be polynomial
+    #         "raw": "raw example",
+    #         "features": "features example",
+    #         "semantics": "semantics example",
+    #         "context":  {"edge": {"1": 100, "2": 2000},
+    #                      "vertex": [{"first": 4, "second": 4},
+    #                                 {"first": 3, "second": 55}]},
+    #         "typeset": "typeset example"
+    #     }
+    #
+    # :param data: incoming json file.
+    # :return: desired instance
+    #
+    # """
 
     datatype = data["datatype"]
 
@@ -253,14 +257,15 @@ def retrieve_instance(mdb, data):
 
 
 def __update_file(mdb, content, path, commit_message, filename):
-
-    """Private Helper Function.
+    r"""Private Helper Function.
     Write new data to target file. Add repository with new commit message
+
     :param content: New content to edit target file
     :param path: repository path
     :param commit_message:
     :param filename:
     :return: none
+
     """
 
 
@@ -273,40 +278,41 @@ def __update_file(mdb, content, path, commit_message, filename):
 
     mdb.git_add(path, filename, commit_message)
 
-    
-    
+
+
 def update_instance(mdb, data):
-    """
-    update instance which match with "input" sha key
-
-    input example;
-
-        r = {
-            "datatype": "graph",   # may be polynomial
-            "sha": "12b8a0b98077b86f4cff2afbb90c3255c8f9affc",
-            "index": "index example",
-            "raw": "raw example",
-            "features": "features example",
-            "semantics": "semantics example",
-            "context":  {"edge": {"1": 100, "2": 2000},
-                         "vertex": [{"first": 4, "second": 4},
-                                    {"first": 3, "second": 55}]},
-            "typeset": "typeset example",
-            "commit": "update_repo"
-        }
-
-
-    return example;
-
-        {'status': 1}
-
-        if removal is unsuccessful;
-
-        {'status': 0}
-
-    :param data: incoming json file.
-    :return:
-    """
+    # r"""
+    # update instance which match with "input" sha key
+    #
+    # input example;
+    #
+    #     r = {
+    #         "datatype": "graph",   # may be polynomial
+    #         "sha": "12b8a0b98077b86f4cff2afbb90c3255c8f9affc",
+    #         "index": "index example",
+    #         "raw": "raw example",
+    #         "features": "features example",
+    #         "semantics": "semantics example",
+    #         "context":  {"edge": {"1": 100, "2": 2000},
+    #                      "vertex": [{"first": 4, "second": 4},
+    #                                 {"first": 3, "second": 55}]},
+    #         "typeset": "typeset example",
+    #         "commit": "update_repo"
+    #     }
+    #
+    #
+    # return example;
+    #
+    #     {'status': 1}
+    #
+    #     if removal is unsuccessful;
+    #
+    #     {'status': 0}
+    #
+    # :param data: incoming json file.
+    # :return:
+    #
+    # """
 
     datatype = data["datatype"]
 
@@ -338,4 +344,3 @@ def update_instance(mdb, data):
     }
 
     return response
-
