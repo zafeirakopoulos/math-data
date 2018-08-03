@@ -114,9 +114,6 @@ class mdb:
 
         index.commit(message)
 
-    def get_file_number(self):
-        return self.__file_number
-
     def get_last_sha(self, path, filename):
         """
         To get last commit sha key which we can access it permanently.
