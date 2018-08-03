@@ -40,9 +40,8 @@ class Table:
         return self[sha]
 
     def __getitem__(self, sha):
-        # TODO stub code
-        with open('test_file1.json', 'r') as f:
-            return f.read()
+        commit_msg = json.loads(self.repo.git.execute(["git", "log", "--format=%B", "-n", "1", sha]))
+        return self.repo.git.execute(["git", "show", '%s:%s' % (sha, commit_msg['file'])])
 
 
 class DB:

@@ -34,7 +34,9 @@ if __name__ == '__main__':
 
             print(db['test'].update(sha, content, "another test"))
         elif operation == "4":
-            print("not implemented")
+            sha = input("Please enter commit SHA:")
+
+            print(db['test'][sha])
         else:
             print("not a valid entry")
 
