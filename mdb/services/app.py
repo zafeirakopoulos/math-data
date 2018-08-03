@@ -1,35 +1,11 @@
 from flask import Flask,render_template,request, jsonify, json
-from database import manage, io, search
 import os
+from mdb.database import manage,io,search
+
 app = Flask(__name__)
 
 
-jsonType = {
-
-    "raw": {"dense": {"structure": "matrix"},
-            "sparse": {"structure": "list"}
-            },
-
-    "typeset": {},
-
-    "features": {"directed": {"structure": "boolean"}
-                     }
-}
-
-
-r = {
-        "raw": "something-",
-        "features": "something-",
-        "semantics": "something-",
-        "context":  {"edge": {"1": 99, "2": 3},
-                     "vertex": [{"first": 1, "second": 2},
-                                {"first": 2, "second": 3}]},
-        "typeset": "something-",
-        "commit": "commit-message"
-    }
-
-
-@app.route("/", methods=["GET"  "POST"])
+@app.route("/", methods=["GET", "POST"])
 def start():
     basedir = os.path.join(os.getcwd(), "data")
     global data
@@ -149,7 +125,5 @@ def instances():
 
 
 if __name__ == '__main__':
+   print sys.argv[0]
    app.run(debug=True)
-
-
-
