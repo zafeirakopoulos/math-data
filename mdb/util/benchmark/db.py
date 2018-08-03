@@ -1,3 +1,5 @@
+import json
+
 from git import Repo
 from os import makedirs
 from os.path import exists, join, splitext
@@ -17,18 +19,24 @@ class Table:
         copy(file, join(self.repo.working_dir, uuid_file))
         self.repo.git.add(uuid_file)
         commit_msg = '{"file":"%s","msg":"%s"}' % (uuid_file, msg)
-        return self.index.commit(commit_msg).hexsha
+        return '{"success":1,"sha":"%s"}' % self.index.commit(commit_msg).hexsha
 
     def remove(self, sha):
         # TODO stub code
         return True
 
     def update(self, sha, file, msg):
-        # TODO stub code
-        return uuid4().hex
+        for commit in self.repo.iter_commits():
+            if commit.hexsha != sha:
+                continue
+
+            commit_msg = json.loads(commit.message)
+            copy(file, join(self.repo.working_dir, commit_msg['file']))
+            commit_msg['msg'] = msg
+            return '{"success":1,"sha":"%s"}' % self.index.commit(json.dumps(commit_msg)).hexsha
+        return '{"success":0}'
 
     def get(self, sha):
-        # TODO stub code
         return self[sha]
 
     def __getitem__(self, sha):
