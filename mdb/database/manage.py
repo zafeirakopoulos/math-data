@@ -34,7 +34,23 @@ class mdb:
 
     @current_repos.setter
     def current_repos(self, repo):
-        self.__current_repo = repo
+        self.__current_repos = repo
+
+    @property
+    def instance_repo(self):
+        return self.__instance_repo
+
+    @instance_repo.setter
+    def instance_repo(self, repo):
+        self.__instance_repo = repo
+
+    @property
+    def next_file(self):
+        return self.__next_file
+
+    @next_file.setter
+    def next_file(self, num):
+        self.__next_file = num
 
     def __init__(self, basedir):
 
@@ -44,13 +60,26 @@ class mdb:
                                 self.aspects[1]: "repo1",
                                 self.aspects[2]: "repo1",
                                 self.aspects[3]: "repo1",
-                                self.aspects[4]: "repo1"
-                                }
+                                self.aspects[4]: "repo1"}
+
+        self.__instance_repo = "repo1"
 
         self.__basedir = basedir
-        self.__current_repo = "repo1"
 
         self.__initial_setup()
+
+        self.__next_file = \
+            {self.aspects[0]:
+                 len(os.listdir(os.path.join(self.basedir, self.aspects[0], self.current_repos[self.aspects[0]]))),
+             self.aspects[1]:
+                 len(os.listdir(os.path.join(self.basedir, self.aspects[1], self.current_repos[self.aspects[1]]))),
+             self.aspects[2]:
+                 len(os.listdir(os.path.join(self.basedir, self.aspects[2], self.current_repos[self.aspects[2]]))),
+             self.aspects[3]:
+                 len(os.listdir(os.path.join(self.basedir, self.aspects[3], self.current_repos[self.aspects[3]]))),
+             self.aspects[4]:
+                 len(os.listdir(os.path.join(self.basedir, self.aspects[4], self.current_repos[self.aspects[4]])))
+             }
 
     def git_add(self, path, filename, message):
         """
@@ -85,16 +114,7 @@ class mdb:
 
         index.commit(message)
 
-    def get_attributes(self):
-        return self.__attributes
-
-    def get_basedir(self):
-        return self.__basedir
-
-    def get_file_number(self):
-        return self.__file_number
-
-    def get_last_sha(self,path, filename):
+    def get_last_sha(self, path, filename):
         """
         To get last commit sha key which we can access it permanently.
         :param path:
@@ -123,6 +143,12 @@ class mdb:
         return commits[0].hexsha
 
     def __initial_setup(self):
+        """
+        Initial setup of MDB.
+        It creates files structure for MDB
+
+        :return: None
+        """
 
         for aspect in self.aspects:
             aspect_dir = os.path.join(self.basedir, aspect)
@@ -133,21 +159,44 @@ class mdb:
 
                 # repo directories creation
                 repo_dir = os.path.join(aspect_dir, self.current_repos[aspect])
+
+                # repo creation
                 if not os.path.exists(repo_dir):
                     self.__repo = Repo.init(repo_dir).git
 
+        # Now part of instance and index
+
         json_array = []
+
+        # instance part
 
         # instance file creation
         instance_dir = os.path.join(self.basedir, "instance")
         if not os.path.exists(instance_dir):
-            with open(instance_dir, 'w') as outfile:
+            os.makedirs(instance_dir)
+
+        # instance repo directory
+        instance_repo_dir = os.path.join(instance_dir, self.instance_repo)
+        if not os.path.exists(instance_repo_dir):
+            self.__repo = Repo.init(instance_repo_dir).git
+
+        # instance file creation
+        instance_file = os.path.join(instance_repo_dir, "1.txt")
+        if not os.path.exists(instance_file):
+            with open(instance_file, 'w') as outfile:
                 json.dump(json_array, outfile)
 
-        # index file creation
+        # index part
+
+        # index directory creation
         index_dir = os.path.join(self.basedir, "index")
         if not os.path.exists(index_dir):
-            with open(index_dir, 'w') as outfile:
+            self.__repo = Repo.init(index_dir).git
+
+        # index file creation
+        index_file = os.path.join(index_dir, "1.txt")
+        if not os.path.exists(index_file):
+            with open(index_file, 'w') as outfile:
                 json.dump(json_array, outfile)
 
         return None
@@ -157,13 +206,22 @@ class mdb:
 
     def statistics(self):
 
-        with open(os.path.join(self.__basedir, "log.txt")) as json_file:
-            dic = json.load(json_file)
+        context_path = os.path.join(self.basedir, "context", self.current_repos["context"])
 
         instance = {}
 
-        for datatype in self.__datatypes:
-            instance[datatype] = dic["remaining-" + datatype]
+        for filename in os.listdir(context_path):
+
+            if filename == ".git":
+                continue
+
+            with open(os.path.join(context_path, filename), "r") as json_file:
+                datatype = json.load(json_file)
+
+            if datatype in instance:
+                instance[datatype] += 1
+            else:
+                instance[datatype] = 1
 
         return instance
 

@@ -7,68 +7,75 @@ mutex = Lock()
 
 
 def __add_helper(mdb, data):
-    """ Private Helper Function.
+    r""" Private Helper Function.
     Go through target path and creates new data type
+
     :param data: incoming json file.
     :param sha_list: sha list of all attribute such as context
     :return: none
+
     """
 
+    sha_dic = {}
 
+    if not os.path.exists(mdb.basedir):
+        return "Base directory are not found", 0
 
+    for aspect in mdb.aspects:
+        # check if aspect exist
 
+        filename = str(mdb.next_file[aspect]) + ".txt"
 
-    datatype = data["datatype"]
-    dir_datatype = os.path.join(mdb.get_basedir(), datatype)
+        mdb.next_file[aspect] += 1
 
-    if os.path.exists(dir_datatype):
+        repo_path = os.path.join(mdb.basedir, aspect, mdb.current_repos[aspect])
 
-        # update static log to update log.txt
-        with open(os.path.join(mdb.get_basedir(), datatype, "index")) as json_file:
-            total = json.load(json_file)
+        file_path = os.path.join(mdb.basedir, aspect, mdb.current_repos[aspect], filename)
 
-        filename = "file" + str(len(total) + 1) + ".txt"
+        with open(file_path, 'w') as outfile:
+            json.dump(data[aspect], outfile)
 
-        sha_dic = {}
+        mdb.git_add(repo_path, filename, data["commit"])
 
-        for attribute in mdb.get_attributes():
+        sha_dic[aspect] = mdb.get_last_sha(repo_path, filename)
 
-            dir_attribute = os.path.join(mdb.get_basedir(), datatype, attribute)
-            file_path = os.path.join(dir_attribute, filename)
+    # Instance part
 
-            if os.path.exists(dir_attribute):
+    instance_file_path = os.path.join(mdb.basedir, "instance", mdb.instance_repo, "1.txt")
+    instance_repo_path = os.path.join(mdb.basedir, "instance", mdb.instance_repo)
+    with open(instance_file_path, "r") as json_file:
+        sha_list = json.load(json_file)
 
-                # create new file and add to repo
-                with open(file_path, 'w') as outfile:
-                    json.dump(data[attribute], outfile)
+    sha_list.append(sha_dic)
 
-                # git add
-                mdb.git_add(dir_attribute, filename, data["commit"])
+    mdb.git_add(instance_repo_path, "1.txt", data["commit"])
 
-                sha_dic[attribute] = mdb.get_first_sha(dir_attribute, filename)
-                # --------------------------------
+    with open(os.path.join(instance_file_path), 'w') as outfile:
+        json.dump(sha_list, outfile)
 
-        # add new dictionary to index list
-        total.append(sha_dic)
+    # Index part
 
-        #                  #
-        # index operations #
-        #                  #
-        with open(os.path.join(mdb.get_basedir(), datatype, "index"), 'w') as outfile:
-            json.dump(total, outfile)
+    index_sha = mdb.get_last_sha(instance_repo_path, "1.txt")
 
-        # git add
-        mdb.git_add(dir_datatype, "index", data["commit"])
+    index_repo_path = os.path.join(mdb.basedir, "index")
+    index_file_path = os.path.join(mdb.basedir, "index", "1.txt")
 
-        # return index sha key
-        return mdb.get_last_sha(os.path.join(mdb.get_basedir(), datatype), "index")
+    with open(index_file_path, "r") as json_file:
+        index_list = json.load(json_file)
 
-    else:
-        pass
+    index_list.append({"sha": index_sha,
+                       "repo": mdb.instance_repo})
+
+    with open(os.path.join(index_file_path), 'w') as outfile:
+        json.dump(index_list, outfile)
+
+    status = "True"
+
+    return status, index_sha
 
 
 def add_instance(mdb, data):
-    """
+    r"""
     It is dependent to name of data type.
     if new data type required to add new file structure is created.
     Otherwise, add just a new file.
@@ -79,12 +86,11 @@ def add_instance(mdb, data):
             "raw": "raw example",
             "features": "features example",
             "semantics": "semantics example",
-            "context":  {"edge": {"1": 100, "2": 2000},
-                         "vertex": [{"first": 4, "second": 4},
-                                    {"first": 3, "second": 55}]},
+            "context":  {"edge": {"1": 100, "2": 2000},"vertex": [{"first": 4, "second": 4}, {"first": 3, "second": 55}]},
             "typeset": "typeset example",
             "commit": "update_repo"
         }
+
     return example;
 
         {sha : a63813d76910623f2b92ca7343682fe9ee2230a1 , 'status': 1}
@@ -92,59 +98,56 @@ def add_instance(mdb, data):
         {'status': 0} # this line will be rewrite
 
     :param data: incoming json file.
+    
     :return: sha key of index of datatype.
+
     """
-    '''
+
     mutex.acquire()
     try:
-        index_sha = __add_helper(mdb, data)
+        status, index_sha = __add_helper(mdb, data)
     finally:
         mutex.release()
 
-    status = 1  # will be fix
     response = {
         "sha": index_sha,    # index represent all of datatype to perform on it.
         "status": status                            # if successful otherwise 0
-    }
-    '''
-
-    response = {
-        "sha": "84354c98e8198a0554252a3124dab8e3ae8cf90b"
     }
 
     return response
 
 
 def remove_instance(mdb, data):
-    """
-    It is dependent to name of data type and its sha key.
-    An example as fallow;
-
-    input example;
-
-        r = {
-            "datatype": "graph",
-            "sha": "a9f870b98077b86f4cff2afbb90c3255c8f9a923"
-        }
-
-        other example
-
-        r = {
-            "datatype": "polynomial",
-            "sha": "12b8a0b98077b86f4cff2afbb90c3255c8f9affc"
-        }
-
-    return example;
-
-        {'status': 1}
-
-        if removal is unsuccessful;
-
-        {'status': 0}
-
-    :param data: incoming json file.
-    :return: control status
-    """
+    # r"""
+    # It is dependent to name of data type and its sha key.
+    # An example as fallow;
+    #
+    # input example;
+    #
+    #     r = {
+    #         "datatype": "graph",
+    #         "sha": "a9f870b98077b86f4cff2afbb90c3255c8f9a923"
+    #     }
+    #
+    #     other example
+    #
+    #     r = {
+    #         "datatype": "polynomial",
+    #         "sha": "12b8a0b98077b86f4cff2afbb90c3255c8f9affc"
+    #     }
+    #
+    # return example;
+    #
+    #     {'status': 1}
+    #
+    #     if removal is unsuccessful;
+    #
+    #     {'status': 0}
+    #
+    # :param data: incoming json file.
+    # :return: control status
+    #
+    # """
     status = 0
     datatype = data["datatype"]
 
@@ -185,39 +188,39 @@ def remove_instance(mdb, data):
 
 
 def retrieve_instance(mdb, data):
-
-    """ Fetches an instance which match with "input" sha key
-
-    input example;
-
-        r = {
-            "datatype": "graph",
-            "sha": "18e8b2047eeefe9d45fa01a2f15b26bb62a3c471"
-        }
-
-        other example
-
-        r = {
-            "datatype": "polynomial",
-            "sha": "21fa767a68101f4b7e75ffe50001954d0ee37a74"
-        }
-
-    return example;
-
-        r = {
-            "datatype": "graph",   # may be polynomial
-            "raw": "raw example",
-            "features": "features example",
-            "semantics": "semantics example",
-            "context":  {"edge": {"1": 100, "2": 2000},
-                         "vertex": [{"first": 4, "second": 4},
-                                    {"first": 3, "second": 55}]},
-            "typeset": "typeset example"
-        }
-
-    :param data: incoming json file.
-    :return: desired instance
-    """
+    # r""" Fetches an instance which match with "input" sha key
+    #
+    # input example;
+    #
+    #     r = {
+    #         "datatype": "graph",
+    #         "sha": "18e8b2047eeefe9d45fa01a2f15b26bb62a3c471"
+    #     }
+    #
+    #     other example
+    #
+    #     r = {
+    #         "datatype": "polynomial",
+    #         "sha": "21fa767a68101f4b7e75ffe50001954d0ee37a74"
+    #     }
+    #
+    # return example;
+    #
+    #     r = {
+    #         "datatype": "graph",   # may be polynomial
+    #         "raw": "raw example",
+    #         "features": "features example",
+    #         "semantics": "semantics example",
+    #         "context":  {"edge": {"1": 100, "2": 2000},
+    #                      "vertex": [{"first": 4, "second": 4},
+    #                                 {"first": 3, "second": 55}]},
+    #         "typeset": "typeset example"
+    #     }
+    #
+    # :param data: incoming json file.
+    # :return: desired instance
+    #
+    # """
 
     datatype = data["datatype"]
 
@@ -254,14 +257,15 @@ def retrieve_instance(mdb, data):
 
 
 def __update_file(mdb, content, path, commit_message, filename):
-
-    """Private Helper Function.
+    r"""Private Helper Function.
     Write new data to target file. Add repository with new commit message
+
     :param content: New content to edit target file
     :param path: repository path
     :param commit_message:
     :param filename:
     :return: none
+
     """
 
 
@@ -274,40 +278,41 @@ def __update_file(mdb, content, path, commit_message, filename):
 
     mdb.git_add(path, filename, commit_message)
 
-    
-    
+
+
 def update_instance(mdb, data):
-    """
-    update instance which match with "input" sha key
-
-    input example;
-
-        r = {
-            "datatype": "graph",   # may be polynomial
-            "sha": "12b8a0b98077b86f4cff2afbb90c3255c8f9affc",
-            "index": "index example",
-            "raw": "raw example",
-            "features": "features example",
-            "semantics": "semantics example",
-            "context":  {"edge": {"1": 100, "2": 2000},
-                         "vertex": [{"first": 4, "second": 4},
-                                    {"first": 3, "second": 55}]},
-            "typeset": "typeset example",
-            "commit": "update_repo"
-        }
-
-
-    return example;
-
-        {'status': 1}
-
-        if removal is unsuccessful;
-
-        {'status': 0}
-
-    :param data: incoming json file.
-    :return:
-    """
+    # r"""
+    # update instance which match with "input" sha key
+    #
+    # input example;
+    #
+    #     r = {
+    #         "datatype": "graph",   # may be polynomial
+    #         "sha": "12b8a0b98077b86f4cff2afbb90c3255c8f9affc",
+    #         "index": "index example",
+    #         "raw": "raw example",
+    #         "features": "features example",
+    #         "semantics": "semantics example",
+    #         "context":  {"edge": {"1": 100, "2": 2000},
+    #                      "vertex": [{"first": 4, "second": 4},
+    #                                 {"first": 3, "second": 55}]},
+    #         "typeset": "typeset example",
+    #         "commit": "update_repo"
+    #     }
+    #
+    #
+    # return example;
+    #
+    #     {'status': 1}
+    #
+    #     if removal is unsuccessful;
+    #
+    #     {'status': 0}
+    #
+    # :param data: incoming json file.
+    # :return:
+    #
+    # """
 
     datatype = data["datatype"]
 
@@ -339,4 +344,3 @@ def update_instance(mdb, data):
     }
 
     return response
-
