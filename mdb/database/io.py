@@ -46,17 +46,17 @@ def __add_helper(mdb, data):
 
     sha_list.append(sha_dic)
 
-    mdb.git_add(instance_repo_path, "1.txt", data["commit"])
+    mdb.git_add(instance_repo_path, mdb.instance_file, data["commit"])
 
     with open(os.path.join(instance_file_path), 'w') as outfile:
         json.dump(sha_list, outfile)
 
     # Index part
 
-    index_sha = mdb.get_last_sha(instance_repo_path, "1.txt")
+    index_sha = mdb.get_last_sha(instance_repo_path, mdb.instance_file)
 
     index_repo_path = os.path.join(mdb.basedir, "index")
-    index_file_path = os.path.join(mdb.basedir, "index", "1.txt")
+    index_file_path = os.path.join(mdb.basedir, "index", mdb.index_file)
 
     with open(index_file_path, "r") as json_file:
         index_list = json.load(json_file)
@@ -74,13 +74,10 @@ def __add_helper(mdb, data):
 
 def add_instance(mdb, data):
     """
-    It is dependent to name of data type.
-    if new data type required to add new file structure is created.
-    Otherwise, add just a new file.
+    add any instance
 
     input example;
         r = {
-            "datatype": "graph",   # may be polynomial
             "raw": "raw example",
             "features": "features example",
             "semantics": "semantics example",
@@ -116,71 +113,49 @@ def add_instance(mdb, data):
 
 def remove_instance(mdb, data):
     """
-    It is dependent to name of data type and its sha key.
-    An example as fallow;
+
+    Remove sha key from index file
+
 
     input example;
 
         r = {
-            "datatype": "graph",
             "sha": "a9f870b98077b86f4cff2afbb90c3255c8f9a923"
-        }
-
-        other example
-
-        r = {
-            "datatype": "polynomial",
-            "sha": "12b8a0b98077b86f4cff2afbb90c3255c8f9affc"
         }
 
     return example;
 
-        {'status': 1}
+        {'status': True}
 
         if removal is unsuccessful;
 
-        {'status': 0}
+        {'status': False}
 
     :param data: incoming json file.
     :return: control status
     """
-    status = 0
-    datatype = data["datatype"]
 
-    if os.path.exists(datatype):
+    index_file_path = os.path.join(mdb.basedir, "index", mdb.index_file)
 
-        input_sha = data["sha"]
+    with open(index_file_path, "r") as json_file:
+        sha_list = json.load(json_file)
 
-        dir_index = os.path.join(mdb.get_basedir(), datatype, "index")
+    if not sha_list:
+        return {"status": "There are any instance in index"}
 
-        for filename in os.listdir(dir_index):
+    input_sha = data["sha"]
 
-            # we ignore .git file
-            if filename == ".git":
-                continue
+    for sha in sha_list:
 
-            if input_sha == mdb.get_first_sha(dir_index, filename):
+        if input_sha in sha.values():
+            sha_list.remove(sha)
 
-                for attribute in mdb.get_attributes():
+            with open(index_file_path, 'w') as outfile:
+                json.dump(sha_list, outfile)
 
-                    path = os.path.join(mdb.get_basedir(), datatype, attribute)
+            return {"status": True}
 
-                    mdb.git_remove(path, filename, "deleted repo")
-
-                status = 1
-
-                # decrease log file data type and write to log again
-                mdb.get_file_number()["remaining-" + datatype] -= 1
-                with open(os.path.join(mdb.get_basedir(), "log.txt"), 'w') as outfile:
-                    json.dump(mdb.get_file_number(), outfile)
-
-                break
-
-    response = {
-        "status": status  # if successful otherwise 0
-    }
-
-    return response
+    return {"status": False}
 
 
 def retrieve_instance(mdb, data):
