@@ -20,16 +20,21 @@ class Table:
         return self.index.commit(commit_msg).hexsha
 
     def remove(self, sha):
-        pass
+        # TODO stub code
+        return True
 
     def update(self, sha, file, msg):
-        pass
+        # TODO stub code
+        return uuid4().hex
 
     def get(self, sha):
+        # TODO stub code
         return self[sha]
 
     def __getitem__(self, sha):
-        pass
+        # TODO stub code
+        with open('test_file1.json', 'r') as f:
+            return f.read()
 
 
 class DB:
