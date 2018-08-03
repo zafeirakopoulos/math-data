@@ -39,7 +39,7 @@ class Instance:
     @property
     def features(self):
         return self.__features
-    @confeaturestext.setter
+    @features.setter
     def features(self, value):
         # Check if valid SpaceTime
         self.__features = value
