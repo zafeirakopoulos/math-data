@@ -3,6 +3,7 @@ import json
 from git import Repo
 
 
+
 class mdb:
 
     __repos = {}
@@ -224,22 +225,26 @@ class mdb:
 
     def statistics(self):
 
-        context_path = os.path.join(self.basedir, "context", self.current_repos["context"])
+        context_path = os.path.join(self.basedir, "context")
 
         instance = {}
 
-        for filename in os.listdir(context_path):
+        for repos in os.listdir(context_path):
 
-            if filename == ".git":
-                continue
+            context_repo_path = os.path.join(self.basedir, "context", repos)
 
-            with open(os.path.join(context_path, filename), "r") as json_file:
-                datatype = json.load(json_file)
+            for filename in os.listdir(context_repo_path):
 
-            if datatype in instance:
-                instance[datatype] += 1
-            else:
-                instance[datatype] = 1
+                if filename == ".git":
+                    continue
+
+                with open(os.path.join(context_repo_path, filename), "r") as json_file:
+                    datatype = json.load(json_file)
+
+                if datatype in instance:
+                    instance[datatype] += 1
+                else:
+                    instance[datatype] = 1
 
         return instance
 
