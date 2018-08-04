@@ -3,7 +3,6 @@ import json
 from git import Repo
 
 
-
 class mdb:
 
     __repos = {}
@@ -52,6 +51,22 @@ class mdb:
     def next_file(self, num):
         self.__next_file = num
 
+    @property
+    def instance_file(self):
+        return self.__index_file
+
+    @instance_file.setter
+    def instance_file(self, filename):
+        self.__instance_file = filename
+
+    @property
+    def index_file(self):
+        return self.__index_file
+
+    @index_file.setter
+    def index_file(self, filename):
+        self.__index_file = filename
+
     def __init__(self, basedir):
 
         self.__aspects = ["raw", "semantics", "typeset", "context", "features"]
@@ -63,6 +78,9 @@ class mdb:
                                 self.aspects[4]: "repo1"}
 
         self.__instance_repo = "repo1"
+        self.__instance_file = "1.txt"
+
+        self.__index_file = "1.txt"
 
         self.__basedir = basedir
 
@@ -70,7 +88,7 @@ class mdb:
 
         self.__next_file = \
             {self.aspects[0]:
-                 len(os.listdir(os.path.join(self.basedir, self.aspects[0], self.current_repos[self.aspects[0]]))),
+                len(os.listdir(os.path.join(self.basedir, self.aspects[0], self.current_repos[self.aspects[0]]))),
              self.aspects[1]:
                  len(os.listdir(os.path.join(self.basedir, self.aspects[1], self.current_repos[self.aspects[1]]))),
              self.aspects[2]:
@@ -181,7 +199,7 @@ class mdb:
             self.__repo = Repo.init(instance_repo_dir).git
 
         # instance file creation
-        instance_file = os.path.join(instance_repo_dir, "1.txt")
+        instance_file = os.path.join(instance_repo_dir, self.instance_file)
         if not os.path.exists(instance_file):
             with open(instance_file, 'w') as outfile:
                 json.dump(json_array, outfile)
@@ -194,7 +212,7 @@ class mdb:
             self.__repo = Repo.init(index_dir).git
 
         # index file creation
-        index_file = os.path.join(index_dir, "1.txt")
+        index_file = os.path.join(index_dir, self.index_file)
         if not os.path.exists(index_file):
             with open(index_file, 'w') as outfile:
                 json.dump(json_array, outfile)
@@ -226,7 +244,7 @@ class mdb:
         return instance
 
     def definitions(self):
-        """Return the list of all object definitions in the mathdatabase.
+        """Return the list of all object definitions in the database.
         """
         return []
 
@@ -236,11 +254,11 @@ class mdb:
         return {}
 
     def status(self):
-        """Return the current status of the mathdatabase.
+        """Return the current status of the database.
         """
         return 0
 
     def sanitize(self):
-        """Sanitize the mathdatabase.
+        """Sanitize the database.
         """
         return 0
