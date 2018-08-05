@@ -111,7 +111,7 @@ class mdb:
         """
 
         repo = Repo.init(path).git
-        index = Repo(path).index
+        index = Repo.init(path).index
 
         # add file to repo
         repo.add(filename)
@@ -205,6 +205,9 @@ class mdb:
             with open(instance_file, 'w') as outfile:
                 json.dump(json_array, outfile)
 
+            # add instance file to git
+            self.git_add(instance_repo_dir, self.instance_file, "9999")
+
         # index part
 
         # index directory creation
@@ -218,10 +221,34 @@ class mdb:
             with open(index_file, 'w') as outfile:
                 json.dump(json_array, outfile)
 
+            # add index file to git
+            self.git_add(index_dir, self.index_file, "9999")
+
         return None
 
     def history_instance(self):
         pass
+
+    def git_checkout(self, path, sha):
+
+        repo = Repo(path)
+
+        repo.git.checkout(sha)
+
+        return None
+
+    def get_all_commit(self, path, filename):
+
+        repo = Repo(path)
+        commits = str(repo.git.log(
+            "--pretty=oneline", "--all", "--full-history", filename)).splitlines()
+
+        sha_list = []
+
+        for commit in commits:
+            sha_list.append({commit[:40]: commit[41:45]})
+
+        return sha_list
 
     def statistics(self):
 
