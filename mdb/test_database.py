@@ -52,7 +52,6 @@ def test_update_instance(sha):
 def test_retrieve_instance(sha):
 
     r = {
-        "datatype": "graph",
         "sha": sha
     }
 
