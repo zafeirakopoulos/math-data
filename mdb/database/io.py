@@ -7,25 +7,25 @@ mutex = Lock()
 
 
 def __add_helper(mdb, data):
-    r""" Private Helper Function.
+    """ Private Helper Function.
     Go through target path and creates new data type
-
     :param data: incoming json file.
     :param sha_list: sha list of all attribute such as context
     :return: none
-
     """
 
-    sha_dic = {}
+    aspect_dic = {}
 
     if not os.path.exists(mdb.basedir):
         return "Base directory are not found", 0
 
+    # aspects part
     for aspect in mdb.aspects:
         # check if aspect exist
 
         filename = str(mdb.next_file[aspect]) + ".txt"
 
+        # increase static file number
         mdb.next_file[aspect] += 1
 
         repo_path = os.path.join(mdb.basedir, aspect, mdb.current_repos[aspect])
@@ -37,21 +37,32 @@ def __add_helper(mdb, data):
 
         mdb.git_add(repo_path, filename, data["commit"])
 
-        sha_dic[aspect] = mdb.get_last_sha(repo_path, filename)
+        aspect_attributes = {"sha": mdb.get_last_sha(repo_path, filename),
+                             "repo": mdb.current_repos[aspect],
+                             "file": filename}
+
+        aspect_dic[aspect] = aspect_attributes
+
+        #aspect_dic[aspect] = mdb.get_last_sha(repo_path, filename)
 
     # Instance part
 
-    instance_file_path = os.path.join(mdb.basedir, "instance", mdb.instance_repo, "1.txt")
+    instance_file_path = os.path.join(mdb.basedir, "instance", mdb.instance_repo, mdb.instance_file)
     instance_repo_path = os.path.join(mdb.basedir, "instance", mdb.instance_repo)
+
+    # read from instance
     with open(instance_file_path, "r") as json_file:
         sha_list = json.load(json_file)
 
-    sha_list.append(sha_dic)
+    # add new dic to instance sha keys
+    sha_list.append(aspect_dic)
 
-    mdb.git_add(instance_repo_path, mdb.instance_file, data["commit"])
-
+    # write again updated instance
     with open(os.path.join(instance_file_path), 'w') as outfile:
         json.dump(sha_list, outfile)
+
+        # add and commit instance                          # aspects sha order
+    mdb.git_add(instance_repo_path, mdb.instance_file, str(len(sha_list)).zfill(4) + ' - ' + data["commit"])
 
     # Index part
 
@@ -69,6 +80,8 @@ def __add_helper(mdb, data):
     with open(os.path.join(index_file_path), 'w') as outfile:
         json.dump(index_list, outfile)
 
+    mdb.git_add(index_repo_path, mdb.index_file, data["commit"])
+
     status = "True"
 
     return status, index_sha
@@ -83,11 +96,12 @@ def add_instance(mdb, data):
             "raw": "raw example",
             "features": "features example",
             "semantics": "semantics example",
-            "context":  {"edge": {"1": 100, "2": 2000},"vertex": [{"first": 4, "second": 4}, {"first": 3, "second": 55}]},
+            "context":  {"edge": {"1": 100, "2": 2000},
+                         "vertex": [{"first": 4, "second": 4},
+                                    {"first": 3, "second": 55}]},
             "typeset": "typeset example",
             "commit": "update_repo"
         }
-
     return example;
 
         {sha : a63813d76910623f2b92ca7343682fe9ee2230a1 , 'status': 1}
@@ -95,9 +109,7 @@ def add_instance(mdb, data):
         {'status': 0} # this line will be rewrite
 
     :param data: incoming json file.
-    
     :return: sha key of index of datatype.
-
     """
 
     mutex.acquire()
@@ -110,7 +122,7 @@ def add_instance(mdb, data):
         "sha": index_sha,    # index represent all of datatype to perform on it.
         "status": status                            # if successful otherwise 0
     }
-
+    
     return response
 
 
@@ -161,85 +173,108 @@ def remove_instance(mdb, data):
     return {"status": False}
 
 
-def retrieve_instance(mdb, data):
-    # r""" Fetches an instance which match with "input" sha key
-    #
-    # input example;
-    #
-    #     r = {
-    #         "datatype": "graph",
-    #         "sha": "18e8b2047eeefe9d45fa01a2f15b26bb62a3c471"
-    #     }
-    #
-    #     other example
-    #
-    #     r = {
-    #         "datatype": "polynomial",
-    #         "sha": "21fa767a68101f4b7e75ffe50001954d0ee37a74"
-    #     }
-    #
-    # return example;
-    #
-    #     r = {
-    #         "datatype": "graph",   # may be polynomial
-    #         "raw": "raw example",
-    #         "features": "features example",
-    #         "semantics": "semantics example",
-    #         "context":  {"edge": {"1": 100, "2": 2000},
-    #                      "vertex": [{"first": 4, "second": 4},
-    #                                 {"first": 3, "second": 55}]},
-    #         "typeset": "typeset example"
-    #     }
-    #
-    # :param data: incoming json file.
-    # :return: desired instance
-    #
-    # """
+def find_instance_order(mdb, sha):
 
-    datatype = data["datatype"]
+    instance_path = os.path.join(mdb.basedir, "instance")
 
-    response = {"datatype": datatype}
+    for repo in os.listdir(instance_path):
 
-    status = -1
+        instance_repo_path = os.path.join(mdb.basedir, "instance", repo)
 
-    if not os.path.exists(datatype):
-        status = 0
+        for file in os.listdir(instance_repo_path):
 
-    else:
-        input_sha = data["sha"]
-
-        dir_index = os.path.join(mdb.get_basedir(), datatype, "index")
-
-        for filename in os.listdir(dir_index):
-
-            if filename == ".git":
+            if file == ".git":
                 continue
 
-            if input_sha == mdb.get_first_sha(dir_index, filename):
-                for attribute in mdb.get_attributes():
-                    file_path = os.path.join(mdb.get_basedir(), datatype, attribute, filename)
+            commits = mdb.get_all_commit(instance_repo_path, file)
 
-                    with open(file_path, "r") as json_file:
-                        response[attribute] = json.load(json_file)
+            for commit in commits:
 
-                status = 1
-                break
+                if sha in commit.keys():
 
-    response["status"] = status
+                    return file, commit[sha].lstrip('0'), instance_repo_path
 
-    return response
+    return None
+
+
+def retrieve_instance(mdb, data):
+
+    """ Fetches an instance which match with "input" sha key.
+    input example;
+        r = {
+            "sha": "18e8b2047eeefe9d45fa01a2f15b26bb62a3c471"
+        }
+        other example
+        r = {
+            "sha": "21fa767a68101f4b7e75ffe50001954d0ee37a74"
+        }
+
+    return example;
+        r = {
+            "raw": "raw example",
+            "features": "features example",
+            "semantics": "semantics example",
+            "context":  "graph",
+            "typeset": "typeset example"
+        }
+    :param data: incoming json file.
+    :return: desired instance
+    """
+
+    sha = data["sha"]
+
+    # find instance file  order
+    instance_file, order, instance_repo_path = find_instance_order(mdb, sha)
+
+    print(instance_file, order, instance_repo_path)
+
+    # do check out
+    mdb.git_checkout(instance_repo_path, sha)
+
+    # read instance file
+    with open(os.path.join(instance_repo_path, instance_file), "r") as json_file:
+        instance_content = json.load(json_file)
+
+    # do check out
+    mdb.git_checkout(instance_repo_path, "master")
+
+    # fetch instance
+    aspects = instance_content[int(order) - 1]
+
+    # aspects part
+
+    desired_instance = {}
+
+    for aspect in aspects:
+
+        # aspects repo path
+        repo_path = os.path.join(mdb.basedir, aspect, aspects[aspect]["repo"])
+
+        # do check out
+        mdb.git_checkout(repo_path, aspects[aspect]["sha"])
+
+        # read aspects file
+        with open(os.path.join(repo_path, aspects[aspect]["file"]), "r") as json_file:
+            aspect_content = json.load(json_file)
+
+        # do check out
+        mdb.git_checkout(repo_path, "master")
+
+        # construct aspects
+        desired_instance[aspect] = aspect_content
+
+    return desired_instance
 
 
 def __update_file(mdb, content, path, commit_message, filename):
-    r"""Private Helper Function.
-    Write new data to target file. Add repository with new commit message
 
+    """Private Helper Function.
+    Write new data to target file. Add repository with new commit message
     :param content: New content to edit target file
     :param path: repository path
     :param commit_message:
     :param filename:
     :return: none
-
     """
 
 
@@ -252,41 +287,40 @@ def __update_file(mdb, content, path, commit_message, filename):
 
     mdb.git_add(path, filename, commit_message)
 
-
-
+    
+    
 def update_instance(mdb, data):
-    # r"""
-    # update instance which match with "input" sha key
-    #
-    # input example;
-    #
-    #     r = {
-    #         "datatype": "graph",   # may be polynomial
-    #         "sha": "12b8a0b98077b86f4cff2afbb90c3255c8f9affc",
-    #         "index": "index example",
-    #         "raw": "raw example",
-    #         "features": "features example",
-    #         "semantics": "semantics example",
-    #         "context":  {"edge": {"1": 100, "2": 2000},
-    #                      "vertex": [{"first": 4, "second": 4},
-    #                                 {"first": 3, "second": 55}]},
-    #         "typeset": "typeset example",
-    #         "commit": "update_repo"
-    #     }
-    #
-    #
-    # return example;
-    #
-    #     {'status': 1}
-    #
-    #     if removal is unsuccessful;
-    #
-    #     {'status': 0}
-    #
-    # :param data: incoming json file.
-    # :return:
-    #
-    # """
+    """
+    update instance which match with "input" sha key
+
+    input example;
+
+        r = {
+            "datatype": "graph",   # may be polynomial
+            "sha": "12b8a0b98077b86f4cff2afbb90c3255c8f9affc",
+            "index": "index example",
+            "raw": "raw example",
+            "features": "features example",
+            "semantics": "semantics example",
+            "context":  {"edge": {"1": 100, "2": 2000},
+                         "vertex": [{"first": 4, "second": 4},
+                                    {"first": 3, "second": 55}]},
+            "typeset": "typeset example",
+            "commit": "update_repo"
+        }
+
+
+    return example;
+
+        {'status': 1}
+
+        if removal is unsuccessful;
+
+        {'status': 0}
+
+    :param data: incoming json file.
+    :return:
+    """
 
     datatype = data["datatype"]
 
@@ -318,3 +352,4 @@ def update_instance(mdb, data):
     }
 
     return response
+
