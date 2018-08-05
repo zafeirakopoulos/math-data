@@ -56,6 +56,12 @@ class Table:
             return '{"success":1,"sha":"%s"}' % self.index.commit(json.dumps(commit_msg)).hexsha
         return '{"success":0}'
 
+    def __iter__(self):
+        """Creates a generator based iterator over Table for entries."""
+        for commit in self.repo.iter_commits():
+            if commit.message is not "":
+                yield """{"msg":%s,"sha":"%s"}""" % (json.loads(commit.message)["msg"], commit.hexsha)
+
     def get(self, sha):
         """Retrieves a file from Table with given sha.
 
