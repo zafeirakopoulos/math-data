@@ -1,9 +1,6 @@
-import json
-
 from git import Repo
-from os import makedirs, remove
-from os.path import exists, join, splitext
-from shutil import copy
+from os import makedirs
+from os.path import exists, join
 from uuid import uuid4
 
 
@@ -18,17 +15,18 @@ class Table:
         self.repo.working_dir = path
         self.index = self.repo.index
 
-    def add(self, file, msg):
+    def add(self, content, msg):
         """"Adds given file to the Table as a new entry with msg as the commit message.
 
         :param file: Path of the file to be added.
         :param msg: Commit message.
         :returns: A JSON string with "success" and "sha" keys."""
-        uuid_file = str(uuid4()) + splitext(file)[1]
-        copy(file, join(self.repo.working_dir, uuid_file))
+        uuid_file = str(uuid4())
+        with open(join(self.repo.working_dir, uuid_file), "w") as f:
+            f.write(content)
         self.repo.git.add(uuid_file)
         sha = self.index.commit(msg).hexsha
-        return '{"success":1,"sha":"%s"}' % sha
+        return {"success": True, "sha": sha}
 
     def remove(self, sha, msg):
         """Removes a file from Table.
@@ -38,20 +36,29 @@ class Table:
         :returns: A JSON file with "success" and "sha" keys."""
         for filename in self.repo.commit(sha).stats.files.items():
             self.index.remove(filename, working_tree=True)
-            return '{"success":1,"sha":"%s"}' % self.index.commit(msg).hexsha
+            sha = self.index.commit(msg).hexsha
+            return {'success': True, "sha": sha}
 
-    def update(self, sha, file, msg):
+        return {"success": False, "error": "something when wrong"}
+
+    def update(self, sha, content, msg):
         """Updates a file from the Table.
 
         :param sha: Last commit sha for file.
         :param file: Path to the new content of the file.
         :param msg: Commit message.
         :returns: A JSON file with "success" and "sha" keys."""
-        for filename in self.repo.commit(sha).stats.files.items():
-            copy(file, join(self.repo.working_dir, filename))
-            return '{"success":1,"sha":"%s"}' % self.index.commit(msg).hexsha
+        result = self.remove(sha)
 
-        return '{"success":0}'
+        if not result['success']:
+            return result
+
+        result = self.add(content, msg)
+
+        if not result['success']:
+            return result
+
+        return {"success": True, "sha": result['sha']}
 
     def __iter__(self):
         """Creates a generator based iterator over Table for entries."""
