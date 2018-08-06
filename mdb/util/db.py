@@ -15,16 +15,15 @@ class Table:
         self.repo.working_dir = path
         self.index = self.repo.index
 
-    def add(self, content, msg):
+    def add(self, content, msg, filename=str(uuid4())):
         """"Adds given file to the Table as a new entry with msg as the commit message.
 
         :param file: Path of the file to be added.
         :param msg: Commit message.
         :returns: A JSON string with "success" and "sha" keys."""
-        uuid_file = str(uuid4())
-        with open(join(self.repo.working_dir, uuid_file), "w") as f:
+        with open(join(self.repo.working_dir, filename), "w") as f:
             f.write(content)
-        self.repo.git.add(uuid_file)
+        self.repo.git.add(filename)
         sha = self.index.commit(msg).hexsha
         return {"success": True, "sha": sha}
 
@@ -40,6 +39,11 @@ class Table:
             return {'success': True, "sha": sha}
 
         return {"success": False, "error": "something when wrong"}
+
+    def remove_file(self, filename):
+        result = self.index.remove([filename], working_tree=True)
+        sha = self.index.commit("").hexsha
+        return {"success": len(result) == 1, "sha": sha}
 
     def update(self, sha, content, msg):
         """Updates a file from the Table.
@@ -80,7 +84,7 @@ class Table:
         for filename, _ in self.repo.commit(sha).stats.files.items():
             return filename, self.repo.commit(sha).tree[filename].data_stream
 
-        return None
+        return None, None
 
 
 class DB:

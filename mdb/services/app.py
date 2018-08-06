@@ -1,6 +1,8 @@
 from flask import Flask,render_template,request, jsonify, json
 import os
-from mdb.database import manage,io,search
+from mdb.util.db import DB
+from mdb.database import io as dbio
+
 
 app = Flask(__name__)
 
@@ -21,7 +23,7 @@ def add_instance():
 
     instance = request.json
 
-    response = io.add_instance(data, instance)
+    response = dbio.add_instance(data, instance)
 
     js = json.dumps(response)
 
