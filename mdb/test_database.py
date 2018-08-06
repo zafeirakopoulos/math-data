@@ -1,4 +1,6 @@
-from database import manage, search, io
+from mdb.database import io
+from mdb.util.db import DB, Table
+
 import os
 import json
 
@@ -6,12 +8,12 @@ import json
 def test_add_instance():
 
     r = {
-        "raw": "something-"+str(data.next_file["raw"]),
-        "features": "something-"+str(data.next_file["features"]),
-        "semantics": "something-"+str(data.next_file["semantics"]),
+        "raw": "something",
+        "features": "something",
+        "semantics": "something",
         "context": 'list',
-        "typeset": "something-"+str(data.next_file["typeset"]),
-        "commit": "commit-message-" + str(data.next_file["typeset"])
+        "typeset": "something",
+        "commit": "commit-message"
     }
 
     response = io.add_instance(data, r)
@@ -22,7 +24,8 @@ def test_add_instance():
 def test_remove_instance(sha):
 
     r = {
-        "sha": sha
+        "sha": sha,
+        "commit" : "removed"
     }
 
     response = io.remove_instance(data, r)
@@ -33,14 +36,11 @@ def test_remove_instance(sha):
 def test_update_instance(sha):
 
     r = {
-        "datatype": "graph",
         "sha": sha,
         "raw": "updated",
         "features": "updated",
         "semantics": "updated",
-        "context":  {"edge": {"1": 99, "2": 2000},
-                     "vertex": [{"first": 0, "second": 99},
-                                {"first": 0, "second": 99}]},
+        "context":  "graph",
         "typeset": "updated",
         "commit": "updated_repo"
     }
@@ -78,9 +78,7 @@ def test_find(text):
 
 if __name__ == "__main__":
 
-    basedir = os.path.join(os.getcwd(), "data")
-
-    data = manage.mdb(basedir=basedir)
+    data = DB("data")
 
     total = 9999
 
