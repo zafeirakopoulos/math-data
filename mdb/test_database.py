@@ -78,9 +78,7 @@ def test_find(text):
 
 if __name__ == "__main__":
 
-    basedir = os.path.join(os.getcwd(), "data")
-
-    data = manage.mdb(basedir=basedir)
+    data = manage.mdb(datafolder="data")
 
     total = 9999
 
