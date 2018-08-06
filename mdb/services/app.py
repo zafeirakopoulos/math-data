@@ -1,18 +1,11 @@
-from flask import Flask,render_template,request, jsonify, json
+from flask import Flask,request, json
+from mdb.database import manage, io, search
 import os
 from mdb.util.db import DB
 from mdb.database import io as dbio
 
 
 app = Flask(__name__)
-
-
-@app.route("/", methods=["GET", "POST"])
-def start():
-    basedir = os.path.join(os.getcwd(), "data")
-    global data
-    data = manage.mdb(basedir=basedir)
-
 
 @app.route('/add_instance', methods=["POST"])
 def add_instance():
@@ -45,39 +38,27 @@ def filter():
     js = json.dumps(response)
 
     return js
-
-
 @app.route('/dataset', methods=["POST"])
 def dataset():
-
     basedir = os.path.join(os.getcwd(), "data")
     global data
     data = manage.mdb(basedir=basedir)
-
     instance = request.json
-
     # dataset method are not written yet
     response = search.search(data, instance)
-
     js = json.dumps(response)
-
     return js
-
 
 @app.route('/datatypes', methods=["GET"])
 def datatypes():
-
     # it is an example
     data = [
         {"datatype": "graph"},
         {"datatype": "polynomial"},
         {"datatype": "list"}
     ]
-
     js = json.dumps(data)
-
     return js
-
 
 @app.route('/datasets', methods=["GET"])
 def datasets():
@@ -126,6 +107,22 @@ def instances():
     return js
 
 
+@app.route('/instance', methods=["POST"])
+def instance():
+
+    # it is an example
+
+    basedir = os.path.join(os.getcwd(), "data")
+    global data
+    data = manage.mdb(basedir=basedir)
+    instance = request.json
+
+    response = io.retrieve_instance(data, instance)
+
+    js = json.dumps(response)
+
+    return js
+
 if __name__ == '__main__':
-   print sys.argv[0]
+   print(sys.argv[0])
    app.run(debug=True)
