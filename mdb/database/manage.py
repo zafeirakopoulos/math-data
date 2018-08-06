@@ -1,7 +1,7 @@
 import os
 import json
 from git import Repo
-import set_base_dir as basedir
+import mdb.set_base_dir as basedir
 
 
 
