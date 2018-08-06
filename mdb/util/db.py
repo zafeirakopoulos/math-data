@@ -27,17 +27,18 @@ class Table:
         uuid_file = str(uuid4()) + splitext(file)[1]
         copy(file, join(self.repo.working_dir, uuid_file))
         self.repo.git.add(uuid_file)
-        commit_msg = '{"file":"%s","msg":"%s"}' % (uuid_file, msg)
-        return '{"success":1,"sha":"%s"}' % self.index.commit(commit_msg).hexsha
+        sha = self.index.commit(msg).hexsha
+        return '{"success":1,"sha":"%s"}' % sha
 
-    def remove(self, sha):
+    def remove(self, sha, msg):
         """Removes a file from Table.
 
         :param sha: Last commit sha for file.
+        :param msg: Commit message.
         :returns: A JSON file with "success" and "sha" keys."""
-        commit_msg = json.loads(self.repo.git.execute(["git", "log", "--format=%B", "-n", "1", sha]))
-        remove(join(self.repo.working_dir, commit_msg['file']))
-        return '{"success":1,"sha":"%s"}' % self.index.commit("").hexsha
+        for filename in self.repo.commit(sha).stats.files.items():
+            self.index.remove(filename, working_tree=True)
+            return '{"success":1,"sha":"%s"}' % self.index.commit(msg).hexsha
 
     def update(self, sha, file, msg):
         """Updates a file from the Table.
@@ -46,36 +47,33 @@ class Table:
         :param file: Path to the new content of the file.
         :param msg: Commit message.
         :returns: A JSON file with "success" and "sha" keys."""
-        for commit in self.repo.iter_commits():
-            if commit.hexsha != sha:
-                continue
+        for filename in self.repo.commit(sha).stats.files.items():
+            copy(file, join(self.repo.working_dir, filename))
+            return '{"success":1,"sha":"%s"}' % self.index.commit(msg).hexsha
 
-            commit_msg = json.loads(commit.message)
-            copy(file, join(self.repo.working_dir, commit_msg['file']))
-            commit_msg['msg'] = msg
-            return '{"success":1,"sha":"%s"}' % self.index.commit(json.dumps(commit_msg)).hexsha
         return '{"success":0}'
 
     def __iter__(self):
         """Creates a generator based iterator over Table for entries."""
         for commit in self.repo.iter_commits():
-            if commit.message is not "":
-                yield """{"msg":%s,"sha":"%s"}""" % (json.loads(commit.message)["msg"], commit.hexsha)
+            yield """{"msg":"%s","sha":"%s"}""" % (commit.message, commit.hexsha)
 
     def get(self, sha):
-        """Retrieves a file from Table with given sha.
+        """Retrieves a file from Table with commit sha.
 
-        :param sha: Commit sha of the file.
-        :returns: File content"""
+        :param sha: Commit sha.
+        :returns: A stream to the content of the file."""
         return self[sha]
 
     def __getitem__(self, sha):
-        """Retrieves a file from Table with given sha.
+        """Retrieves a file from Table with commit sha.
 
-        :param sha: Commit sha of the file.
-        :returns: File content."""
-        commit_msg = json.loads(self.repo.git.execute(["git", "log", "--format=%B", "-n", "1", sha]))
-        return self.repo.git.execute(["git", "show", '%s:%s' % (sha, commit_msg['file'])])
+        :param sha: Commit sha.
+        :returns: A stream to the content of the file."""
+        for filename, _ in self.repo.commit(sha).stats.files.items():
+            return filename, self.repo.commit(sha).tree[filename].data_stream
+
+        return None
 
 
 class DB:

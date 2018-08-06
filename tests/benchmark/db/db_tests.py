@@ -44,7 +44,11 @@ if __name__ == '__main__':
         elif operation == "4":
             sha = input("Please enter commit SHA:")
 
-            print(db['test'][sha])
+            result = db['test'][sha]
+            if result is not None:
+                for filename, content in result:
+                    print("=====%s" % filename)
+                    print(content.read())
         elif operation == "5":
             for entry in db['test']:
                 print(entry)
