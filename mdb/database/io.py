@@ -113,7 +113,7 @@ def retrieve_instance(mdb, data):
 
     for aspect in aspects:
         _, s = mdb[aspect][content[aspect]]
-        instance[aspect] = s.read()
+        instance[aspect] = s.read().decode()
 
     return instance
 

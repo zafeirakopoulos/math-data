@@ -12,7 +12,7 @@ def add_instance():
 
     basedir = os.path.join(os.getcwd(), "data")
     global data
-    data = manage.mdb(basedir=basedir)
+    data = DB(basedir)
 
     instance = request.json
 
@@ -28,7 +28,7 @@ def filter():
 
     basedir = os.path.join(os.getcwd(), "data")
     global data
-    data = manage.mdb(basedir=basedir)
+    data = DB(basedir)
 
     instance = request.json
 
@@ -42,7 +42,7 @@ def filter():
 def dataset():
     basedir = os.path.join(os.getcwd(), "data")
     global data
-    data = manage.mdb(basedir=basedir)
+    data = DB(basedir)
     instance = request.json
     # dataset method are not written yet
     response = search.search(data, instance)
@@ -114,7 +114,7 @@ def instance():
 
     basedir = os.path.join(os.getcwd(), "data")
     global data
-    data = manage.mdb(basedir=basedir)
+    data = DB(basedir)
     instance = request.json
 
     response = io.retrieve_instance(data, instance)
