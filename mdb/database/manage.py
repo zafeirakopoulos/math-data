@@ -1,6 +1,7 @@
 import os
 import json
 from git import Repo
+import set_base_dir as basedir
 
 
 
@@ -68,7 +69,7 @@ class mdb:
     def index_file(self, filename):
         self.__index_file = filename
 
-    def __init__(self, basedir):
+    def __init__(self, datafolder):
 
         self.__aspects = ["raw", "semantics", "typeset", "context", "features"]
 
@@ -83,7 +84,7 @@ class mdb:
 
         self.__index_file = "1.txt"
 
-        self.__basedir = basedir
+        self.__basedir = os.path.join(basedir.set_base_dir(), datafolder)
 
         self.__initial_setup()
 
@@ -168,6 +169,9 @@ class mdb:
 
         :return: None
         """
+
+        if not os.path.exists(self.basedir):
+            os.makedirs(self.basedir)
 
         for aspect in self.aspects:
             aspect_dir = os.path.join(self.basedir, aspect)
