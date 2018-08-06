@@ -194,7 +194,7 @@ def find_instance_order(mdb, sha):
 
                     return file, commit[sha].lstrip('0'), instance_repo_path
 
-    return None
+    return None, None, "-1"
 
 
 def retrieve_instance(mdb, data):
@@ -225,6 +225,9 @@ def retrieve_instance(mdb, data):
 
     # find instance file  order
     instance_file, order, instance_repo_path = find_instance_order(mdb, sha)
+
+    if instance_repo_path == "-1":
+        return {"status": "Instance not found"}
 
     print(instance_file, order, instance_repo_path)
 
@@ -266,37 +269,29 @@ def retrieve_instance(mdb, data):
     return desired_instance
 
 
-def __update_file(mdb, content, path, commit_message, filename):
+def find_sha_in_index(mdb, sha):
 
-    """Private Helper Function.
-    Write new data to target file. Add repository with new commit message
-    :param content: New content to edit target file
-    :param path: repository path
-    :param commit_message:
-    :param filename:
-    :return: none
-    """
+    index_repo_path = os.path.join(mdb.basedir, "index")
 
+    for index_file in os.listdir(index_repo_path):
 
-    # generate path
-    file_path = os.path.join(path, filename)
+        if index_file == ".git":
+            continue
 
-    # write target file
-    with open(file_path, 'w') as outfile:
-        json.dump(content, outfile)
+        with open(os.path.join(index_repo_path, index_file), "r") as json_file:
+            sha_repos = json.load(json_file)
 
-    mdb.git_add(path, filename, commit_message)
+            for sha_repo in sha_repos:
+                if sha_repo["sha"] == sha:
+                    return sha_repo["repo"]
 
-    
-    
+    return "-1"
+
 def update_instance(mdb, data):
     """
     update instance which match with "input" sha key
-
     input example;
-
         r = {
-            "datatype": "graph",   # may be polynomial
             "sha": "12b8a0b98077b86f4cff2afbb90c3255c8f9affc",
             "index": "index example",
             "raw": "raw example",
@@ -306,50 +301,29 @@ def update_instance(mdb, data):
                          "vertex": [{"first": 4, "second": 4},
                                     {"first": 3, "second": 55}]},
             "typeset": "typeset example",
-            "commit": "update_repo"
-        }
-
-
+            "commit": "updated_repo" }
     return example;
-
         {'status': 1}
-
         if removal is unsuccessful;
-
         {'status': 0}
-
     :param data: incoming json file.
     :return:
     """
 
-    datatype = data["datatype"]
+    input_sha = data["sha"]
 
-    status = 0
+    repo = find_sha_in_index(mdb, input_sha)
 
-    if not os.path.exists(datatype):
-        status = 0
+    if repo == "-1":
+        return {"status": "Instance not found"}
 
-    else:
-        input_sha = data["sha"]
 
-        dir_index = os.path.join(mdb.get_basedir(), datatype, "index")
 
-        for filename in os.listdir(dir_index):
 
-            if filename == ".git":
-                continue
+    print(repo)
 
-            if input_sha == mdb.get_first_sha(dir_index, filename):
-                for attribute in mdb.get_attributes():
-                    dir_attribute = os.path.join(mdb.get_basedir(), datatype, attribute)
 
-                    __update_file(mdb, data[attribute], dir_attribute, data["commit"], filename)
-                status = 1
-                break
 
-    response = {
-        "status": status  # if successful otherwise 0
-    }
 
-    return response
+    return None
 
