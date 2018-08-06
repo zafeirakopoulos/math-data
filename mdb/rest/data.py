@@ -1,7 +1,12 @@
 from flask import Flask, Blueprint, request, json
 import os
+import mdb
 from mdb.data.db import DB
 from mdb.data.io import *
+from mdb.data.setup import *
+
+
+mdb_data = mdb.data.setup.__mdb
 
 data_app = Blueprint('data_app', __name__, template_folder='templates')
 
@@ -11,6 +16,7 @@ data_app = Blueprint('data_app', __name__, template_folder='templates')
 #         return render_template('pages/%s.html' % page)
 #     except TemplateNotFound:
 #         abort(404)
+
 
 @data_app.route('/add_instance', methods=["POST"])
 def add_instance():
