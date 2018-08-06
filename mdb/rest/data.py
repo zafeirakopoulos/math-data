@@ -1,12 +1,18 @@
-from flask import Flask,request, json
+from flask import Flask, Blueprint, request, json
 import os
-from mdb.db import DB
-from mdb.io import *
+from mdb.data.db import DB
+from mdb.data.io import *
 
+data_app = Blueprint('data_app', __name__, template_folder='templates')
 
-app = Flask(__name__)
+# @data_app.route('/', defaults={'page': 'index'})
+# def index(page):
+#     try:
+#         return render_template('pages/%s.html' % page)
+#     except TemplateNotFound:
+#         abort(404)
 
-@app.route('/add_instance', methods=["POST"])
+@data_app.route('/add_instance', methods=["POST"])
 def add_instance():
 
     basedir = os.path.join(os.getcwd(), "data")
@@ -22,7 +28,7 @@ def add_instance():
     return js
 
 
-@app.route('/filter', methods=["POST"])
+@data_app.route('/filter', methods=["POST"])
 def filter():
 
     basedir = os.path.join(os.getcwd(), "data")
@@ -37,7 +43,7 @@ def filter():
     js = json.dumps(response)
 
     return js
-@app.route('/dataset', methods=["POST"])
+@data_app.route('/dataset', methods=["POST"])
 def dataset():
     basedir = os.path.join(os.getcwd(), "data")
     global data
@@ -48,7 +54,7 @@ def dataset():
     js = json.dumps(response)
     return js
 
-@app.route('/datatypes', methods=["GET"])
+@data_app.route('/datatypes', methods=["GET"])
 def datatypes():
     # it is an example
     data = [
@@ -59,7 +65,7 @@ def datatypes():
     js = json.dumps(data)
     return js
 
-@app.route('/datasets', methods=["GET"])
+@data_app.route('/datasets', methods=["GET"])
 def datasets():
 
     # it is an example
@@ -73,7 +79,7 @@ def datasets():
     return js
 
 
-@app.route('/instances', methods=["GET"])
+@data_app.route('/instances', methods=["GET"])
 def instances():
 
     # it is an example
@@ -106,7 +112,7 @@ def instances():
     return js
 
 
-@app.route('/instance', methods=["POST"])
+@data_app.route('/instance', methods=["POST"])
 def instance():
 
     # it is an example
@@ -122,6 +128,6 @@ def instance():
 
     return js
 
-if __name__ == '__main__':
-   print(sys.argv[0])
-   app.run(debug=True)
+@data_app.route('/shutdown', methods=["POST"])
+def shutdown():
+    flask.request.environ.get('werkzeug.server.shutdown')()

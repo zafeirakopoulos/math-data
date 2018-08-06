@@ -1,8 +1,14 @@
 from threading import Lock
-from mdb.db import DB, Table
+from mdb.data.db import DB, Table
 import os
 import json
 
+# This should be a class.
+# It is initialized with a local path under which all DB are stored.
+# The retrieve functions in this class accept a hask key. 
+# The key gives url (relative within the MDB, i.e., in the local path given
+# when initialized), and a SHA (or a file and SHA depending on the function)
+#
 
 mutex = Lock()
 
