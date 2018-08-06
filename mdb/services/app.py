@@ -1,5 +1,5 @@
 from flask import Flask,request, json
-from mdb.database import manage, io, search
+from mdb.database import io, search
 import os
 from mdb.util.db import DB
 from mdb.database import io as dbio
