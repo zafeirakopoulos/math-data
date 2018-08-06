@@ -1,5 +1,5 @@
-cd mdb/services
-export FLASK_APP=app.py
+cd mdb
+export FLASK_APP=rest.py
 if ! type "python3" > /dev/null; then
     python -m flask run
 else

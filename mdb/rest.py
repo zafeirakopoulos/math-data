@@ -1,8 +1,7 @@
 from flask import Flask,request, json
-from mdb.database import io, search
 import os
-from mdb.util.db import DB
-from mdb.database import io as dbio
+from mdb.db import DB
+from mdb.io import *
 
 
 app = Flask(__name__)
@@ -16,7 +15,7 @@ def add_instance():
 
     instance = request.json
 
-    response = dbio.add_instance(data, instance)
+    response = mdb.io.add_instance(data, instance)
 
     js = json.dumps(response)
 
