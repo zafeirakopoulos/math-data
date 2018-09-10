@@ -1,28 +1,47 @@
- # Set base imamge
-FROM ubuntu:18.04
+# Set base image as debian
+FROM debian:stable-slim as base
 
-# Identify the maintainer of an image
-LABEL MAINTANER Zafeirakis Zafeirakopoulos
-LABEL version = "0.1"
-LABEL description = "Webapp Docker"
 
-# copy project source to app directory
-RUN mkdir /app
-COPY . /app
+LABEL description = "MD"
 
-# install python3 and its necessary plugins
-RUN apt-get update
-RUN apt-get install -y build-essential python3.6 python3.6-dev python3-pip python3-git
-RUN apt-get install -y git
+ENV BUILD_OUT =/output
+ENV JINJA_VERSION=2.10
+ENV REQUESTS=2.19.1
 
-# upgrade pip and intall flask 
-RUN python3.6 -m pip install pip --upgrade
-RUN pip install flask
+FROM base AS essential_builder
 
-# change working directory
-WORKDIR /app
+RUN apt-get update && apt-get install -yq --no-install-recommends \
+    wget \
+    bash \
+    bzip2 \
+    ca-certificates \
+    sudo \
+    locales \
+    build-essential \
+    m4 \
+    yasm \
+    cmake \
+    git
 
-# execute the web application
-ENTRYPOINT ["python3","run-mdb.py"]
+RUN apt-get update && apt-get install -yq --no-install-recommends \
+   python3-pip \
+   python3-dev\
+   python3-git \
+   python3-venv
 
-CMD ["postgres"]
+
+RUN export LIB_PATH=$LIB_PATH:$BUILD_OUT
+
+FROM essential_builder AS documentation_builder
+
+WORKDIR doc_build
+
+RUN pip3 install python-sphinx
+RUN pip3 install rinohtype
+
+FROM essential_builder AS service_builder
+
+WORKDIR service_build
+
+RUN pip3 install flask
+RUN pip3 install request
