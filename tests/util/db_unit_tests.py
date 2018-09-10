@@ -30,13 +30,13 @@ if __name__ == '__main__':
     assert exists(filepath), "first file not present"
 
     with open(filepath, "r") as f:
-        assert f.read() == "test_data", "file content is not same"
+        assert f.read() == "test_data\n", "file content is not same"
     print("table add success")
 
     # TEST DB GET DATA
     filename, bin_content = db['test'][res['sha']]
     file_content = bin_content.decode()
-    assert file_content == "test_data", file_content
+    assert file_content == "test_data\n", file_content
     print("table get success")
 
     for i in range(1000):
@@ -56,13 +56,13 @@ if __name__ == '__main__':
     assert exists(filepath), "first file not present"
 
     with open(filepath, "r") as f:
-        assert f.read() == "test_data", "file content is not same"
+        assert f.read() == "test_data\n", "file content is not same"
     print("table multi repo add success")
 
     # TEST DB GET DATA(multi repo)
     print(res2['sha'], sm, sha)
     filename, bin_content = db['test'][res2['sha']]
     file_content = bin_content.decode()
-    assert file_content == "test_data", file_content
+    assert file_content == "test_data\n", file_content
     print("table multi repo get success")
     print("table multi repo success")
