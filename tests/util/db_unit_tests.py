@@ -12,7 +12,7 @@ def db_add_data(db, data, filename=None):
     return result
 
 
-if __name__ == '__main__':
+def test_it():
     # TEST DB CREATION
     db = DB("db_unit_tests")
     assert exists(db.base), "db folder not present"
@@ -66,3 +66,7 @@ if __name__ == '__main__':
     assert file_content == "test_data", file_content
     print("table multi repo get success")
     print("table multi repo success")
+
+
+if __name__ == '__main__':
+    test_it()  # TODO this is just to bypass the need of sym linking to python lib folder
