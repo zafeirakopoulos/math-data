@@ -99,7 +99,7 @@ class Table:
 
         return {"success": False, "error": "something when wrong"}  # TODO add real error message
 
-    # TODO deprecate this function, we dont need this one I think.
+    # TODO I need to look into how we can handle this. We might never need this tho.
     def remove_file(self, filename):
         result = self.index.remove([filename], working_tree=True)
         sha = self.index.commit("").hexsha
