@@ -1,0 +1,42 @@
+{
+  "name" : "Formal Power Series",
+  "plural" : "Formal Power Series",
+  "attributes": ["coefficients"],
+  "parameters" : {
+    "coefficient type" : ["Number", "Integer"],
+    "number of variables" : [ "Integer", "1" ]
+  },
+  "raw_types": ["dense","sparse"],
+  "raw" :
+    {
+      "dense":
+        {
+          "coefficients" :
+            {
+              "structure" : ["Tensor", "{{number of variables}}"],
+              "element": [ "{{coefficient type}}", "0"]
+            }
+        },
+      "sparse":
+        {
+          "coefficients":
+            {
+              "structure" : "List",
+              "element":
+                 {
+                   "structure" : "Pair",
+                   "element" : [
+                      {
+                        "structure" : ["Tuple", "{{number of variables}}"] ,
+                        "element" : ["Integer"]
+                      },
+                     "{{coefficient type}}"
+                  ]
+                 }
+            }
+        }
+   },
+   "features" : {
+      "number of terms" : ["Integer", "infinity"]
+   }
+}

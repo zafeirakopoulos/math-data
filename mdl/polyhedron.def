@@ -1,0 +1,34 @@
+{
+  "name" : "Polyhedron",
+  "plural" : "Polyhedra",
+  "attributes": ["inequalities"],
+  "parameters" : {
+    "dimension" : [ "Integer", "2" ]
+  },
+  "raw_types": ["hrep"],
+  "raw" :
+    {
+      "hrep":
+        {
+          "inequalities":
+            {
+              "structure" : ["List", "finite"],
+              "element":
+                 {
+                   "structure" : "Pair",
+                   "element" : [
+                      {
+                        "structure" : ["Tuple", "{{dimension}}"] ,
+                        "element" : ["{{coefficient type}}"]
+                      },
+                     "{{coefficient type}}"
+                  ]
+                 }
+            }
+        }
+   },
+   "features" : {
+      "dimension" : "{{dimension}}",
+      "bounded" : "Boolean"
+   }
+}

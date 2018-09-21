@@ -1,0 +1,29 @@
+{
+  "name" : "Graph",
+  "plural" : "Graphs",
+  "attributes": ["edges"],
+  "raw_types": ["dense","sparse"],
+  "raw" :
+    {
+      "dense":
+        {
+          "edges" :
+            {
+              "structure" : "Matrix",
+              "element": "Boolean"
+            }
+        },
+      "sparse":
+        {
+          "edges":
+            {
+              "structure" : "List",
+              "element":
+                 {
+                   "structure" : "Pair",
+                   "element" : ["Integer","Integer"]
+                 }
+            }
+        }
+   }
+}

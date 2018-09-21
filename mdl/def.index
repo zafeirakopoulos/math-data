@@ -1,0 +1,12 @@
+{
+"Graph" : ["graph", 1234 ],
+"Directed Graph" : ["graph_directed", 1234 ],
+"Vertex Weighted Graph" : ["graph_vertex_weighted", 1234 ],
+"Edge Weighted Graph" : ["graph_edge_weighted", 1234 ],
+"Vertex Labeled Graph" : ["graph_vertex_labeled", 1234 ],
+"Edge Labeled Graph" : ["graph_edge_labeled", 1234 ],
+"Directed Edge Weighted Graph" : ["graph_directed_edge_weighted", 1234 ],
+"Directed Vertex and Edge Weighted Graph" : ["graph_directed_vertex_weighted_edge_weighted", 1234 ],
+"Formal Power Series" : ["formal_power_series", 1234 ],
+"Polynomial" : ["polynomial", 1234 ]
+}

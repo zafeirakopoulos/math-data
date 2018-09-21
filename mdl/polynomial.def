@@ -1,0 +1,11 @@
+{
+  "name" : "Polynomial",
+  "plural" : "Polynomials",
+  "inherits" : ["Formal Power Series"]
+  "features" : {
+     "number of terms" : ["Integer", "finite"],
+     "squarefree" : "Boolean",
+     "total degree" : "Integer",
+     "degree" : ["Tuple", "{{number of variables}}"]
+  }
+}

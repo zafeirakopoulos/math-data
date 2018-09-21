@@ -1,0 +1,8 @@
+{
+  "name" : "Convex Body",
+  "plural" : "Convex Bodies",
+  "features" : {
+     "volume" : "Number",
+     "convex" : "True"
+  }
+}

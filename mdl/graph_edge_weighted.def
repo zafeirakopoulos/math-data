@@ -1,0 +1,29 @@
+{
+    "inherits" : ["Graph"],
+    "name": "Edge Weighted Graph",
+    "parameters" :
+      {
+        "edge_weight_type" : ["Number", "Integer"]
+      },
+    "raw" :
+      {
+        "dense":
+          {
+            "edges":
+            {
+              "element": "{{edge_weight_type}}"
+            }
+          },
+        "sparse":
+          {
+            "edges":
+              {
+                "element":
+                   {
+                     "structure" : "Tuple",
+                     "element" : ["Integer", "Integer", "{{edge_weight_type}}"]
+                   }
+              }
+          }
+     }
+}

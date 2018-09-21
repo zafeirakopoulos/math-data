@@ -1,0 +1,31 @@
+{
+    "inherits" : ["Graph"],
+    "name": "Vertex Weighted Graph",
+    "plural": "Vertex Weighted Graphs",
+    "attributes": ["vertices"],
+    "parameters" :
+      {
+        "vertex_weight_type" : ["Number", "Integer"]
+      },
+    "raw" :
+      {
+        "dense":
+          {
+            "vertices": [
+              {
+                "structure" : "List",
+                "element": "{{vertex_weight_type}}"
+              }
+            ]
+          },
+        "sparse":
+          {
+            "vertices" : [
+              {
+                "structure" : "List",
+                "element": "{{vertex_weight_type}}"
+              }
+            ]
+          }
+     }
+}

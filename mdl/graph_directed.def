@@ -1,0 +1,9 @@
+{
+    "inherits" : ["Graph"],
+    "name": "Directed Graph",
+    "plural": "Directed Graphs",
+    "features":
+      {
+         "directed" : "Boolean"
+      }
+}
