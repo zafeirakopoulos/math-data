@@ -1,0 +1,13 @@
+{
+  "parameters": {
+    "number of variables" : 1,
+    "coefficient type" : "Integer"
+  }
+  "raw":
+    {
+      "dense":
+      {
+        "coefficients" : [1,0,2,1]
+      }
+    }
+}

@@ -7,6 +7,10 @@
 "Edge Labeled Graph" : ["graph_edge_labeled", 1234 ],
 "Directed Edge Weighted Graph" : ["graph_directed_edge_weighted", 1234 ],
 "Directed Vertex and Edge Weighted Graph" : ["graph_directed_vertex_weighted_edge_weighted", 1234 ],
+"Vertex and Edge Weighted Graph" : ["graph_vertex_weighted_edge_weighted", 1234 ],
 "Formal Power Series" : ["formal_power_series", 1234 ],
-"Polynomial" : ["polynomial", 1234 ]
+"Polynomial" : ["polynomial", 1234 ],
+"Polyhedron" : ["polyhedron", 1234 ],
+"Polytope" :  ["polytope", 1234 ],
+"Convex Body" :  ["convex_body", 1234 ]
 }

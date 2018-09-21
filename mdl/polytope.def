@@ -1,11 +1,11 @@
 {
   "name" : "Polytope",
   "plural" : "Polytopes",
-  "description" : "The convex hull of a finite set of point (called vertices)"
-  "inherits" : ["Convex Body", "Polyhedron"]
+  "description" : "The convex hull of a finite set of point (called vertices)",
+  "inherits" : ["Convex Body", "Polyhedron"],
   "attributes": ["vertices"],
   "parameters" : {
-    "vertex type" : ["Number", "Integer"],
+    "vertex type" : ["Number", "Integer"]
   },
   "raw_types": ["vrep"],
   "raw" :

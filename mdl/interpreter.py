@@ -6,12 +6,22 @@ import collections
 # From https://stackoverflow.com/questions/3232943/update-value-of-a-nested-dictionary-of-varying-depth
 def update_dict(d, u):
     for k, v in u.items():
+
         if isinstance(d, collections.Mapping):
             if isinstance(v, collections.Mapping):
                 r = update_dict(d.get(k, {}), v)
                 d[k] = r
             else:
-                d[k] = u[k]
+                if k in ["attributes","raw_types"]:
+                    tmp = []
+                    if k in d:
+                        tmp = [ e for e in d[k]]
+                    for e in u[k]:
+                        if e not in tmp:
+                            tmp.append(e)
+                    d[k] = tmp
+                else:
+                    d[k] = u[k]
         else:
             d = {k: u[k]}
     return d
