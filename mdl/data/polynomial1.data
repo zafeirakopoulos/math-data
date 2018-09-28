@@ -1,8 +1,9 @@
 {
+  "type": "Directed Graph",
   "parameters": {
     "number of variables" : 1,
     "coefficient type" : "Integer"
-  }
+  },
   "raw":
     {
       "dense":

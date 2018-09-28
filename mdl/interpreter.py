@@ -16,18 +16,25 @@ def get_string_type():
 
 def isastring(value):
     if isinstance(value, get_string_type()):
-        print(get_meaningful_string(value))
+        print(get_string(value))
         return True
     else:
         return False
 
-def get_meaningful_string(value):
+def get_string(value):
     words = value.split()
+    meaningful_words = []
     for word in words:
         print(word)
-        if word not in keywords:
-            return "Check possible names"
+        if word in keywords:
+            meaningful_words.append(word)
     return value
+
+def get_meaningful_string(words):
+    with open("def.index") as defIndex:
+        index = json.load(defIndex)
+
+
 
 def update_dict(d, u):
     for k, v in u.items():
@@ -82,16 +89,21 @@ def is_of_type(A,B):
             return ret
     return False
 
-def validate(name,data):
+
+def validate(data):
     with open(data+".data") as dataFile:
         index = json.load(dataFile)
-        print(index)
+        print(interpret(index["type"]))
     return True
+
 
 if __name__ == "__main__":
     # execute only if run as a script
     #pprint.pprint(interpret(sys.argv[1]))
     #print("-----------")
     #print(interpret(sys.argv[1]))
+
     print(is_of_type(sys.argv[1],sys.argv[2]))
     print(isastring("Weighted Graph"))
+    #print(isastring("Weighted Graph"))
+    validate("data/polynomial1")
