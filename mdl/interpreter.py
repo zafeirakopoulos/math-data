@@ -2,8 +2,33 @@ import json
 import sys
 import pprint
 import collections
-
 # From https://stackoverflow.com/questions/3232943/update-value-of-a-nested-dictionary-of-varying-depth
+
+keywords = ["Vertex", "Graph", "Edge", "Directed", "Weighted", "Polyhedron", "Polynomial", "Polytope"]
+def get_string_type():
+    PY3 = sys.version_info[0] == 3
+
+    if PY3:
+        string_types = str
+    else:
+        string_types = basestring
+    return string_types
+
+def isastring(value):
+    if isinstance(value, get_string_type()):
+        print(get_meaningful_string(value))
+        return True
+    else:
+        return False
+
+def get_meaningful_string(value):
+    words = value.split()
+    for word in words:
+        print(word)
+        if word not in keywords:
+            return "Check possible names"
+    return value
+
 def update_dict(d, u):
     for k, v in u.items():
 
@@ -33,7 +58,7 @@ def interpret(name):
             raise Exception("Definition not found in the definition index")
         else:
             # TODO Find correct revision of the file
-            filename = index[name][0]
+		    filename = index[name][0]
     with open(filename+".def") as defFile:
         definition = json.load(defFile)
         if "inherits" in definition:
@@ -46,11 +71,14 @@ def interpret(name):
         return definition
 
 def validate(name,data):
-
+    with open(data+".data") as dataFile:
+        index = json.load(dataFile)
+        print(index)
     return True
 
 if __name__ == "__main__":
     # execute only if run as a script
-    pprint.pprint(interpret(sys.argv[1]))
-    print("-----------")
-    print(interpret(sys.argv[1]))
+    #pprint.pprint(interpret(sys.argv[1]))
+    #print("-----------")
+    #print(interpret(sys.argv[1]))
+    print(isastring("Weighted Graph"))
