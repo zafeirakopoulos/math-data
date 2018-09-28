@@ -45,12 +45,25 @@ def interpret(name):
                 definition = parentDef
         return definition
 
+def is_of_type(A,B):
+    if A == B :
+        return True
+    with open(A+".def") as Afile:
+        A = json.load(Afile)
+        if "inherits" in A:
+            ret = False
+            for parent in A["inherits"]:
+                ret = ret | is_of_type(parent,B)
+            return ret
+    return False
+
 def validate(name,data):
 
     return True
 
 if __name__ == "__main__":
     # execute only if run as a script
-    pprint.pprint(interpret(sys.argv[1]))
-    print("-----------")
-    print(interpret(sys.argv[1]))
+    #pprint.pprint(interpret(sys.argv[1]))
+    #print("-----------")
+    #print(interpret(sys.argv[1]))
+    print(is_of_type(sys.argv[1],sys.argv[2]))
