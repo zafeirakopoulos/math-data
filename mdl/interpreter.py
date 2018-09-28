@@ -7,7 +7,7 @@ import collections
 keywords = ["Vertex", "Graph", "Edge", "Directed", "Weighted", "Polyhedron", "Polynomial", "Polytope"]
 def get_string_type():
     PY3 = sys.version_info[0] == 3
-
+	print("Gizwem")
     if PY3:
         string_types = str
     else:

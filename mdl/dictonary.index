@@ -1,0 +1,14 @@
+{
+"Edge" : ["Edge Weighted Graph", "Edge Labeled Graph", "Vertex and Edge Weighted Graph", "Directed Edge Weighted Graph"],
+"Weighted" : ["Vertex Weighted Graph", "Edge Weighted Graph", "Directed Edge Weighted Graph", "Directed Vertex and Edge Weighted Graph", "Vertex and Edge Weighted Graph"],
+"Poly": ["Polynomial", "Polyhedron", "Polytope"],
+"Directed" : ["Directed Graph", "Directed Edge Weighted Graph", "Directed Vertex and Edge Weighted Graph"],
+"Vertex": ["Vertex Weighted Graph", "Vertex Labeled Graph", "Directed Vertex and Edge Weighted Graph", "Vertex and Edge Weighted Graph"],
+"Polynomial" : ["Polynomial"],
+"Polyhedron" : ["Polyhedron"],
+"Polytope" : ["Polytope"],
+"Labeled" : ["Vertex Labeled Graph", "Edge Labeled Graph"],
+"Graph" : ["Graph", "Directed Graph", "Vertex Weighted Graph", "Edge Weighted Graph", "Vertex Labeled Graph", "Edge Labeled Graph", "Directed Edge Weighted Graph", "Directed Vertex and Edge Weighted Graph", "Vertex and Edge Weighted Graph" ],
+"Series" : ["Formal Power Series"],
+"Convex" : ["Convex Body"]
+}
