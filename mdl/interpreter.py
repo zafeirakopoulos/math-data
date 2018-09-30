@@ -16,10 +16,16 @@ def get_string_type():
 def isastring(value):
     if isinstance(value, get_string_type()):
         words = get_string(value)
-        get_meaningful_string(words)
-        return True
+        if not words:
+            print("The input is a string but none of them is meaningful. See our keywords:")
+            print(keywords)
+        else:
+            results = get_meaningful_string(words)
+            print("The input is a string and they are possible names according to your input")
+            print(results)
     else:
-        return False
+        print("The input is not a string. Please enter a string and use at least one in the following keywords:")
+        print(keywords)
 
 def get_string(value):
     words = value.split()
@@ -34,27 +40,21 @@ def get_meaningful_string(words):
     with open("dictionary.index") as dictIndex:
         index = json.load(dictIndex)
     freq_names= {}
+    max_value = 1
     for word in words:
         if word in index:
             for name in index[word]:
                 if name in freq_names:
                     freq_names[name] = freq_names.get(name) + 1
+                    if max_value < freq_names[name]:
+                        max_value = freq_names[name]
                 else:
                     freq_names[name] = 1
-    ####################################PROBLEM#####################
-    max_item = max(freq_names.items())
     most_freq_names = []
-    most_freq_names.append(max_item[0])
-    max_value = max_item[1]
-    print(max_value)
-    del freq_names[max_item[0]]
-    while freq_names:
-        max_item = max(freq_names.items())
-        if max_item[1] == max_value:
-            most_freq_names.append(max_item[0])
-        del freq_names[max_item[0]]
-    ################################PROBLEM##########################
-    print(most_freq_names)
+    for name in freq_names:
+        if freq_names[name] == max_value:
+            most_freq_names.append(name)
+    return most_freq_names
 
 def update_dict(d, u):
     for k, v in u.items():
@@ -117,6 +117,7 @@ def validate(data):
     return True
 
 
+
 if __name__ == "__main__":
     # execute only if run as a script
     #pprint.pprint(interpret(sys.argv[1]))
@@ -124,6 +125,6 @@ if __name__ == "__main__":
     #print(interpret(sys.argv[1]))
 
     #print(is_of_type(sys.argv[1],sys.argv[2]))
-    isastring("Directed Graph")
+    isastring("Edge Graph")
     #print(isastring("Weighted Graph"))
     #validate("data/polynomial1")
