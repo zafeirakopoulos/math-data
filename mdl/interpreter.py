@@ -7,7 +7,6 @@ import collections
 keywords = ["Vertex", "Graph", "Edge", "Directed", "Weighted", "Polyhedron", "Polynomial", "Polytope"]
 def get_string_type():
     PY3 = sys.version_info[0] == 3
-	print("Gizwem")
     if PY3:
         string_types = str
     else:
@@ -16,7 +15,8 @@ def get_string_type():
 
 def isastring(value):
     if isinstance(value, get_string_type()):
-        print(get_string(value))
+        words = get_string(value)
+        get_meaningful_string(words)
         return True
     else:
         return False
@@ -25,16 +25,36 @@ def get_string(value):
     words = value.split()
     meaningful_words = []
     for word in words:
-        print(word)
         if word in keywords:
             meaningful_words.append(word)
-    return value
+    return meaningful_words
 
 def get_meaningful_string(words):
-    with open("def.index") as defIndex:
-        index = json.load(defIndex)
-
-
+    #ref : https://www.pythonforbeginners.com/dictionary/how-to-use-dictionaries-in-python/
+    with open("dictionary.index") as dictIndex:
+        index = json.load(dictIndex)
+    freq_names= {}
+    for word in words:
+        if word in index:
+            for name in index[word]:
+                if name in freq_names:
+                    freq_names[name] = freq_names.get(name) + 1
+                else:
+                    freq_names[name] = 1
+    ####################################PROBLEM#####################
+    max_item = max(freq_names.items())
+    most_freq_names = []
+    most_freq_names.append(max_item[0])
+    max_value = max_item[1]
+    print(max_value)
+    del freq_names[max_item[0]]
+    while freq_names:
+        max_item = max(freq_names.items())
+        if max_item[1] == max_value:
+            most_freq_names.append(max_item[0])
+        del freq_names[max_item[0]]
+    ################################PROBLEM##########################
+    print(most_freq_names)
 
 def update_dict(d, u):
     for k, v in u.items():
@@ -103,7 +123,7 @@ if __name__ == "__main__":
     #print("-----------")
     #print(interpret(sys.argv[1]))
 
-    print(is_of_type(sys.argv[1],sys.argv[2]))
-    print(isastring("Weighted Graph"))
+    #print(is_of_type(sys.argv[1],sys.argv[2]))
+    isastring("Directed Graph")
     #print(isastring("Weighted Graph"))
-    validate("data/polynomial1")
+    #validate("data/polynomial1")
