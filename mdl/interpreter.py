@@ -156,6 +156,7 @@ def analyze_data_file(json_data, json_def):
 		else:
 			if data == "raw":
 				for d in json_data[data]:
+					print(d)
 					if d not in json_def[data]:
 						raise Exception(d + " is not found in definition file")
 					else:
@@ -163,11 +164,29 @@ def analyze_data_file(json_data, json_def):
 							if json_def[data][d][d2]["structure"] == "Matrix" and json_def[data][d][d2]["element"] == "Boolean":
 									if isinstance(json_data[data][d][d2], list):
 										print("Yes it is a matrix")
+										isBoolean(json_data[data][d][d2])
 									else:
 										raise Exception("You selected dense but you didnt write a matrix.")
+							#elif json_def[data][d][d2]["structure"] == "Matrix" and json_def[data][d][d2]["element"] == "Boolean":
 									
 									
-						
+def isBoolean(List):
+	for l in List:
+		print(l)
+		if isinstance(l, list):
+			isBoolean(l)
+		else:
+			if l!='1' or l!='0':
+				raise Exception("wrong type")
+									
+def detect_element_value(data, structure, element):
+	if structure == "Matrix":
+		if element == "Boolean":
+			if not isinstance(data, list):
+				raise Exception("Wrong")
+		#else:
+			#detect_element_value(data[element])
+									
 
 def validate(data):
     with open(data+".data") as dataFile:
