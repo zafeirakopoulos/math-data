@@ -3,8 +3,6 @@ import sys
 import pprint
 import collections
 
-
-
 keywords = ["Vertex", "Graph", "Edge", "Directed", "Weighted", "Polyhedron", "Polynomial", "Polytope"]
 def get_string_type():
     PY3 = sys.version_info[0] == 3
@@ -18,15 +16,13 @@ def isastring(value):
     if isinstance(value, get_string_type()):
         words = get_string(value)
         if not words:
-            print("The input is a string but none of them is meaningful. See our keywords:")
-            print(keywords)
+            raise Exception("The input is a string but none of them is meaningful. See our keywords: " + keywords)
         else:
             results = get_meaningful_string(words)
-            print("The input is a string and they are possible names according to your input")
-            print(results)
+            raise Exception("The input is a string and they are possible names according to your input " + results)
+            
     else:
-        print("The input is not a string. Please enter a string and use at least one in the following keywords:")
-        print(keywords)
+        raise Exception("The input is not a string. Please enter a string and use at least one in the following keywords: " + results)
 
 def get_string(value):
     words = value.split()
@@ -156,20 +152,21 @@ def analyze_data_file(json_data, json_def):
 	for data in json_data:
 		print(data)
 		if data not in json_def and data != 'type':
-			print(data + " data is not found in definition file")
+			raise Exception(data + " is not found in definition file")
 		else:
 			if data == "raw":
-				
 				for d in json_data[data]:
 					if d not in json_def[data]:
-						print(d + " data is not found in definition file")
+						raise Exception(d + " is not found in definition file")
 					else:
 						for d2 in json_def[data][d]:
 							if json_def[data][d][d2]["structure"] == "Matrix" and json_def[data][d][d2]["element"] == "Boolean":
 									if isinstance(json_data[data][d][d2], list):
 										print("Yes it is a matrix")
 									else:
-										print("You selected dense but you didnt write a matrix.")
+										raise Exception("You selected dense but you didnt write a matrix.")
+									
+									
 						
 
 def validate(data):
