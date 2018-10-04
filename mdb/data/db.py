@@ -67,7 +67,7 @@ class Table:
         if filename is None:
             filename = str(uuid4())
 
-        if self.stat['insertions'] == 1000:
+        if self.stat['insertions'] == 100:
             self._create_subrepo_()
             self.stat['insertions'] = 0
         self.stat['insertions'] += 1
@@ -76,7 +76,7 @@ class Table:
         repo, index = self._get_repo_(self.stat['active'])
 
         with open(join(repo.working_dir, filename), "w") as f:
-            f.write(content)
+            print(content, file=f)
             f.flush()
             fsync(f.fileno())
         repo.git.add(filename)
