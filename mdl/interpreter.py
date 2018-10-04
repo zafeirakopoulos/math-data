@@ -2,7 +2,8 @@ import json
 import sys
 import pprint
 import collections
-# From https://stackoverflow.com/questions/3232943/update-value-of-a-nested-dictionary-of-varying-depth
+
+
 
 keywords = ["Vertex", "Graph", "Edge", "Directed", "Weighted", "Polyhedron", "Polynomial", "Polytope"]
 def get_string_type():
@@ -108,12 +109,75 @@ def is_of_type(A,B):
                 ret = ret | is_of_type(parent,B)
             return ret
     return False
+'''
+def analyze_definition_file(def_json_data):
+    for json_data in def_json_data:
+        print(json_data)
+        print("----------")
+        if isinstance(def_json_data[json_data], collections.Mapping):
+            print("is a map")
+            for data in def_json_data[json_data]:
+                print(data)
+        elif isinstance(def_json_data[json_data], list):
+                print("is a list")
+                for data in def_json_data[json_data]:
+                    print(data)
+        else:
+            print(def_json_data[json_data])
+        print("//////////////")
 
+def go_depth(def_json_data):
+    #ref: https://www.geeksforgeeks.org/type-isinstance-python/
+    for json_data in def_json_data:
+        en_def_json_data = def_json_data.encode('utf-8')
+        print("before")
+        print(json_data)
+        print("after")
+        if isinstance(en_def_json_data, get_string_type()):
+            print(def_json_data+ " is a string")
+        if isinstance(def_json_data[json_data], collections.Mapping):
+            print("is a map")
+            print(def_json_data[json_data])
+            go_depth(def_json_data[json_data])
+        elif isinstance(def_json_data[json_data], list):
+            print("is a list")
+            print(def_json_data[json_data])
+            go_depth(def_json_data[json_data])
+        else:
+            print("boom")
+            print(def_json_data[json_data])
+            #return 0
+    print("//////////////")
+
+'''
+    #print(def_json_data["raw"])
+	
+def analyze_data_file(json_data, json_def):
+	for data in json_data:
+		print(data)
+		if data not in json_def and data != 'type':
+			print(data + " data is not found in definition file")
+		else:
+			if data == "raw":
+				
+				for d in json_data[data]:
+					if d not in json_def[data]:
+						print(d + " data is not found in definition file")
+					else:
+						for d2 in json_def[data][d]:
+							if json_def[data][d][d2]["structure"] == "Matrix" and json_def[data][d][d2]["element"] == "Boolean":
+									if isinstance(json_data[data][d][d2], list):
+										print("Yes it is a matrix")
+									else:
+										print("You selected dense but you didnt write a matrix.")
+						
 
 def validate(data):
     with open(data+".data") as dataFile:
-        index = json.load(dataFile)
-        print(interpret(index["type"]))
+        data_file = json.load(dataFile)
+        def_file = interpret(data_file["type"])
+        analyze_data_file(data_file, def_file)
+        
     return True
 
 
@@ -125,6 +189,7 @@ if __name__ == "__main__":
     #print(interpret(sys.argv[1]))
 
     #print(is_of_type(sys.argv[1],sys.argv[2]))
-    isastring("Edge Graph")
+    #isastring("Edge Graph")
     #print(isastring("Weighted Graph"))
-    #validate("data/polynomial1")
+    validate("data/new_graph")
+    #bar('graph.def', 'raw')

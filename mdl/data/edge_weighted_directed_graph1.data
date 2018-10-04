@@ -1,0 +1,21 @@
+{
+  "type": "Directed Edge Weighted Graph",
+  "parameters": {
+	"edge_weight_type" : "Integer"
+  },
+  "raw_types" : "sparse",
+  "raw":
+    {
+      "sparse":
+      {
+        "edges" : 
+			{
+				[
+					[[0,1],1],
+					[[0,2],2],
+					[[0,3],3]
+				]
+			}
+      }
+    }
+}
