@@ -11,7 +11,7 @@
           {
             "edges":
             {
-              "element": "{{edge_weight_type}}"
+              "element": ["{{edge_weight_type}}", "Integer"]
             }
           },
         "sparse":

@@ -10,22 +10,20 @@
     "raw" :
       {
         "dense":
-          {
-            "vertices": [
+        {
+            "vertices": 
               {
                 "structure" : "List",
-                "element": "{{vertex_weight_type}}"
+                "element": ["{{vertex_weight_type}}", "Integer"]
               }
-            ]
-          },
+        },
         "sparse":
           {
-            "vertices" : [
+            "vertices" : 
               {
                 "structure" : "List",
-                "element": "{{vertex_weight_type}}"
+                "element": ["{{vertex_weight_type}}", "Integer"]
               }
-            ]
           }
      }
 }

@@ -131,6 +131,7 @@ def validate_type(data,T, json_def):
 		for i in range(len(data)):
 			return validate_type(data[i], T[i], json_def)
 	elif "{" in str(T):
+		print(T)
 		oldstr = str(T)
 		newstr = oldstr.replace("{", "")
 		newstr = newstr.replace("}", "")
@@ -201,6 +202,9 @@ def analyze_data_file(json_data, json_def):
             if attribute not in data_attributes:
                 raise Exception(attribute + "  not found in definition file")
         for attribute in raw_data:
+			print(raw_data[attribute])
+			print(raw_def[attribute]["structure"])
+			print(raw_def[attribute]["element"])
 			check_rec( raw_def[attribute]["structure"],  raw_def[attribute]["element"], raw_data[attribute], json_data)
     return True
 
@@ -226,11 +230,10 @@ def validate(data):
 	with open(data+".data") as dataFile:
 		data_file = json.load(dataFile)
 		def_file = interpret(data_file["type"])
+		#pprint.pprint(data_file)
 		analyze_data_file(data_file, def_file)
 
 	return True
-
-
 
 if __name__ == "__main__":
     # execute only if run as a script
