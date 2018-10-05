@@ -20,7 +20,7 @@
               {
                 "element":
                    {
-                     "structure" : "Tuple",
+                     "structure" : ["Tuple",3],
                      "element" : ["Integer", "Integer", "{{edge_weight_type}}"]
                    }
               }
