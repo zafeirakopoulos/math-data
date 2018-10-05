@@ -1,5 +1,6 @@
 import json
 
+
 def dense_conv(file):
     file = open(file, "r")
     for each_line in file.readlines():
