@@ -111,8 +111,12 @@ def is_of_type(A,B):
 
 def validate_type(data,T):
     #  "List", "Matrix", "Tuple"
-    if T in ["Boolean"]:
-        return (str(data) == "0") or (str(data) == "1") or (str(data) == "True") or (str(data) == "False")
+	if T in ["Boolean"]:
+		return (str(data) == "0") or (str(data) == "1") or (str(data) == "True") or (str(data) == "False")
+	elif T in ["Integer"]:
+		return isinstance(data, int)
+	elif T in ["Number"]:
+		return isinstance(data, float)
 
 
 def validate_structure(data,T):
@@ -130,27 +134,34 @@ def validate_structure(data,T):
     return True
 
 def get_iterator_of_elements(structure, data):
-    if structure == "Matrix":
-        if len(data)==0:
-            raise Exception("Matrix is empty")
-        return [ data[i][j] for i in range(len(data)) for j in range(len(data[0]))]
-
+	if structure == "Matrix":
+		if len(data)==0:
+			raise Exception("Matrix is empty")
+		return [ data[i][j] for i in range(len(data)) for j in range(len(data[0]))]
+	elif structure == "List":
+		if len(data)==0:
+			raise Exception("List is empty")
+		return data
+	elif "Tuple" in structure:
+		return data
+		
 def check_rec(structure, element, data):
     # First we check if the structure is correct
-    if not validate_structure(data,structure):
-        raise Exception("Data is not a " + structure)
+	if not validate_structure(data,structure):
+		raise Exception("Data is not a " + structure)
 
     # Check if every entry is of element
-    elements = get_iterator_of_elements(structure, data)
-    if type(element)==dict:
-        for e in elements:
-            rec(element["structure"],element["element"],e)
-    else:
-        for e in elements:
-            if not validate_type(e,element[0]):
-                print(str(e)+" "+element[0])
-                raise Exception("wrong element type")
-    return True
+	elements = get_iterator_of_elements(structure, data)
+	#return
+	if type(element)==dict:
+		for e in elements:
+			check_rec(element["structure"],element["element"],e)
+	else:
+		for e in elements:
+			if not validate_type(e,element[0]):
+				print(str(e)+" ____   "+element[0])
+				raise Exception("wrong element type")
+	return True
 
 def analyze_data_file(json_data, json_def):
     for data in json_data:
@@ -172,7 +183,7 @@ def analyze_data_file(json_data, json_def):
             if attribute not in data_attributes:
                 raise Exception(attribute + "  not found in definition file")
         for attribute in raw_data:
-            check_rec( raw_def[attribute]["structure"],  raw_def[attribute]["element"], raw_data[attribute])
+			check_rec( raw_def[attribute]["structure"],  raw_def[attribute]["element"], raw_data[attribute])
     return True
 
 
@@ -194,12 +205,12 @@ def detect_element_value(data, structure, element):
 
 
 def validate(data):
-    with open(data+".data") as dataFile:
-        data_file = json.load(dataFile)
-        def_file = interpret(data_file["type"])
-        analyze_data_file(data_file, def_file)
+	with open(data+".data") as dataFile:
+		data_file = json.load(dataFile)
+		def_file = interpret(data_file["type"])
+		analyze_data_file(data_file, def_file)
 
-    return True
+	return True
 
 
 
@@ -212,5 +223,5 @@ if __name__ == "__main__":
     #print(is_of_type(sys.argv[1],sys.argv[2]))
     #isastring("Edge Graph")
     #print(isastring("Weighted Graph"))
-    validate("data/new_graph")
+    validate("data/edge_weigthed_graph")
     #bar('graph.def', 'raw')
