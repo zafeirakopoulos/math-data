@@ -5,7 +5,8 @@
   "inherits" : ["Convex Body", "Polyhedron"],
   "attributes": ["vertices"],
   "parameters" : {
-    "vertex type" : ["Number", "Integer"]
+    "vertex type" : ["Number", "Integer"],
+	"dimension" : ["Integer", "Nonnegative"]
   },
   "raw_types": ["vrep"],
   "raw" :

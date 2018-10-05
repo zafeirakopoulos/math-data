@@ -20,7 +20,7 @@ def isastring(value):
         else:
             results = get_meaningful_string(words)
             raise Exception("The input is a string and they are possible names according to your input " + results)
-            
+
     else:
         raise Exception("The input is not a string. Please enter a string and use at least one in the following keywords: " + results)
 
@@ -105,49 +105,7 @@ def is_of_type(A,B):
                 ret = ret | is_of_type(parent,B)
             return ret
     return False
-'''
-def analyze_definition_file(def_json_data):
-    for json_data in def_json_data:
-        print(json_data)
-        print("----------")
-        if isinstance(def_json_data[json_data], collections.Mapping):
-            print("is a map")
-            for data in def_json_data[json_data]:
-                print(data)
-        elif isinstance(def_json_data[json_data], list):
-                print("is a list")
-                for data in def_json_data[json_data]:
-                    print(data)
-        else:
-            print(def_json_data[json_data])
-        print("//////////////")
 
-def go_depth(def_json_data):
-    #ref: https://www.geeksforgeeks.org/type-isinstance-python/
-    for json_data in def_json_data:
-        en_def_json_data = def_json_data.encode('utf-8')
-        print("before")
-        print(json_data)
-        print("after")
-        if isinstance(en_def_json_data, get_string_type()):
-            print(def_json_data+ " is a string")
-        if isinstance(def_json_data[json_data], collections.Mapping):
-            print("is a map")
-            print(def_json_data[json_data])
-            go_depth(def_json_data[json_data])
-        elif isinstance(def_json_data[json_data], list):
-            print("is a list")
-            print(def_json_data[json_data])
-            go_depth(def_json_data[json_data])
-        else:
-            print("boom")
-            print(def_json_data[json_data])
-            #return 0
-    print("//////////////")
-
-'''
-    #print(def_json_data["raw"])
-	
 def analyze_data_file(json_data, json_def):
 	for data in json_data:
 		print(data)
@@ -168,17 +126,16 @@ def analyze_data_file(json_data, json_def):
 									else:
 										raise Exception("You selected dense but you didnt write a matrix.")
 							#elif json_def[data][d][d2]["structure"] == "Matrix" and json_def[data][d][d2]["element"] == "Boolean":
-									
-									
+
+
 def isBoolean(List):
 	for l in List:
-		print(l)
 		if isinstance(l, list):
 			isBoolean(l)
 		else:
 			if l!='1' or l!='0':
 				raise Exception("wrong type")
-									
+
 def detect_element_value(data, structure, element):
 	if structure == "Matrix":
 		if element == "Boolean":
@@ -186,14 +143,14 @@ def detect_element_value(data, structure, element):
 				raise Exception("Wrong")
 		#else:
 			#detect_element_value(data[element])
-									
+
 
 def validate(data):
     with open(data+".data") as dataFile:
         data_file = json.load(dataFile)
         def_file = interpret(data_file["type"])
         analyze_data_file(data_file, def_file)
-        
+
     return True
 
 
