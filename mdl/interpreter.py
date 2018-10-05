@@ -3,6 +3,8 @@ import sys
 import pprint
 import collections
 
+
+
 keywords = ["Vertex", "Graph", "Edge", "Directed", "Weighted", "Polyhedron", "Polynomial", "Polytope"]
 def get_string_type():
     PY3 = sys.version_info[0] == 3
@@ -82,7 +84,7 @@ def interpret(name):
             raise Exception("Definition not found in the definition index")
         else:
             # TODO Find correct revision of the file
-		    filename = index[name][0]
+            filename = index[name][0]
     with open(filename+".def") as defFile:
         definition = json.load(defFile)
         if "inherits" in definition:
@@ -106,26 +108,72 @@ def is_of_type(A,B):
             return ret
     return False
 
+
+def validate_type(data,T):
+    #  "List", "Matrix", "Tuple"
+    if T in ["Boolean"]:
+        return (str(data) == "0") or (str(data) == "1") or (str(data) == "True") or (str(data) == "False")
+
+
+def validate_structure(data,T):
+    #  "List", "Matrix", "Tuple"
+    if T=="Matrix":
+        if not isinstance(data, list):
+            raise Exception("Not a Matrix")
+        for row in data:
+            if not isinstance(row, list):
+                    raise Exception("Not a Matrix")
+    if T=="List":
+        if not isinstance(data, list):
+            raise Exception("Not a List")
+
+    return True
+
+def get_iterator_of_elements(structure, data):
+    if structure == "Matrix":
+        if len(data)==0:
+            raise Exception("Matrix is empty")
+        return [ data[i][j] for i in range(len(data)) for j in range(len(data[0]))]
+
+def check_rec(structure, element, data):
+    # First we check if the structure is correct
+    if not validate_structure(data,structure):
+        raise Exception("Data is not a " + structure)
+
+    # Check if every entry is of element
+    elements = get_iterator_of_elements(structure, data)
+    if type(element)==dict:
+        for e in elements:
+            rec(element["structure"],element["element"],e)
+    else:
+        for e in elements:
+            if not validate_type(e,element[0]):
+                print(str(e)+" "+element[0])
+                raise Exception("wrong element type")
+    return True
+
 def analyze_data_file(json_data, json_def):
-	for data in json_data:
-		print(data)
-		if data not in json_def and data != 'type':
-			raise Exception(data + " is not found in definition file")
-		else:
-			if data == "raw":
-				for d in json_data[data]:
-					print(d)
-					if d not in json_def[data]:
-						raise Exception(d + " is not found in definition file")
-					else:
-						for d2 in json_def[data][d]:
-							if json_def[data][d][d2]["structure"] == "Matrix" and json_def[data][d][d2]["element"] == "Boolean":
-									if isinstance(json_data[data][d][d2], list):
-										print("Yes it is a matrix")
-										isBoolean(json_data[data][d][d2])
-									else:
-										raise Exception("You selected dense but you didnt write a matrix.")
-							#elif json_def[data][d][d2]["structure"] == "Matrix" and json_def[data][d][d2]["element"] == "Boolean":
+    for data in json_data:
+        print(data)
+        if (data not in json_def) and (data != 'type'):
+            raise Exception(data + " is not found in definition file")
+    data_raw_types=json_def["raw_types"]
+    data_attributes=json_def["attributes"]
+    data_raw = json_data["raw"]
+    for data_raw_type in data_raw:
+        if data_raw_type not in data_raw_types:
+            raise Exception(data_raw_type + " is not valid raw type")
+        raw_def = json_def["raw"][data_raw_type]
+        raw_data = json_data["raw"][data_raw_type]
+        for attribute in data_attributes:
+            if attribute not in raw_data:
+                raise Exception(attribute + "  not found in data file")
+        for attribute in raw_data:
+            if attribute not in data_attributes:
+                raise Exception(attribute + "  not found in definition file")
+        for attribute in raw_data:
+            check_rec( raw_def[attribute]["structure"],  raw_def[attribute]["element"], raw_data[attribute])
+    return True
 
 
 def isBoolean(List):

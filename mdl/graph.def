@@ -10,7 +10,7 @@
           "edges" :
             {
               "structure" : "Matrix",
-              "element": "Boolean"
+              "element": [ "Boolean", "0"]
             }
         },
       "sparse":
@@ -20,7 +20,7 @@
               "structure" : "List",
               "element":
                  {
-                   "structure" : "Pair",
+                   "structure" : ["Tuple", 2],
                    "element" : ["Integer","Integer"]
                  }
             }
