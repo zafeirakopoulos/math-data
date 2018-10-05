@@ -21,7 +21,7 @@
                 "element":
                    {
                      "structure" : ["Tuple",3],
-                     "element" : ["Integer", "Integer", "{{edge_weight_type}}"]
+                     "element" : [["Integer", "Integer", "{{edge_weight_type}}"], [1,1,"Integer"]]
                    }
               }
           }
