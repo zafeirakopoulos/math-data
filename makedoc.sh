@@ -1,4 +1,7 @@
+#!/bin/sh
 sphinx-apidoc -f -o doc/source/ mdb/
-cd doc
+sphinx-apidoc -f -o doc/source/ service/
+cd doc 
 make html
+make latexpdf
 cd ..
