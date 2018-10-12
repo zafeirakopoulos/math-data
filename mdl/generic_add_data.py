@@ -1,5 +1,6 @@
 import json
 import interpreter
+import string
 
 
 def add_data_polytope(file, raw_type):
@@ -9,16 +10,17 @@ def add_data_polytope(file, raw_type):
     for each_line in file.readlines():
         if "INEQUALITIES" in each_line or cnt_1 != 0:
             print("okay")
-
-            matrix = [0] * 7
-            for i in range(7):
-                matrix[i] = [0] * 2
-                matrix[i][0] = [0, 0, 0]
-            print(matrix)
+            if "INEQUALITIES" in each_line:
+                matrix = [0] * 7
+                for i in range(7):
+                    matrix[i] = [0] * 2
+                    matrix[i][0] = [0, 0, 0]
+                print(matrix)
 
             if "<v>" in each_line:
                 each_line.replace("<v>", "")
                 each_line.replace("</v>", "")
+                print(each_line)
                 b, a1, a2, a3 = each_line.split()
                 print(a1)
                 matrix[cnt_1][0][0] = int(a1)
