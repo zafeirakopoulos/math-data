@@ -127,11 +127,9 @@ def validate_type(data,T, json_def):
 				return validate_type(data[i], T, json_def)
 		return isinstance(data, float)
 	elif isinstance(T, list):
-		print("list")
 		for i in range(len(data)):
 			return validate_type(data[i], T[i], json_def)
 	elif "{" in str(T):
-		print(T)
 		oldstr = str(T)
 		newstr = oldstr.replace("{", "")
 		newstr = newstr.replace("}", "")
@@ -143,13 +141,16 @@ def validate_structure(data,T):
     if T=="Matrix":
         if not isinstance(data, list):
             raise Exception("Not a Matrix")
+        col = len(data)
+        print(col)
         for row in data:
             if not isinstance(row, list):
                     raise Exception("Not a Matrix")
+            if len(row) != col:
+			        raise Exception("Not a Matrix")
     if T=="List":
         if not isinstance(data, list):
             raise Exception("Not a List")
-
     return True
 
 def get_iterator_of_elements(structure, data):
@@ -171,20 +172,16 @@ def check_rec(structure, element, data, json_def):
 
     # Check if every entry is of element
 	elements = get_iterator_of_elements(structure, data)
-	#return
 	if type(element)==dict:
 		for e in elements:
 			check_rec(element["structure"],element["element"],e, json_def)
 	else:
-		#for e in elements:
-		#print(e)
 		if not validate_type(elements,element[0], json_def):
 			raise Exception("wrong element type")
 	return True
 
 def analyze_data_file(json_data, json_def):
     for data in json_data:
-        print(data)
         if (data not in json_def) and (data != 'type'):
             raise Exception(data + " is not found in definition file")
     data_raw_types=json_def["raw_types"]
@@ -202,28 +199,9 @@ def analyze_data_file(json_data, json_def):
             if attribute not in data_attributes:
                 raise Exception(attribute + "  not found in definition file")
         for attribute in raw_data:
-			print(raw_data[attribute])
-			print(raw_def[attribute]["structure"])
-			print(raw_def[attribute]["element"])
 			check_rec( raw_def[attribute]["structure"],  raw_def[attribute]["element"], raw_data[attribute], json_data)
     return True
 
-
-def isBoolean(List):
-	for l in List:
-		if isinstance(l, list):
-			isBoolean(l)
-		else:
-			if l!='1' or l!='0':
-				raise Exception("wrong type")
-
-def detect_element_value(data, structure, element):
-	if structure == "Matrix":
-		if element == "Boolean":
-			if not isinstance(data, list):
-				raise Exception("Wrong")
-		#else:
-			#detect_element_value(data[element])
 
 
 def validate(data):
@@ -232,7 +210,6 @@ def validate(data):
 		def_file = interpret(data_file["type"])
 		#pprint.pprint(data_file)
 		analyze_data_file(data_file, def_file)
-
 	return True
 
 if __name__ == "__main__":
