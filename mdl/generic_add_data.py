@@ -2,7 +2,37 @@ import json
 import interpreter
 
 
-<<<<<<< HEAD
+def add_data_polytope(file, raw_type):
+    file = open(file, "r")
+    cnt_1 = 0
+
+    for each_line in file.readlines():
+        if "INEQUALITIES" in each_line or cnt_1 != 0:
+            print("okay")
+
+            matrix = [0] * 7
+            for i in range(7):
+                matrix[i] = [0] * 2
+                matrix[i][0] = [0, 0, 0]
+            print(matrix)
+
+            if "<v>" in each_line:
+                each_line.replace("<v>", "")
+                each_line.replace("</v>", "")
+                b, a1, a2, a3 = each_line.split()
+                print(a1)
+                matrix[cnt_1][0][0] = int(a1)
+                matrix[cnt_1][0][1] = int(a2)
+                matrix[cnt_1][0][2] = int(a3)
+                matrix[cnt_1][1] = int(b)
+
+            if "</m>" in each_line:
+                cnt_1 = 0
+            else:
+                cnt_1 = cnt_1 + 1
+
+
+
 def add_data_devwg(file, dense_sparse):
     file = open(file, "r")
     counter = 0  # to create list properly
@@ -231,9 +261,6 @@ def add_data_dewg(file, dense_sparse):
 
 
 def add_data_vwg(file, dense_sparse):
-=======
-def add_data_ewg(file):
->>>>>>> 6be892b1f993c82fcf7be769c5e0ad358926551b
     file = open(file, "r")
     counter = 0  # to create list properly
 
@@ -251,21 +278,15 @@ def add_data_ewg(file):
             for i in range(int(number_edges)):
                 graph_list[i] = [0] * 2
 
-<<<<<<< HEAD
             # for vertices
             vertices_list = [0] * int(number_nodes)
 
         if each_line[0] == "e":
             e, nv, ne, ew = each_line.split()
-=======
-        if each_line[0] == "e":
-            e, nv, ne = each_line.split()
->>>>>>> 6be892b1f993c82fcf7be769c5e0ad358926551b
 
             adj_matrix[int(nv) - 1][int(ne) - 1] = 1  # upper triangular matrix
             # adj_matrix[int(ne)-1][int(nv)-1] = 1    # lower triangular matrix
 
-<<<<<<< HEAD
             graph_list[counter][0] = int(nv)
             graph_list[counter][1] = int(ne)
             counter += 1
@@ -324,10 +345,6 @@ def add_data_ewg(file, dense_sparse):
             graph_list[counter][0] = int(nv)
             graph_list[counter][1] = int(ne)
             graph_list[counter][2] = int(ew)
-=======
-            graph_list[counter][0] = nv
-            graph_list[counter][1] = ne
->>>>>>> 6be892b1f993c82fcf7be769c5e0ad358926551b
             counter += 1
 
     print(adj_matrix)
@@ -335,7 +352,6 @@ def add_data_ewg(file, dense_sparse):
     print(graph_list)
 
     data = interpreter.interpret("Edge Weighted Graph")
-<<<<<<< HEAD
     if dense_sparse == "d":
         data["raw"]["dense"]["edges"] = adj_matrix
         data["raw_types"] = ["dense"]
@@ -344,10 +360,6 @@ def add_data_ewg(file, dense_sparse):
         data["raw"]["sparse"]["edges"] = graph_list
         data["raw_types"] = ["sparse"]
         del data["raw"]["dense"]
-=======
-    data["raw"]["dense"]["edges"] = adj_matrix
-    data["raw"]["sparse"]["edges"] = graph_list
->>>>>>> 6be892b1f993c82fcf7be769c5e0ad358926551b
     print(data)
     choice = input("Do you want to create a json file (y/n): ")
     if choice == "y":
@@ -356,11 +368,7 @@ def add_data_ewg(file, dense_sparse):
             json.dump(data, outfile)
 
 
-<<<<<<< HEAD
 def add_data_dg(file, dense_sparse):
-=======
-def add_data_dg(file):
->>>>>>> 6be892b1f993c82fcf7be769c5e0ad358926551b
     file = open(file, "r")
     counter = 0  # to create list properly
 
@@ -384,13 +392,8 @@ def add_data_dg(file):
             adj_matrix[int(nv) - 1][int(ne) - 1] = 1  # upper triangular matrix
             # adj_matrix[int(ne)-1][int(nv)-1] = 1    # lower triangular matrix
 
-<<<<<<< HEAD
             graph_list[counter][0] = int(nv)
             graph_list[counter][1] = int(ne)
-=======
-            graph_list[counter][0] = nv
-            graph_list[counter][1] = ne
->>>>>>> 6be892b1f993c82fcf7be769c5e0ad358926551b
             counter += 1
 
     print(adj_matrix)
@@ -399,7 +402,6 @@ def add_data_dg(file):
 
     data = interpreter.interpret("Directed Graph")
     data["features"]["directed"] = "True"
-<<<<<<< HEAD
     if dense_sparse == "d":
         data["raw"]["dense"]["edges"] = adj_matrix
         data["raw_types"] = ["dense"]
@@ -408,10 +410,6 @@ def add_data_dg(file):
         data["raw"]["sparse"]["edges"] = graph_list
         data["raw_types"] = ["sparse"]
         del data["raw"]["dense"]
-=======
-    data["raw"]["dense"]["edges"] = adj_matrix
-    data["raw"]["sparse"]["edges"] = graph_list
->>>>>>> 6be892b1f993c82fcf7be769c5e0ad358926551b
     print(data)
     choice = input("Do you want to create a json file (y/n): ")
     if choice == "y":
@@ -420,11 +418,7 @@ def add_data_dg(file):
             json.dump(data, outfile)
 
 
-<<<<<<< HEAD
 def add_data_g(file, dense_sparse):
-=======
-def add_data_g(file):
->>>>>>> 6be892b1f993c82fcf7be769c5e0ad358926551b
     file = open(file, "r")
     counter = 0  # to create list properly
 
@@ -448,13 +442,8 @@ def add_data_g(file):
             adj_matrix[int(nv) - 1][int(ne) - 1] = 1  # upper triangular matrix
             # adj_matrix[int(ne)-1][int(nv)-1] = 1    # lower triangular matrix
 
-<<<<<<< HEAD
             graph_list[counter][0] = int(nv)
             graph_list[counter][1] = int(ne)
-=======
-            graph_list[counter][0] = nv
-            graph_list[counter][1] = ne
->>>>>>> 6be892b1f993c82fcf7be769c5e0ad358926551b
             counter += 1
 
     print(adj_matrix)
@@ -463,7 +452,6 @@ def add_data_g(file):
 
     with open("graph.def") as json_file:
         data = json.load(json_file)
-<<<<<<< HEAD
         if dense_sparse == "d":
             data["raw"]["dense"]["edges"] = adj_matrix
             data["raw_types"] = ["dense"]
@@ -472,20 +460,14 @@ def add_data_g(file):
             data["raw"]["sparse"]["edges"] = graph_list
             data["raw_types"] = ["sparse"]
             del data["raw"]["dense"]
-=======
-        data["raw"]["dense"]["edges"] = adj_matrix
-        data["raw"]["sparse"]["edges"] = graph_list
->>>>>>> 6be892b1f993c82fcf7be769c5e0ad358926551b
         print(data)
     choice = input("Do you want to create a json file (y/n): ")
     if choice == "y":
         filename = input("Enter the file name : ")
         with open(filename + '.json', 'w') as outfile:
             json.dump(data, outfile)
-<<<<<<< HEAD
+
 
 
 # to try any function
-#add_data_g("edge_vertex.txt", "d")
-=======
->>>>>>> 6be892b1f993c82fcf7be769c5e0ad358926551b
+add_data_polytope("data\F.3D.0000.poly", "d")
