@@ -21,15 +21,25 @@
 				"size": "Integer",
 				"dimension": 1
 			    },
-                "element": ["{{vertex_weight_type}}", "Integer"]
+                "element": {
+				"value": "{{vertex_weight_type}}",
+				"default": "Integer"
+			   }
               }
         },
         "sparse":
           {
             "vertices" : 
               {
-                "structure" : "List",
-                "element": ["{{vertex_weight_type}}", "Integer"]
+                "structure" : {
+				"type": "Tensor",
+				"size": "Integer",
+				"dimension": 1
+			    },
+                "element": {
+				"value": "{{vertex_weight_type}}",
+				"default": "Integer"
+			   }
               }
           }
      }
