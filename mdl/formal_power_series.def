@@ -3,8 +3,14 @@
   "plural" : "Formal Power Series",
   "attributes": ["coefficients"],
   "parameters" : {
-    "coefficient type" : ["Number", "Integer"],
-    "number of variables" : [ "Integer", "1" ]
+    "coefficient type" : {
+							"value": "Number",
+							"default": "Integer"
+						},
+    "number of variables" : {
+							"value": "Integer",
+							"default": "1"
+						}
   },
   "raw_types": ["dense","sparse"],
   "raw" :
@@ -13,22 +19,44 @@
         {
           "coefficients" :
             {
-              "structure" : ["Tensor", "{{number of variables}}"],
-              "element": [ "{{coefficient type}}", "0"]
+              "structure" : {
+								"type": "Tensor",
+								"dimension": "{{number of variables}}",
+								"size": "Integer"
+			  },
+              "element": {
+							"value": "{{coefficient type}}",
+							"default": 0
+			  }
             }
         },
       "sparse":
         {
           "coefficients":
             {
-              "structure" : "List",
+              "structure" : {
+								"type": "Tensor",
+								"dimension": 1,
+								"size": "Integer"
+							},
               "element":
                  {
-                   "structure" : "Pair",
+                   "structure" : {
+								"type": "Tensor",
+								"dimension": 2,
+								"size": "Integer"
+							},
                    "element" : [
                       {
-                        "structure" : ["Tuple", "{{number of variables}}"] ,
-                        "element" : ["Integer"]
+                        "structure" : {
+								"type": "Tensor",
+								"dimension": "{{number of variables}}",
+								"size": "Integer"
+						},
+                        "element" : {
+								"value": "Integer",
+								"default": 0
+						}
                       },
                      "{{coefficient type}}"
                   ]
@@ -37,6 +65,9 @@
         }
    },
    "features" : {
-      "number of terms" : ["Integer", "infinity"]
+      "number of terms" : {
+								"value": "Integer",
+								"default": "infinity"
+						}
    }
 }
