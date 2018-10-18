@@ -29,37 +29,39 @@ loop_2 = True
 
 while loop_1:
     print_menu()
-    dense_sparse = input("What is the raw type (dense : d / sparse : s) :")
-    choice = input("Enter your choice [1-5]: ")
+    print("What is the raw type (dense : d / sparse : s) :")
+    dense_sparse = raw_input() #input()
+
+    choice = raw_input("Enter your choice [1-3]: ")
 
     if choice == "1":
         continue
     elif choice == "2":
         print_graph_menu()
-        choice_2 = input("Enter your choice [1-7]: ")
+        choice_2 = raw_input("Enter your choice [1-8]: ")
         if choice_2 == "1":
-            filename = input("Enter the file name (for example -sample_graph.txt-) :  ")
+            filename = raw_input("Enter the file name (for example -sample_graph.txt-) :  ")
             generic_add_data.add_data_g(filename, dense_sparse)
         elif choice_2 == "2":
-            filename = input("Enter the file name (for example -sample_graph.txt-) :  ")
+            filename = raw_input("Enter the file name (for example -sample_graph.txt-) :  ")
             generic_add_data.add_data_dg(filename, dense_sparse)
         elif choice_2 == "3":
-            filename = input("Enter the file name (for example -sample_graph.txt-) :  ")
+            filename = raw_input("Enter the file name (for example -sample_graph.txt-) :  ")
             generic_add_data.add_data_ewg(filename, dense_sparse)
         elif choice_2 == "4":
-            filename = input("Enter the file name (for example -sample_graph.txt-) :  ")
+            filename = raw_input("Enter the file name (for example -sample_graph.txt-) :  ")
             generic_add_data.add_data_vwg(filename, dense_sparse)
         elif choice_2 == "5":
-            filename = input("Enter the file name (for example -sample_graph.txt-) :  ")
+            filename = raw_input("Enter the file name (for example -sample_graph.txt-) :  ")
             generic_add_data.add_data_dewg(filename, dense_sparse)
         elif choice_2 == "6":
-            filename = input("Enter the file name (for example -sample_graph.txt-) :  ")
+            filename = raw_input("Enter the file name (for example -sample_graph.txt-) :  ")
             generic_add_data.add_data_dvwg(filename, dense_sparse)
         elif choice_2 == "7":
-            filename = input("Enter the file name (for example -sample_graph.txt-) :  ")
+            filename = raw_input("Enter the file name (for example -sample_graph.txt-) :  ")
             generic_add_data.add_data_evwg(filename, dense_sparse)
         elif choice_2 == "8":
-            filename = input("Enter the file name (for example -sample_graph.txt-) :  ")
+            filename = raw_input("Enter the file name (for example -sample_graph.txt-) :  ")
             generic_add_data.add_data_devwg(filename, dense_sparse)
-    elif choice == 6:
+    elif choice == 3:
         loop_1 = False

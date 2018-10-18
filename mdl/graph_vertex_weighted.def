@@ -17,13 +17,13 @@
             "vertices": 
               {
                 "structure" : {
-				"type": "Tensor",
-				"size": "Integer",
-				"dimension": 1
+					"type": "Tensor",
+					"size": "Integer",
+					"dimension": 1
 			    },
                 "element": {
-				"value": "{{vertex_weight_type}}",
-				"default": "Integer"
+					"value": "{{vertex_weight_type}}",
+					"default": "Integer"
 			   }
               }
         },
@@ -32,13 +32,13 @@
             "vertices" : 
               {
                 "structure" : {
-				"type": "Tensor",
-				"size": "Integer",
-				"dimension": 1
+					"type": "Tensor",
+					"size": "Integer",
+					"dimension": 1
 			    },
                 "element": {
-				"value": "{{vertex_weight_type}}",
-				"default": "Integer"
+					"value": "{{vertex_weight_type}}",
+					"default": "Integer"
 			   }
               }
           }
