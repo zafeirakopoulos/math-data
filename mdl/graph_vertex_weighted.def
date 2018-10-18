@@ -5,7 +5,10 @@
     "attributes": ["vertices"],
     "parameters" :
       {
-        "vertex_weight_type" : ["Number", "Integer"]
+        "vertex_weight_type" : {
+				  "value": "Number,
+				  "default": "Integer"
+			       }
       },
     "raw" :
       {
@@ -13,7 +16,11 @@
         {
             "vertices": 
               {
-                "structure" : "List",
+                "structure" : {
+				"type": "Tensor",
+				"size": "Integer",
+				"dimension": 1
+			    },
                 "element": ["{{vertex_weight_type}}", "Integer"]
               }
         },
