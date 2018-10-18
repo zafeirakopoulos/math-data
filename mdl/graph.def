@@ -30,7 +30,7 @@
                  {
                    "structure" : {
 		                    "type": "Tuple",
-                                    "size": 2,
+                                    "size": 2
 				 },
 		   "element":  {
 				    "value_type": "Integer",
