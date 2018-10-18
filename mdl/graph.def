@@ -9,11 +9,13 @@
         {
           "edges" :
             {
-              "structure" : { "type": "Matrix",
-			      "size": "Integer"
+              "structure" : { "type": "Tensor",
+			      "size": "Integer",
+			      "dimension": 2
+			
 		            },
               "element": {
-				"value_type": "Boolean",
+				"value": "Boolean",
 				"default": 0
 			 }
             }
@@ -23,17 +25,19 @@
           "edges":
             {
               "structure" : {
-				"type": "List",
-				"size": "Integer"
+				"type": "Tensor",
+				"size": "Integer",
+				"dimension": 1
 			    },
               "element":
                  {
                    "structure" : {
-		                    "type": "Tuple",
-                                    "size": 2
+		                    "type": "Tensor",
+                                    "size": 2,
+				    "dimension": 1
 				 },
 		   "element":  {
-				    "value_type": "Integer",
+				    "value": "Integer",
 				    "default": "NaN"
 			       }
                  }
