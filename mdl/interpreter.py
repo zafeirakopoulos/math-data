@@ -133,7 +133,7 @@ def validate_type(data,T, json_def):
 		oldstr = str(T)
 		newstr = oldstr.replace("{", "")
 		newstr = newstr.replace("}", "")
-		return validate_type(data, json_def["parameters"][newstr][0], json_def)	
+		return validate_type(data, json_def["parameters"][newstr][0], json_def)
 
 
 def validate_structure(data,T):
@@ -147,7 +147,7 @@ def validate_structure(data,T):
             if not isinstance(row, list):
                     raise Exception("Not a Matrix")
             if len(row) != col:
-			        raise Exception("Not a Matrix")
+                raise Exception("Not a Matrix")
     if T=="List":
         if not isinstance(data, list):
             raise Exception("Not a List")
@@ -164,7 +164,7 @@ def get_iterator_of_elements(structure, data):
 		return data
 	elif "Tuple" in structure:
 		return data
-		
+
 def check_rec(structure, element, data, json_def):
     # First we check if the structure is correct
 	if not validate_structure(data,structure):
@@ -199,7 +199,7 @@ def analyze_data_file(json_data, json_def):
             if attribute not in data_attributes:
                 raise Exception(attribute + "  not found in definition file")
         for attribute in raw_data:
-			check_rec( raw_def[attribute]["structure"],  raw_def[attribute]["element"], raw_data[attribute], json_data)
+            check_rec( raw_def[attribute]["structure"],  raw_def[attribute]["element"], raw_data[attribute], json_data)
     return True
 
 
@@ -216,10 +216,10 @@ if __name__ == "__main__":
     # execute only if run as a script
     #pprint.pprint(interpret(sys.argv[1]))
     #print("-----------")
-    #print(interpret(sys.argv[1]))
+    pprint.pprint(interpret(sys.argv[1]))
 
     #print(is_of_type(sys.argv[1],sys.argv[2]))
     #isastring("Edge Graph")
     #print(isastring("Weighted Graph"))
-    validate("data/new_graph")
+    #validate("data/new_graph")
     #bar('graph.def', 'raw')
