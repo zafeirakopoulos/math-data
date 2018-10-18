@@ -9,19 +9,33 @@
         {
           "edges" :
             {
-              "structure" : "Matrix",
-              "element": [ "Boolean", "0"]
+              "structure" : { "type": "Matrix",
+			      "size": "Integer"
+		            },
+              "element": {
+				"value_type": "Boolean",
+				"default": 0
+			 }
             }
         },
       "sparse":
         {
           "edges":
             {
-              "structure" : "List",
+              "structure" : {
+				"type": "List",
+				"size": "Integer"
+			    },
               "element":
                  {
-                   "structure" : ["Tuple", 2],
-                   "element" : ["Integer","Integer"]
+                   "structure" : {
+		                    "type": "Tuple",
+                                    "size": 2,
+				 },
+		   "element":  {
+				    "value_type": "Integer",
+				    "default": "NaN"
+			       }
                  }
             }
         }
