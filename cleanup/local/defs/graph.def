@@ -10,7 +10,7 @@
           "edges" :
             {
               "structure" : { "type": "Tensor",
-                              "size": "Integer",
+                              "size": ["Integer", "Integer"],
                               "dimension": 2
                             },
               "element": {
@@ -25,19 +25,18 @@
             {
               "structure" : {
                       				"type": "Tensor",
-                      				"size": "Integer",
+                      				"size": ["Integer"],
                       				"dimension": 1
 			                      },
               "element":
                  {
                    "structure" : {
                 		               "type": "Tensor",
-                                   "size": 2,
-          				                 "dimension": 1
-				                         },
+										"size": 2,
+          				                "dimension": 1
+				                        },
             		   "element":  {
-                      				    "value": "Integer",
-                      				    "default": "NaN"
+                      				    "value": "Integer"
             			             }
                  }
           }

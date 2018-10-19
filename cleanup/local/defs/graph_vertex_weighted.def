@@ -18,7 +18,7 @@
               {
                 "structure" : {
                       					"type": "Tensor",
-                      					"size": "Integer",
+                      					"size": ["Integer"],
                       					"dimension": 1
 			    },
                 "element": {
@@ -31,12 +31,12 @@
             "vertices" :
               {
                 "structure" : {
-					"type": "Tensor",
-					"size": "Integer",
-					"dimension": 1
+									"type": "Tensor",
+									"size": ["Integer"],
+									"dimension": 1
 			    },
                 "element": {
-					"value": "{{vertex_weight_type}}"
+									"value": "{{vertex_weight_type}}"
 			   }
               }
           }

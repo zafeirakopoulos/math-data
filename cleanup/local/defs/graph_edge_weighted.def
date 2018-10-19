@@ -4,9 +4,9 @@
     "parameters" :
       {
         "edge_weight_type" : {
-                      				  "value": "Number,
-                      				  "default": "Integer"
-                    			    }
+                      			"value": "Number",
+                      			"default": "Integer"
+                    		}
       },
     "raw" :
       {
@@ -15,8 +15,8 @@
             "edges":
             {
               "element": {
-              							"value": "{{edge_weight_type}}"
-              					 }
+              			"value": "{{edge_weight_type}}"
+              			}
             }
           },
         "sparse":
@@ -25,23 +25,16 @@
               {
                 "element":
                    {
-			              "structure" : {
-                    								"type": "Tensor",
-                    								"size": "Integer",
-                    								"dimension": 1
-                    							},
-							"element":
-								{
-									"structure" : {
-											"type": "Tensor",
-											"size": 3,
-											"dimension": 1
-									},
+
+							"structure" : {
+													"type": "Tensor",
+													"size": "3",
+													"dimension": "1"
+								},
 									"element":  {
-											"value": ["Integer", "{{edge_weight_type}}"],
-											"default": ["1", "Integer"]
+												"value": ["Integer", "Integer", "{{edge_weight_type}}"]
 									}
-								}
+								
                    }
               }
           }
