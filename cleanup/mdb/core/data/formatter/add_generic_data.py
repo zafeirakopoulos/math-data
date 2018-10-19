@@ -1,6 +1,13 @@
 import json
-import interpreter
 import string
+import os
+import sys
+print(sys.path[0])
+sys.path[0] = "C:\\Users\\Lenovo-Pc\\Desktop\\HAKAN\\Tubitak Proje\\math-data\\cleanup\\mdb\\core\\data\\language"
+import interpreter
+print(sys.path[0])
+PATH = "C:\\Users\\Lenovo-Pc\\Desktop\\HAKAN\\Tubitak Proje\\math-data\\cleanup\\local\\"   #should be changed
+
 
 
 def add_data_polytope(file, raw_type):
@@ -471,5 +478,5 @@ def add_data_g(file, dense_sparse):
 
 
 
+add_data_vwg(PATH + "third_party\\GEOM20.col", "s")
 # to try any function
-add_data_polytope("data\F.3D.0000.poly", "d")

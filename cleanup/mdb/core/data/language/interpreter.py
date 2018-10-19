@@ -3,7 +3,7 @@ import sys
 import pprint
 import collections
 
-PATH = "C:\\Users\\Gizem\\Desktop\\math-data\\cleanup\\local\\defs\\"
+PATH = "C:\\Users\\Lenovo-Pc\\Desktop\\HAKAN\\Tubitak Proje\\math-data\\cleanup\\local\\defs\\"
 
 keywords = ["Vertex", "Graph", "Edge", "Directed", "Weighted", "Polyhedron", "Polynomial", "Polytope"]
 def get_string_type():
@@ -80,7 +80,7 @@ def update_dict(d, u):
 def interpret(name):
     with open(PATH+"def.index") as defIndex:
         index = json.load(defIndex)
-        pprint.pprint(index)
+
         if name not in index:
             raise Exception("Definition not found in the definition index")
         else:
