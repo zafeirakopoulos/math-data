@@ -3,7 +3,10 @@
     "name": "Edge Weighted Graph",
     "parameters" :
       {
-        "edge_weight_type" : ["Number", "Integer"]
+        "edge_weight_type" : {
+				  "value": "Number,
+				  "default": "Integer"
+			    }
       },
     "raw" :
       {
@@ -11,7 +14,10 @@
           {
             "edges":
             {
-              "element": ["{{edge_weight_type}}", "Integer"]
+              "element": {
+							"value": "{{edge_weight_type}}", 
+							"default" : "Integer"
+						}
             }
           },
         "sparse":
@@ -20,8 +26,23 @@
               {
                 "element":
                    {
-                     "structure" : ["Tuple",3],
-                     "element" : [["Integer", "Integer", "{{edge_weight_type}}"], [1,1,"Integer"]]
+			              "structure" : {
+								"type": "Tensor",
+								"size": "Integer",
+								"dimension": 1
+							},
+							"element":
+								{
+									"structure" : {
+											"type": "Tensor",
+											"size": 3,
+											"dimension": 1
+									},
+									"element":  {
+											"value": ["Integer", "{{edge_weight_type}}"],
+											"default": ["1", "Integer"]
+									}
+								}
                    }
               }
           }
