@@ -6,7 +6,7 @@
     "parameters" :
       {
         "vertex_weight_type" : {
-				  "value": "Number,
+				  "value": "Number",
 				  "default": "Integer"
 			       }
       },
@@ -14,22 +14,21 @@
       {
         "dense":
         {
-            "vertices": 
+            "vertices":
               {
                 "structure" : {
-					"type": "Tensor",
-					"size": "Integer",
-					"dimension": 1
+                      					"type": "Tensor",
+                      					"size": "Integer",
+                      					"dimension": 1
 			    },
                 "element": {
-					"value": "{{vertex_weight_type}}",
-					"default": "Integer"
-			   }
+					                     "value": "{{vertex_weight_type}}"
+			                     }
               }
         },
         "sparse":
           {
-            "vertices" : 
+            "vertices" :
               {
                 "structure" : {
 					"type": "Tensor",
@@ -37,8 +36,7 @@
 					"dimension": 1
 			    },
                 "element": {
-					"value": "{{vertex_weight_type}}",
-					"default": "Integer"
+					"value": "{{vertex_weight_type}}"
 			   }
               }
           }

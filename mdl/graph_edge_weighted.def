@@ -4,9 +4,9 @@
     "parameters" :
       {
         "edge_weight_type" : {
-				  "value": "Number,
-				  "default": "Integer"
-			    }
+                      				  "value": "Number,
+                      				  "default": "Integer"
+                    			    }
       },
     "raw" :
       {
@@ -15,9 +15,8 @@
             "edges":
             {
               "element": {
-							"value": "{{edge_weight_type}}", 
-							"default" : "Integer"
-						}
+              							"value": "{{edge_weight_type}}"
+              					 }
             }
           },
         "sparse":
@@ -27,10 +26,10 @@
                 "element":
                    {
 			              "structure" : {
-								"type": "Tensor",
-								"size": "Integer",
-								"dimension": 1
-							},
+                    								"type": "Tensor",
+                    								"size": "Integer",
+                    								"dimension": 1
+                    							},
 							"element":
 								{
 									"structure" : {
