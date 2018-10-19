@@ -49,6 +49,7 @@ class Table:
             # The repo may not be accessed before.
             if name not in self.stat['repos']:
                 # There is no repo like this
+                # TODO raise Exception?
                 return None, None
             path = join(self.base, name)
             self.sms[name] = {}
@@ -69,6 +70,7 @@ class Table:
 
         if self.stat['insertions'] == 100:
             self._create_subrepo_()
+            # TODO remove that. Already set to 0 in the _create_subrepo_
             self.stat['insertions'] = 0
         self.stat['insertions'] += 1
         self.save()

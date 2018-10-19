@@ -3,42 +3,30 @@ from mdb.data.db import DB, Table
 import os
 import json
 
+
 # This should be a class.
 # It is initialized with a local path under which all DB are stored.
-# The retrieve functions in this class accept a hask key. 
+# The retrieve functions in this class accept a hask key.
 # The key gives url (relative within the MDB, i.e., in the local path given
 # when initialized), and a SHA (or a file and SHA depending on the function)
 #
 
-mutex = Lock()
+class MDB:
+    mutex = Lock()
+    aspects = ["raw", "features", "semantics", "context", "typeset"]
 
-aspects = ["raw", "features", "semantics", "context", "typeset"]
+    def __init__():
 
-def __add_helper(mdb, data):
-    """ Private Helper Function.
-    Go through target path and creates new data type
-    :param data: incoming json file.
-    :return: none
-    """
 
-    sha_list = {}
+    def __add_helper(mdb, data):
+        """ Private Helper Function.
+        Go through target path and creates new data type
+        :param data: incoming json file.
+        :return: none
+        """
 
-    for aspect in aspects:
 
-        table = mdb[aspect]
-
-        if isinstance(table, Table):
-            result = table.add(data[aspect], data["commit"]) # success: True/False, sha: shakey, error: message
-
-            if result["success"]:
-                sha_list[aspect] = result["sha"]
-            else:
-                return result["error"]
-
-    result = mdb["instances"].add(json.dumps(sha_list), "added instance")
-    mdb['index'].add("", "add %s" % result['sha'], filename=result['sha'])
-
-    return result
+        return result
 
 
 def add_instance(mdb: DB, data):
@@ -68,7 +56,22 @@ def add_instance(mdb: DB, data):
 
     mutex.acquire()
     try:
-        response = __add_helper(mdb, data)
+        sha_list = {}
+
+        for aspect in aspects:
+
+            table = mdb[aspect]
+
+            if isinstance(table, Table):
+                result = table.add(data[aspect], data["commit"]) # success: True/False, sha: shakey, error: message
+
+                if result["success"]:
+                    sha_list[aspect] = result["sha"]
+                else:
+                    return result["error"]
+
+        response = mdb["instances"].add(json.dumps(sha_list), "added instance")
+        mdb['index'].add("", "add %s" % result['sha'], filename=result['sha'])
     finally:
         mutex.release()
 

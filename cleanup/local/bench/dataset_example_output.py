@@ -1,4 +1,5 @@
 from parser import *
+import os
 
 static_path = os.path.join(os.path.abspath("."), "example files", "dataset.json")
 gen_path = os.path.join(os.path.abspath("."), "example files", "generator.json")
