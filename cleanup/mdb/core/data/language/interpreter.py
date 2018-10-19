@@ -3,7 +3,7 @@ import sys
 import pprint
 import collections
 
-
+PATH = "C:\\Users\\Gizem\\Desktop\\math-data\\cleanup\\local\\defs\\"
 
 keywords = ["Vertex", "Graph", "Edge", "Directed", "Weighted", "Polyhedron", "Polynomial", "Polytope"]
 def get_string_type():
@@ -78,14 +78,15 @@ def update_dict(d, u):
     return d
 
 def interpret(name):
-    with open("def.index") as defIndex:
+    with open(PATH+"def.index") as defIndex:
         index = json.load(defIndex)
+        pprint.pprint(index)
         if name not in index:
             raise Exception("Definition not found in the definition index")
         else:
             # TODO Find correct revision of the file
             filename = index[name][0]
-    with open(filename+".def") as defFile:
+    with open(PATH+filename+".def") as defFile:
         definition = json.load(defFile)
         if "inherits" in definition:
             # TODO resolve dependencies
@@ -216,6 +217,7 @@ if __name__ == "__main__":
     # execute only if run as a script
     #pprint.pprint(interpret(sys.argv[1]))
     #print("-----------")
+
     pprint.pprint(interpret(sys.argv[1]))
 
     #print(is_of_type(sys.argv[1],sys.argv[2]))
