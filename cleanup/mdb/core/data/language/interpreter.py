@@ -3,7 +3,7 @@ import sys
 import pprint
 import collections
 
-PATH = "C:\\Users\\Lenovo-Pc\\Desktop\\HAKAN\\Tubitak Proje\\math-data\\cleanup\\local\\defs\\"
+PATH = "C:\\Users\\Gizem\\Desktop\\math-data\\cleanup\local\defs\\"
 
 keywords = ["Vertex", "Graph", "Edge", "Directed", "Weighted", "Polyhedron", "Polynomial", "Polytope"]
 def get_string_type():
@@ -217,8 +217,11 @@ if __name__ == "__main__":
     # execute only if run as a script
     #pprint.pprint(interpret(sys.argv[1]))
     #print("-----------")
-
     pprint.pprint(interpret(sys.argv[1]))
+    definition = interpret(sys.argv[1])
+    filename = "out"
+    with open(filename + '.json', 'w') as outfile:
+        json.dump(definition, outfile)
 
     #print(is_of_type(sys.argv[1],sys.argv[2]))
     #isastring("Edge Graph")
