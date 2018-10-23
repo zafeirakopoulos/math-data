@@ -1,0 +1,6 @@
+{
+    "name" : "FieldElement",
+    "description" : "Is an element of a field"
+    "properties" :["field element"],
+    "inherits" : ["Invertible"]
+}

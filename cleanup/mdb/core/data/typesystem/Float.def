@@ -1,0 +1,8 @@
+{
+    "inherits" : ["Rational"],
+    "name" : "Float",
+    "plural" : "Floats",
+    "properties" : {
+        "exact" : false
+    }
+}

@@ -1,0 +1,7 @@
+{
+    "inherits" : ["Real"],
+    "properties" : {
+        "exact" : true,
+        "field element": true
+    }
+}
