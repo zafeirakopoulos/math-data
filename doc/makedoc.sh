@@ -1,7 +1,9 @@
 #!/bin/sh
-sphinx-apidoc -f -o doc/source/ mdb/
-sphinx-apidoc -f -o doc/source/ service/
-cd doc 
+sphinx-apidoc -f -o source/ mdb/
+sphinx-apidoc -f -o source/ mdb/data/app/
+cd doc
 make html
-make latexpdf
-cd ..
+make latex
+cd build/latex/
+pdflatex MathDataBench.tex
+cd ../../..
