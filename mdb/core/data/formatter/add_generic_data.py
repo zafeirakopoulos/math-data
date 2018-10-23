@@ -2,12 +2,15 @@ import json
 import string
 import os
 import sys
+new_path = sys.path[0]
+new_path = new_path[:-10] + "\\language\\"
+sys.path[0] = new_path
 print(sys.path[0])
-sys.path[0] = "C:\\Users\\Lenovo-Pc\\Desktop\\HAKAN\\Tubitak Proje\\math-data\\cleanup\\mdb\\core\\data\\language"
 import interpreter
-print(sys.path[0])
-PATH = "C:\\Users\\Lenovo-Pc\\Desktop\\HAKAN\\Tubitak Proje\\math-data\\cleanup\\local\\"   #should be changed
-
+new_path = new_path[:-24] + "\\local\\third_party\\"
+print(new_path)
+PATH = new_path   #should be changed
+#C:\Users\Hakan\Desktop\Proje\math-data\local\third_party
 
 
 def add_data_polytope(file, raw_type):
@@ -478,5 +481,5 @@ def add_data_g(file, dense_sparse):
 
 
 
-add_data_vwg(PATH + "third_party\\GEOM20.col", "s")
+add_data_vwg(PATH + "GEOM20.col", "s")
 # to try any function

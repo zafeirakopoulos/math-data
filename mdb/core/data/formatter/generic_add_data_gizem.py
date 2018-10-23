@@ -1,8 +1,18 @@
 import json
-import interpreter
+import os
 import string
+import sys
+new_path = sys.path[0]
+new_path = new_path[:-10] + "\\language\\"
+sys.path[0] = new_path
+print(sys.path[0])
+import interpreter
+new_path = new_path[:-24] + "\\local\\third_party\\"
+print(new_path)
+PATH = new_path
 
-def add_data_polytope(file, raw_type):
+
+def add_data_polytope(file, raw_type):  #not completed
     file = open(file, "r")
     cnt_1 = 0
 
@@ -38,14 +48,14 @@ def create_matrix(number_nodes):
     for i in range(int(number_nodes)):
         adj_matrix[i] = [0] * int(number_nodes)
     return adj_matrix
-			
+
 
 def create_list(number_edges, row_size):
     graph_list = [0] * int(number_edges)
     for i in range(int(number_edges)):
         graph_list[i] = [0] * row_size
     return graph_list
-	
+
 def create_json_file(data):
     choice = raw_input("Do you want to create a json file (y/n): ")
     if choice is "y":
@@ -73,8 +83,9 @@ def put_option(option, data):
     if option == "s":
         data["raw_types"] = ["sparse"]
         del data["raw"]["dense"]
-	return data
-	
+    return data
+
+
 def add_data_devwg(file, dense_sparse):
     file = open(file, "r")
     counter = 0  # to create list properly
@@ -96,7 +107,7 @@ def add_data_devwg(file, dense_sparse):
                 raw[counter][1] = int(ne)
                 raw[counter][2] = int(ew)
             else:
-			    raise Exception("Option is not found.")
+                raise Exception("Option is not found.")
             counter += 1
 
         if each_line[0] == "n":
@@ -135,7 +146,7 @@ def add_data_evwg(file, dense_sparse):
                 raw[counter][1] = int(ne)
                 raw[counter][2] = int(ew)
             else:
-			    raise Exception("Option is not found.")
+                raise Exception("Option is not found.")
             counter += 1
 
         if each_line[0] == "n":
@@ -170,7 +181,7 @@ def add_data_dvwg(file, dense_sparse):
                 raw[counter][0] = int(nv)
                 raw[counter][1] = int(ne)
             else:
-			    raise Exception("Option is not found.")
+                raise Exception("Option is not found.")
             counter += 1
 
         if each_line[0] == "n":
@@ -203,7 +214,7 @@ def add_data_dewg(file, dense_sparse):
                 raw[counter][1] = int(ne)
                 raw[counter][2] = int(ew)
             else:
-			    raise Exception("Option is not found.")
+                raise Exception("Option is not found.")
             counter += 1
 
     data = interpreter.interpret("Directed Edge Weighted Graph")
@@ -226,7 +237,7 @@ def add_data_vwg(file, dense_sparse):
 
         if each_line[0] == "e":
             e, nv, ne, ew = each_line.split()
-            
+
             if dense_sparse == "d":
                 raw[int(nv) - 1][int(ne) - 1] = 1  # upper triangular matrix
                 # raw[int(ne)-1][int(nv)-1] = 1    # lower triangular matrix
@@ -234,20 +245,22 @@ def add_data_vwg(file, dense_sparse):
                 raw[counter][0] = int(nv)
                 raw[counter][1] = int(ne)
             else:
-			    raise Exception("Option is not found.")
+                raise Exception("Option is not found.")
             counter += 1
         if each_line[0] == "n":
             n, nn, vw = each_line.split()
-            vertices_list[int(nn) - 1] = int(vw)	
+            vertices_list[int(nn) - 1] = int(vw)
     data = interpreter.interpret("Vertex Weighted Graph")
+    print(vertices_list)
+    print(raw)
     data["raw"]["dense"]["vertices"] = vertices_list
     data["raw"]["dense"]["edges"] = raw
     data = put_option(dense_sparse, data)
     print(data)
     #create_json_file(data)
-    choice = raw_input("Do you want to create a json file (y/n): ")
+    choice = input("Do you want to create a json file (y/n): ")
     if choice == "y":
-        filename = raw_input("Enter the file name : ")
+        filename = input("Enter the file name : ")
         with open(filename + '.json', 'w') as outfile:
             json.dump(data, outfile)
 
@@ -271,14 +284,14 @@ def add_data_ewg(file, dense_sparse):
                 raw[counter][1] = int(ne)
                 raw[counter][2] = int(ew)
             else:
-			    raise Exception("Option is not found.")
+                raise Exception("Option is not found.")
             counter += 1
 
     data = interpreter.interpret("Edge Weighted Graph")
     data["raw"]["dense"]["edges"] = raw
     data = put_option(dense_sparse, data)
     create_json_file(data)
-	
+
 def add_data_dg(file, dense_sparse):
     file = open(file, "r")
     counter = 0  # to create list properly
@@ -297,7 +310,7 @@ def add_data_dg(file, dense_sparse):
                 raw[counter][0] = int(nv)
                 raw[counter][1] = int(ne)
             else:
-			    raise Exception("Option is not found.")
+                raise Exception("Option is not found.")
             counter += 1
 
     data = interpreter.interpret("Directed Graph")
@@ -325,9 +338,15 @@ def add_data_g(file, dense_sparse):
                 raw[counter][0] = int(nv)
                 raw[counter][1] = int(ne)
             else:
-			    raise Exception("option is not found")
+                raise Exception("option is not found")
             counter += 1
     data = interpreter.interpret("Graph")
     data["raw"]["dense"]["edges"] = raw
     data = put_option(dense_sparse, data)
     create_json_file(data)
+
+
+
+
+add_data_vwg(PATH + "GEOM20.col", "d")
+# to try any function
