@@ -28,8 +28,8 @@
 
 							"structure" : {
 													"type": "Tensor",
-													"size": "3",
-													"dimension": "1"
+													"size": ["Integer", "3"],
+													"dimension": "2"
 								},
 									"element":  {
 												"value": ["Integer", "Integer", "{{edge_weight_type}}"]
