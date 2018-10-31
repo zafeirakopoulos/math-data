@@ -1,1 +1,1 @@
-npx @angular/cli ng build --prod --base-href="/MathDataLanding/"
+npx -p @angular/cli ng build --prod --base-href="/MathDataLanding/"

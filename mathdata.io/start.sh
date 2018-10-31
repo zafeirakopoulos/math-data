@@ -1,4 +1,6 @@
-if [ ! -d "./apache-tomcat-9.0.12" ]
+#!/bin/bash
+
+if [ ! -d "./apache-tomcat-9.0.12" ]; then
     wget https://www-eu.apache.org/dist/tomcat/tomcat-9/v9.0.12/bin/apache-tomcat-9.0.12.tar.gz
 
     tar xf apache-tomcat-9.0.12.tar.gz
