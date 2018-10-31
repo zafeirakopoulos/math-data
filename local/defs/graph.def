@@ -1,0 +1,45 @@
+{
+  "name" : "Graph",
+  "plural" : "Graphs",
+  "attributes": ["edges"],
+  "raw_types": ["dense","sparse"],
+  "raw" :
+    {
+      "dense":
+        {
+          "edges" :
+            {
+              "structure" : { "type": "Tensor",
+                              "size": ["Integer", "Integer"],
+                              "dimension": 2
+                            },
+              "element": {
+				                    "value": "Boolean",
+                    				"default": 0
+                         }
+            }
+        },
+      "sparse":
+        {
+          "edges":
+            {
+              "structure" : {
+                      				"type": "Tensor",
+                      				"size": ["Integer"],
+                      				"dimension": 1
+			                      },
+              "element":
+                 {
+                   "structure" : {
+                		               "type": "Tensor",
+						"size": ["Integer", 2],
+          				         "dimension": 2
+				                        },
+            		   "element":  {
+                      				    "value": ["Integer", "Integer"]
+            			             }
+                 }
+          }
+      }
+   }
+}
