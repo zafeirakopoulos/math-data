@@ -10,7 +10,9 @@
     "target": "es2015",
     "strict": true,
     "strictNullChecks": false,
-    "types": []
+    "types": [],
+    "jsx": "react",
+    "typeRoots": ["lib"]
   },
   "include": ["src/*"]
 }

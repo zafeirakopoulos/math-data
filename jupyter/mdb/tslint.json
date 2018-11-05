@@ -6,6 +6,13 @@
         "tslint-config-prettier"
     ],
     "jsRules": {},
-    "rules": {},
+    "rules": {
+
+        // Development settings
+        "member-access": false,
+        "object-literal-sort-keys": false,
+        "no-console": false,
+        "no-unused-variable": false
+    },
     "rulesDirectory": []
 }

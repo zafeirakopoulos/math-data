@@ -31,14 +31,17 @@
     "lint": "npx prettier --parser typescript --write \"**/*.ts\""
   },
   "dependencies": {
-    "@jupyterlab/application": "^0.18.6",
-    "@jupyterlab/apputils": "^0.18.4",
+    "@jupyterlab/application": "^0.19.1",
+    "@jupyterlab/apputils": "^0.19.1",
     "@jupyterlab/docregistry": "^0.18.4",
     "@jupyterlab/mainmenu": "^0.7.4",
-    "@jupyterlab/notebook": "^0.18.5",
+    "@jupyterlab/notebook": "^0.19.2",
     "@phosphor/coreutils": "^1.3.0",
     "@phosphor/messaging": "^1.2.2",
-    "@phosphor/widgets": "^1.6.0"
+    "@phosphor/widgets": "^1.6.0",
+    "@types/react-dom": "^16.0.9",
+    "react": "^16.6.0",
+    "react-dom": "^16.6.0"
   },
   "devDependencies": {
     "prettier": "1.14.3",
