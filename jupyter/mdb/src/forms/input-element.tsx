@@ -1,3 +1,7 @@
+/**
+ * Generic text input element.
+ * Currently used by only matrix component
+ */
 import * as React from "react";
 import { ValueType } from "../definitions/types";
 
@@ -14,7 +18,7 @@ interface IInputElementState {
 }
 
 // Usage: <InputElement elementType=boolean|number|... value=value />
-export class InputElement extends React.Component<IInputElementProps, IInputElementState> {
+export class InputElement extends React.Component<any, IInputElementState> {
     constructor(props: IInputElementProps) {
         super(props);
         this.state = {

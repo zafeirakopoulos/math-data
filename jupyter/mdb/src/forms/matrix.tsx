@@ -2,7 +2,6 @@ import * as React from "react";
 import { ValueType } from "../definitions/types";
 import { InputElement } from "./input-element";
 
-
 export interface IMatrixProps {
     row: number,
     col: number,
@@ -20,11 +19,14 @@ export interface IMatrixState {
 export class Matrix extends React.Component<IMatrixProps, IMatrixState> {
     constructor(props: IMatrixProps) {
         super(props);
-
-        this.initDataMatrix();
+        this.state = {
+            row: this.props.row,
+            col: this.props.col,
+            data: this.generateDataState()
+        };
     }
 
-    initDataMatrix(firstTime = true) {
+    generateDataState(): any[] {
         // Matrix array representation
         const data = [];
         for (let i = 0; i < this.props.row; ++i) {
@@ -34,26 +36,17 @@ export class Matrix extends React.Component<IMatrixProps, IMatrixState> {
             }
         }
 
-        // On first call, initialize state. Else, only setState data
-        if (firstTime) {
-            this.state = {
-                row: this.props.row,
-                col: this.props.col,
-                data
-            };
-        } else {
-            this.setState({ data });
-        }
+        return data;
     }
 
     // Create inputs as table of InputElement components
-    createInputTable() {
+    renderInputTable() {
         const table = [];
         for (let i = 0; i < this.props.row; ++i) {
             const children = [];
             for (let j = 0; j < this.props.col; j++) {
                 let dataPoint = this.state.data[i][j];
-                if (dataPoint === 'undefined') {
+                if (dataPoint === "undefined") {
                     dataPoint = this.props.defaultValue;
                 }
                 children.push(
@@ -71,11 +64,13 @@ export class Matrix extends React.Component<IMatrixProps, IMatrixState> {
             table.push(<tr key={i}>{children}</tr>);
         }
 
-        return <table><tbody>{table}</tbody></table>;
+        return <table>
+            <tbody>{table}</tbody>
+        </table>;
     }
 
     render() {
-        return (this.createInputTable());
+        return (this.renderInputTable());
     }
 
     // Children will call this callback when their input changes.
