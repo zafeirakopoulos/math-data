@@ -1,6 +1,6 @@
 import json
-
 import git
+
 from git import Repo
 from os import makedirs, fsync
 from os.path import exists, join
