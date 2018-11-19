@@ -3,13 +3,12 @@ import string
 import os
 import sys
 new_path = sys.path[0]
-print(new_path)
-new_path = new_path[:-10] + "/language/"
+new_path = new_path[:-10] + "\\language\\"
 sys.path[0] = new_path
 print(sys.path[0])
 import interpreter
-path_def = new_path[:-24] + "/local/defs/"
-new_path = new_path[:-24] + "/local/third_party/"
+new_path = new_path[:-24] + "\\local\\third_party\\"
+print(new_path)
 PATH = new_path   #should be changed
 #C:\Users\Hakan\Desktop\Proje\math-data\local\third_party
 
@@ -431,7 +430,7 @@ def add_data_dg(file, dense_sparse):
             json.dump(data, outfile)
 
 
-def add_data_g(file, raw_types):
+def add_data_g(file, dense_sparse):
     file = open(file, "r")
     counter = 0  # to create list properly
 
@@ -450,93 +449,37 @@ def add_data_g(file, raw_types):
                 graph_list[i] = [0] * 2
 
         if each_line[0] == "e":
-            e, nv, ne, ew = each_line.split()
+            e, nv, ne = each_line.split()
 
             adj_matrix[int(nv) - 1][int(ne) - 1] = 1  # upper triangular matrix
-            adj_matrix[int(ne)-1][int(nv)-1] = 1    # lower triangular matrix
+            # adj_matrix[int(ne)-1][int(nv)-1] = 1    # lower triangular matrix
 
             graph_list[counter][0] = int(nv)
             graph_list[counter][1] = int(ne)
             counter += 1
 
-    with open(path_def+"general_graph.def") as json_file:
-        data = json.load(json_file)
-	data = setName(data, "Graph")
-        data = setPlural(data, "Graphs")
-        options = dict({
-            "raw_types": raw_types
-        })
+    print(adj_matrix)
+    print('\n'.join(['\t'.join([str(cell) for cell in row]) for row in adj_matrix]))  # to print matrix nicely
+    print(graph_list)
 
-        data = setAttributes(data, ["edges"])
-        data = setOptions(data, options)
-        sizes = dict({
-            "edges": int(number_edges),
-            "vertices": int(number_nodes)
-        })
-        data = setSize(data, sizes)
-        raw = dict()
-        for raw_type in raw_types:
-            if raw_type == "dense":
-                raw["dense"] = {"edges": adj_matrix}
-            if raw_type == "sparse":
-                raw["sparse"] = {"edges": graph_list} 
-        print(raw)           
-        data = setRaw(data, raw)
+    with open("graph.def") as json_file:
+        data = json.load(json_file)
+        if dense_sparse == "d":
+            data["raw"]["dense"]["edges"] = adj_matrix
+            data["raw_types"] = ["dense"]
+            del data["raw"]["sparse"]
+        elif dense_sparse == "s":
+            data["raw"]["sparse"]["edges"] = graph_list
+            data["raw_types"] = ["sparse"]
+            del data["raw"]["dense"]
         print(data)
-    choice = raw_input("Do you want to create a json file (y/n): ") #Python3 : input()
+    choice = input("Do you want to create a json file (y/n): ")
     if choice == "y":
-        filename = raw_input("Enter the file name : ")
+        filename = input("Enter the file name : ")
         with open(filename + '.json', 'w') as outfile:
             json.dump(data, outfile)
 
-def setName(data, name):
-    data["name"] = name
-    return data
-    
-def setPlural(data, plural):
-    data["plural"] = plural
-    return data
 
-def setAttributes(data, attributes):
-    for default in data["attributes"]:
-        data["attributes"][default] = False
-    for attribute in attributes:
-        data["attributes"][attribute] = True
-    for default in data["attributes"]:
-        if data["attributes"][default] == False:
-            for raw_type in data["raw"]:
-                del data["raw"][raw_type][default]  
-    return data
 
-def setOptions(data, options):
-    for option in data["options"]:
-        for s_option in data["options"][option]:
-             data["options"][option][s_option] = False
-    for option in options:
-        if isinstance(options[option], list):
-            for sub_option in options[option]:
-                data["options"][option][sub_option] = True
-        else:
-            data["options"][option] = True
-    for s_option in data["options"]["raw_types"]:
-         if data["options"]["raw_types"][s_option] == False:
-             del data["raw"][s_option]    
-    return data
-
-def setSize(data, sizes):
-    for size in sizes:
-        data["size"][size] = sizes[size]
-    return data
-
-def setRaw(data, raw):
-    for raw_type in raw:
-        if data["options"]["raw_types"][raw_type] == True:
-            for attr_raw in raw[raw_type]:     
-                if data["attributes"][attr_raw] == True:
-                    data["raw"][raw_type][attr_raw] = raw[raw_type][attr_raw]
-                else:
-                   print(data["raw"][raw_type][attr_raw])
-                   del data["raw"][raw_type][attr_raw]
-    return data
-add_data_g(PATH + "GEOM20.col", ["dense", "sparse"])
+add_data_vwg(PATH + "GEOM20.col", "s")
 # to try any function
