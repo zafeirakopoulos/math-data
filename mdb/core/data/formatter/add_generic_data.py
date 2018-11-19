@@ -431,8 +431,8 @@ def add_data_dg(file, dense_sparse):
             json.dump(data, outfile)
 
 
-def add_data_g(file, raw_types):
-    file = open(file, "r")
+def add_data_g(file_name, raw_types):
+    file = open(PATH+file_name, "r")
     counter = 0  # to create list properly
 
     for each_line in file.readlines():
@@ -483,11 +483,12 @@ def add_data_g(file, raw_types):
         print(raw)           
         data = setRaw(data, raw)
         print(data)
-    choice = raw_input("Do you want to create a json file (y/n): ") #Python3 : input()
-    if choice == "y":
-        filename = raw_input("Enter the file name : ")
-        with open(filename + '.json', 'w') as outfile:
-            json.dump(data, outfile)
+    #Create a json file for the generated data
+    json_name = PATH + file_name
+    for raw_type in raw_types:
+        json_name += "_" + raw_type
+    with open(json_name + '.json', 'w') as outfile:
+        json.dump(data, outfile)
 
 def setName(data, name):
     data["name"] = name
@@ -538,5 +539,5 @@ def setRaw(data, raw):
                    print(data["raw"][raw_type][attr_raw])
                    del data["raw"][raw_type][attr_raw]
     return data
-add_data_g(PATH + "GEOM20.col", ["dense", "sparse"])
+add_data_g("GEOM20.col", ["dense", "sparse"])
 # to try any function
