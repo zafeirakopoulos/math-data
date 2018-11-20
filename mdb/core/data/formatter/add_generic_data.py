@@ -55,7 +55,6 @@ def add_data_devwg(file_name, raw_types):
         data = setName(data, "Directed Edge and Vertex Weighted Graph")
         data = setPlural(data, "Directed Edge and Vertex Weighted Graphs")
         options = dict({
-            "raw_types": raw_types,
 			"vertices": {
 			           "weighted": True
 			},
@@ -64,6 +63,12 @@ def add_data_devwg(file_name, raw_types):
 					   "weighted": True
 			}
         })
+        if isinstance(raw_types, list):
+            for raw_type in range(len(raw_types)):
+                print(raw_types[raw_type])
+                options["raw_types"] = {raw_type: True}
+        else:
+           options["raw_types"] = {raw_types: True}
 
         data = setAttributes(data, ["edges", "vertices"])
         data = setOptions(data, options)
@@ -73,11 +78,17 @@ def add_data_devwg(file_name, raw_types):
         })
         data = setSize(data, sizes)
         raw = dict()
-        for raw_type in raw_types:
-            if raw_type == "dense":
-                raw["dense"] = {"edges": adj_matrix}
-            if raw_type == "sparse":
-                raw["sparse"] = {"edges": graph_list}            
+        if isinstance(raw_types, list):
+            for raw_type in raw_types:
+                if raw_type == "dense":
+                    raw["dense"] = {"edges": adj_matrix, "vertices": vertices_list}
+                if raw_type == "sparse":
+                    raw["sparse"] = {"edges": graph_list, "vertices": vertices_list}  
+        else:
+            if raw_types == "dense":
+                raw["dense"] = {"edges": adj_matrix, "vertices": vertices_list}
+            else:
+                raw["sparse"] = {"edges": graph_list, "vertices": vertices_list}                      
         data = setRaw(data, raw)
     #Create a json file for the generated data
     json_name = PATH + file_name
@@ -129,7 +140,6 @@ def add_data_evwg(file_name, raw_types):
         data = setName(data, "Edge and Vertex Weighted Graph")
         data = setPlural(data, "Edge and Vertex Weighted Graphs")
         options = dict({
-            "raw_types": raw_types,
 			"vertices": {
 			           "weighted": True
 			},
@@ -137,6 +147,14 @@ def add_data_evwg(file_name, raw_types):
 			           "weighted": True
 			}
         })
+
+        if isinstance(raw_types, list):
+            for raw_type in range(len(raw_types)):
+                print(raw_types[raw_type])
+                options["raw_types"] = {raw_type: True}
+        else:
+           options["raw_types"] = {raw_types: True}
+
 
         data = setAttributes(data, ["edges", "vertices"])
         data = setOptions(data, options)
@@ -146,11 +164,17 @@ def add_data_evwg(file_name, raw_types):
         })
         data = setSize(data, sizes)
         raw = dict()
-        for raw_type in raw_types:
-            if raw_type == "dense":
-                raw["dense"] = {"edges": adj_matrix}
-            if raw_type == "sparse":
-                raw["sparse"] = {"edges": graph_list}            
+        if isinstance(raw_types, list):
+            for raw_type in raw_types:
+                if raw_type == "dense":
+                    raw["dense"] = {"edges": adj_matrix, "vertices": vertices_list}
+                if raw_type == "sparse":
+                    raw["sparse"] = {"edges": graph_list, "vertices": vertices_list}  
+        else:
+            if raw_types == "dense":
+                raw["dense"] = {"edges": adj_matrix, "vertices": vertices_list}
+            else:
+                raw["sparse"] = {"edges": graph_list, "vertices": vertices_list}                      
         data = setRaw(data, raw)
     #Create a json file for the generated data
     json_name = PATH + file_name
@@ -200,7 +224,6 @@ def add_data_dvwg(file_name, raw_types):
         data = setName(data, "Directed Vertex Weighted Graph")
         data = setPlural(data, "Directed Vertex Weighted Graphs")
         options = dict({
-            "raw_types": raw_types,
 			"vertices": {
 			           "weighted": True
 			},
@@ -208,6 +231,13 @@ def add_data_dvwg(file_name, raw_types):
 			           "directed": True
 			}
         })
+        if isinstance(raw_types, list):
+            for raw_type in range(len(raw_types)):
+                print(raw_types[raw_type])
+                options["raw_types"] = {raw_type: True}
+        else:
+           options["raw_types"] = {raw_types: True}
+
 
         data = setAttributes(data, ["edges", "vertices"])
         data = setOptions(data, options)
@@ -217,11 +247,17 @@ def add_data_dvwg(file_name, raw_types):
         })
         data = setSize(data, sizes)
         raw = dict()
-        for raw_type in raw_types:
-            if raw_type == "dense":
-                raw["dense"] = {"edges": adj_matrix}
-            if raw_type == "sparse":
-                raw["sparse"] = {"edges": graph_list}            
+        if isinstance(raw_types, list):
+            for raw_type in raw_types:
+                if raw_type == "dense":
+                    raw["dense"] = {"edges": adj_matrix, "vertices": vertices_list}
+                if raw_type == "sparse":
+                    raw["sparse"] = {"edges": graph_list, "vertices": vertices_list}  
+        else:
+            if raw_types == "dense":
+                raw["dense"] = {"edges": adj_matrix, "vertices": vertices_list}
+            else:
+                raw["sparse"] = {"edges": graph_list, "vertices": vertices_list}                      
         data = setRaw(data, raw)
     #Create a json file for the generated data
     json_name = PATH + file_name
@@ -266,12 +302,17 @@ def add_data_dewg(file_name, raw_types):
         data = setName(data, "Directed Edge Weighted Graph")
         data = setPlural(data, "Directed Edge Weighted Graphs")
         options = dict({
-            "raw_types": raw_types,
 			"edges": {
 			           "weighted": True,
-					   "directed": True
+			           "directed": True
 			}
         })
+        if isinstance(raw_types, list):
+            for raw_type in range(len(raw_types)):
+                print(raw_types[raw_type])
+                options["raw_types"] = {raw_type: True}
+        else:
+           options["raw_types"] = {raw_types: True}
 
         data = setAttributes(data, ["edges"])
         data = setOptions(data, options)
@@ -281,11 +322,17 @@ def add_data_dewg(file_name, raw_types):
         })
         data = setSize(data, sizes)
         raw = dict()
-        for raw_type in raw_types:
-            if raw_type == "dense":
+        if isinstance(raw_types, list):
+            for raw_type in raw_types:
+                if raw_type == "dense":
+                    raw["dense"] = {"edges": adj_matrix}
+                if raw_type == "sparse":
+                    raw["sparse"] = {"edges": graph_list}  
+        else:
+            if raw_types == "dense":
                 raw["dense"] = {"edges": adj_matrix}
-            if raw_type == "sparse":
-                raw["sparse"] = {"edges": graph_list}            
+            else:
+                raw["sparse"] = {"edges": graph_list}                      
         data = setRaw(data, raw)
     #Create a json file for the generated data
     json_name = PATH + file_name
@@ -337,11 +384,16 @@ def add_data_vwg(file_name, raw_types):
         data = setName(data, "Vertex Weighted Graph")
         data = setPlural(data, "Vertex Weighted Graphs")
         options = dict({
-            "raw_types": raw_types,
 			"vertices": {
 			           "weighted": True
 			}
         })
+        if isinstance(raw_types, list):
+            for raw_type in range(len(raw_types)):
+                print(raw_types[raw_type])
+                options["raw_types"] = {raw_type: True}
+        else:
+           options["raw_types"] = {raw_types: True}
 
         data = setAttributes(data, ["edges", "vertices"])
         data = setOptions(data, options)
@@ -351,11 +403,17 @@ def add_data_vwg(file_name, raw_types):
         })
         data = setSize(data, sizes)
         raw = dict()
-        for raw_type in raw_types:
-            if raw_type == "dense":
-                raw["dense"] = {"edges": adj_matrix}
-            if raw_type == "sparse":
-                raw["sparse"] = {"edges": graph_list}            
+        if isinstance(raw_types, list):
+            for raw_type in raw_types:
+                if raw_type == "dense":
+                    raw["dense"] = {"edges": adj_matrix, "vertices": vertices_list}
+                if raw_type == "sparse":
+                    raw["sparse"] = {"edges": graph_list, "vertices": vertices_list}  
+        else:
+            if raw_types == "dense":
+                raw["dense"] = {"edges": adj_matrix, "vertices": vertices_list}
+            else:
+                raw["sparse"] = {"edges": graph_list, "vertices": vertices_list}                      
         data = setRaw(data, raw)
     #Create a json file for the generated data
     json_name = PATH + file_name
@@ -400,11 +458,18 @@ def add_data_ewg(file_name, raw_types):
         data = setName(data, "Edge Weighted Graph")
         data = setPlural(data, "Edge Weighted Graphs")
         options = dict({
-            "raw_types": raw_types,
-			"edges": {
-			           "weighted": True
+
+		"edges": {
+		           "weighted": True
 			}
         })
+        if isinstance(raw_types, list):
+            for raw_type in range(len(raw_types)):
+                print(raw_types[raw_type])
+                options["raw_types"] = {raw_type: True}
+        else:
+           options["raw_types"] = {raw_types: True}
+
 
         data = setAttributes(data, ["edges"])
         data = setOptions(data, options)
@@ -414,11 +479,17 @@ def add_data_ewg(file_name, raw_types):
         })
         data = setSize(data, sizes)
         raw = dict()
-        for raw_type in raw_types:
-            if raw_type == "dense":
+        if isinstance(raw_types, list):
+            for raw_type in raw_types:
+                if raw_type == "dense":
+                    raw["dense"] = {"edges": adj_matrix}
+                if raw_type == "sparse":
+                    raw["sparse"] = {"edges": graph_list}  
+        else:
+            if raw_types == "dense":
                 raw["dense"] = {"edges": adj_matrix}
-            if raw_type == "sparse":
-                raw["sparse"] = {"edges": graph_list}            
+            else:
+                raw["sparse"] = {"edges": graph_list}                      
         data = setRaw(data, raw)
     #Create a json file for the generated data
     json_name = PATH + file_name
@@ -544,9 +615,14 @@ def add_data_g(file_name, raw_types):
         data = json.load(json_file)
 	data = setName(data, "Graph")
         data = setPlural(data, "Graphs")
-        options = dict({
-            "raw_types": raw_types
-        })
+        options = dict()
+        if isinstance(raw_types, list):
+            for raw_type in range(len(raw_types)):
+                print(raw_types[raw_type])
+                options["raw_types"] = {raw_type: True}
+        else:
+            options["raw_types"] = {raw_types: True}
+
 
         data = setAttributes(data, ["edges"])
         data = setOptions(data, options)
@@ -556,14 +632,19 @@ def add_data_g(file_name, raw_types):
         })
         data = setSize(data, sizes)
         raw = dict()
-        for raw_type in raw_types:
-            if raw_type == "dense":
+        if isinstance(raw_types, list):
+            for raw_type in raw_types:
+                if raw_type == "dense":
+                    raw["dense"] = {"edges": adj_matrix}
+                if raw_type == "sparse":
+                    raw["sparse"] = {"edges": graph_list}  
+        else:
+            if raw_types == "dense":
                 raw["dense"] = {"edges": adj_matrix}
-            if raw_type == "sparse":
-                raw["sparse"] = {"edges": graph_list} 
-        print(raw)           
+            else:
+                raw["sparse"] = {"edges": graph_list}                      
         data = setRaw(data, raw)
-        print(data)
+
     #Create a json file for the generated data
     json_name = PATH + file_name
     for raw_type in raw_types:
@@ -624,12 +705,12 @@ def main(file_name):
     for raw_type in raw_types:
         #add_data_g(file_name, raw_type)
         add_data_dg(file_name, raw_type)
-        '''add_data_ewg(file_name, raw_type)
+        add_data_ewg(file_name, raw_type)
         add_data_dewg(file_name, raw_type)
         add_data_vwg(file_name, raw_type)
         add_data_dvwg(file_name, raw_type)
         add_data_evwg(file_name, raw_type)
-        add_data_devwg(file_name, raw_type)'''
+        add_data_devwg(file_name, raw_type)
 
 main("GEOM20.col")
 '''main("GEOM20a.col")
