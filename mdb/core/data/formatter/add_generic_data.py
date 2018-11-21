@@ -90,14 +90,7 @@ def add_data_devwg(file_name, raw_types):
             else:
                 raw["sparse"] = {"edges": graph_list, "vertices": vertices_list}                      
         data = setRaw(data, raw)
-    #Create a json file for the generated data
-    json_name = PATH + file_name
-    for raw_type in raw_types:
-        json_name += "_" + raw_type
-	json_name += "_DirectedEdgeVertexWeightedGraph"
-    with open(json_name + '.json', 'w') as outfile:
-        json.dump(data, outfile)
-
+    createOutput(raw_types, data, "Directed Edge and Vertex Weighted Graph", file_name)
 
 def add_data_evwg(file_name, raw_types):
     file = open(PATH+file_name, "r")
@@ -176,13 +169,7 @@ def add_data_evwg(file_name, raw_types):
             else:
                 raw["sparse"] = {"edges": graph_list, "vertices": vertices_list}                      
         data = setRaw(data, raw)
-    #Create a json file for the generated data
-    json_name = PATH + file_name
-    for raw_type in raw_types:
-        json_name += "_" + raw_type
-	json_name += "_EdgeVertexWeightedGraph"
-    with open(json_name + '.json', 'w') as outfile:
-        json.dump(data, outfile)
+    createOutput(raw_types, data, "Edge and Vertex Weighted Graph", file_name)
 	
 def add_data_dvwg(file_name, raw_types):
     file = open(PATH+file_name, "r")
@@ -259,13 +246,7 @@ def add_data_dvwg(file_name, raw_types):
             else:
                 raw["sparse"] = {"edges": graph_list, "vertices": vertices_list}                      
         data = setRaw(data, raw)
-    #Create a json file for the generated data
-    json_name = PATH + file_name
-    for raw_type in raw_types:
-        json_name += "_" + raw_type
-	json_name += "_DirectedVertexWeightedGraph"
-    with open(json_name + '.json', 'w') as outfile:
-        json.dump(data, outfile)
+    createOutput(raw_types, data, "Directed Vertex Weighted Graph", file_name)
 
 
 def add_data_dewg(file_name, raw_types):
@@ -334,14 +315,7 @@ def add_data_dewg(file_name, raw_types):
             else:
                 raw["sparse"] = {"edges": graph_list}                      
         data = setRaw(data, raw)
-    #Create a json file for the generated data
-    json_name = PATH + file_name
-    for raw_type in raw_types:
-        json_name += "_" + raw_type
-	json_name += "_DirectedEdgeWeightedGraph"
-    with open(json_name + '.json', 'w') as outfile:
-        json.dump(data, outfile)
-   
+    createOutput(raw_types, data, "Directed Edge Weigthed Graph", file_name)
 
 
 def add_data_vwg(file_name, raw_types):
@@ -415,13 +389,7 @@ def add_data_vwg(file_name, raw_types):
             else:
                 raw["sparse"] = {"edges": graph_list, "vertices": vertices_list}                      
         data = setRaw(data, raw)
-    #Create a json file for the generated data
-    json_name = PATH + file_name
-    for raw_type in raw_types:
-        json_name += "_" + raw_type
-	json_name += "_VertexWeightedGraph"
-    with open(json_name + '.json', 'w') as outfile:
-        json.dump(data, outfile)
+    createOutput(raw_types, data, "Vertex Weighted Graph", file_name)
 			
 		
 def add_data_ewg(file_name, raw_types):
@@ -491,13 +459,7 @@ def add_data_ewg(file_name, raw_types):
             else:
                 raw["sparse"] = {"edges": graph_list}                      
         data = setRaw(data, raw)
-    #Create a json file for the generated data
-    json_name = PATH + file_name
-    for raw_type in raw_types:
-        json_name += "_" + raw_type
-	json_name += "_EdgeWeightedGraph"
-    with open(json_name + '.json', 'w') as outfile:
-        json.dump(data, outfile)
+    createOutput(raw_types, data, "Edge Weighted Graph", file_name)
 
 
 
@@ -569,17 +531,7 @@ def add_data_dg(file_name, raw_types):
             else:
                 raw["sparse"] = {"edges": graph_list}                      
         data = setRaw(data, raw)
-    #Create a json file for the generated data
-    json_name = PATH + file_name
-    if not isinstance(raw_types, list):
-       json_name += "_" + raw_types
-    else: 
-        for raw_type in raw_types:
-            json_name += "_" + raw_type
-    json_name += "_DirectedGraph"
-    with open(json_name + '.json', 'w') as outfile:
-        json.dump(data, outfile)
-
+    createOutput(raw_types, data, "Directed Graph", file_name)
 
 		
 
@@ -645,11 +597,17 @@ def add_data_g(file_name, raw_types):
                 raw["sparse"] = {"edges": graph_list}                      
         data = setRaw(data, raw)
 
+    createOutput(raw_types, data, "Graph", file_name)
+
+def createOutput(raw_types, data, graph_name, file_name):
     #Create a json file for the generated data
     json_name = PATH + file_name
-    for raw_type in raw_types:
-        json_name += "_" + raw_type
-	json_name += "_Graph"
+    if isinstance(raw_types, list):
+        for raw_type in raw_types:
+            json_name += "_" + raw_type
+    else:
+        json_name += "_" + raw_types
+    json_name += "_" + graph_name
     with open(json_name + '.json', 'w') as outfile:
         json.dump(data, outfile)
 
@@ -703,7 +661,7 @@ def setRaw(data, raw):
 def main(file_name):
     raw_types = ["sparse", "dense"]
     for raw_type in raw_types:
-        #add_data_g(file_name, raw_type)
+        add_data_g(file_name, raw_type)
         add_data_dg(file_name, raw_type)
         add_data_ewg(file_name, raw_type)
         add_data_dewg(file_name, raw_type)
@@ -712,8 +670,8 @@ def main(file_name):
         add_data_evwg(file_name, raw_type)
         add_data_devwg(file_name, raw_type)
 
-main("GEOM20.col")
-'''main("GEOM20a.col")
+#main("GEOM20.col")
+main("GEOM20a.col")
 main("GEOM20b.col")
 
 main("GEOM30.col")
@@ -754,7 +712,7 @@ main("GEOM110b.col")
 
 main("GEOM120.col")
 main("GEOM120a.col")
-main("GEOM120b.col")'''
+main("GEOM120b.col")
 
 
 
