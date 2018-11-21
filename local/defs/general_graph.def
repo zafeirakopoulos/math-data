@@ -12,11 +12,11 @@
       },
       "vertices":{
          "weighted":"Boolean"
-      },
-      "raw_types":{
-         "dense":"Boolean",
-         "sparse":"Boolean"
       }
+   },
+   "raw_types":{
+      "dense":"Boolean",
+      "sparse":"Boolean"
    },
    "size":{
       "edges":"integer",
@@ -26,9 +26,8 @@
       "dense":{
          "edges":{
             "structure":{
-               "type":"Tensor",
                "dimension":2,
-		"size": "@size.vertices"
+               "size":"@size.vertices"
             },
             "element":{
                "type":"Number",
@@ -37,9 +36,8 @@
          },
          "vertices":{
             "structure":{
-               "type":"Tensor",
                "dimension":1,
-		"size": "@size.vertices"
+               "size":"@size.vertices"
             },
             "element":{
                "type":"Number",
@@ -50,19 +48,26 @@
       "sparse":{
          "edges":{
             "structure":{
-               "type":"Tensor",
                "dimension":1,
-		"size": "@size.edges"
+               "size":"@size.edges"
             },
             "element":{
                "type":"Tensor",
                "dimension":1,
-		"if": { "@options.edges.weighted": true },
-		"then": { "size": 3},
-		"else": { 
-			"if" : {"@options.edges.weighted": false },
-			"then": { "size": 2}
-		},
+               "if":{
+                  "@options.edges.weighted":true
+               },
+               "then":{
+                  "size":3
+               },
+               "else":{
+                  "if":{
+                     "@options.edges.weighted":false
+                  },
+                  "then":{
+                     "size":2
+                  }
+               },
                "value":[
                   "Integer",
                   "Integer",
@@ -72,9 +77,8 @@
          },
          "vertices":{
             "structure":{
-               "type":"Tensor",
                "dimension":1,
-		"size": "@size.vertices"
+               "size":"@size.vertices"
             },
             "element":{
                "type":"Number",
