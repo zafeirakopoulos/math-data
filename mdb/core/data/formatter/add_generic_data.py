@@ -4,10 +4,8 @@ import os
 import sys
 import collections
 new_path = sys.path[0]
-print(new_path)
 new_path = new_path[:-10] + "/language/"
 sys.path[0] = new_path
-print(sys.path[0])
 path_def = new_path[:-24] + "/local/defs/"
 new_path = new_path[:-24] + "/local/third_party/"
 PATH = new_path   #should be changed
@@ -35,15 +33,17 @@ def add_data_devwg(file_name, raw_types):
             # for vertices
             vertices_list = [0] * int(number_nodes)
 
+        values= []
         if each_line[0] == "e":
-            e, nv, ne, ew = each_line.split()
+            #e, nv, ne, ew = each_line.split()
+            values = each_line.split()
 
-            adj_matrix[int(nv) - 1][int(ne) - 1] = int(ew)  # upper triangular matrix
-            #adj_matrix[int(ne)-1][int(nv)-1] = 1    # lower triangular matrix
+            adj_matrix[int(values[1]) - 1][int(values[2]) - 1] = int(values[3])  # upper triangular matrix
+            adj_matrix[int(values[2])-1][int(values[1])-1] = int(values[3])     # lower triangular matrix
 
-            graph_list[counter][0] = int(nv)
-            graph_list[counter][1] = int(ne)
-            graph_list[counter][2] = int(ew)
+            graph_list[counter][0] = int(values[1])
+            graph_list[counter][1] = int(values[2])
+            graph_list[counter][2] = int(values[3])
             counter += 1
 
         if each_line[0] == "n":
@@ -63,13 +63,7 @@ def add_data_devwg(file_name, raw_types):
 					   "weighted": True
 			}
         })
-        if isinstance(raw_types, list):
-            for raw_type in range(len(raw_types)):
-                print(raw_types[raw_type])
-                options["raw_types"] = {raw_type: True}
-        else:
-           options["raw_types"] = {raw_types: True}
-
+        data = setRawTypes(data, raw_types)
         data = setAttributes(data, ["edges", "vertices"])
         data = setOptions(data, options)
         sizes = dict({
@@ -113,15 +107,17 @@ def add_data_evwg(file_name, raw_types):
             # for vertices
             vertices_list = [0] * int(number_nodes)
 
+        values= []
         if each_line[0] == "e":
-            e, nv, ne, ew = each_line.split()
+            #e, nv, ne, ew = each_line.split()
+            values = each_line.split()
 
-            adj_matrix[int(nv) - 1][int(ne) - 1] = int(ew)  # upper triangular matrix
-            adj_matrix[int(ne)-1][int(nv)-1] = 1    # lower triangular matrix
+            adj_matrix[int(values[1]) - 1][int(values[2]) - 1] = int(values[3])  # upper triangular matrix
+            adj_matrix[int(values[2])-1][int(values[1])-1] = int(values[3])     # lower triangular matrix
 
-            graph_list[counter][0] = int(nv)
-            graph_list[counter][1] = int(ne)
-            graph_list[counter][2] = int(ew)
+            graph_list[counter][0] = int(values[1])
+            graph_list[counter][1] = int(values[2])
+            graph_list[counter][2] = int(values[3])
             counter += 1
 
         if each_line[0] == "n":
@@ -141,14 +137,7 @@ def add_data_evwg(file_name, raw_types):
 			}
         })
 
-        if isinstance(raw_types, list):
-            for raw_type in range(len(raw_types)):
-                print(raw_types[raw_type])
-                options["raw_types"] = {raw_type: True}
-        else:
-           options["raw_types"] = {raw_types: True}
-
-
+        data = setRawTypes(data, raw_types)
         data = setAttributes(data, ["edges", "vertices"])
         data = setOptions(data, options)
         sizes = dict({
@@ -192,14 +181,16 @@ def add_data_dvwg(file_name, raw_types):
             # for vertices
             vertices_list = [0] * int(number_nodes)
 
+        values= []
         if each_line[0] == "e":
-            e, nv, ne, ew = each_line.split()
+            #e, nv, ne, ew = each_line.split()
+            values = each_line.split()
 
-            adj_matrix[int(nv) - 1][int(ne) - 1] = 1  # upper triangular matrix
-            #adj_matrix[int(ne)-1][int(nv)-1] = 1    # lower triangular matrix
+            adj_matrix[int(values[1]) - 1][int(values[2]) - 1] = 1  # upper triangular matrix
+            adj_matrix[int(values[2])-1][int(values[1])-1] = 1    # lower triangular matrix
 
-            graph_list[counter][0] = int(nv)
-            graph_list[counter][1] = int(ne)
+            graph_list[counter][0] = int(values[1])
+            graph_list[counter][1] = int(values[2])
             counter += 1
 
         if each_line[0] == "n":
@@ -218,14 +209,7 @@ def add_data_dvwg(file_name, raw_types):
 			           "directed": True
 			}
         })
-        if isinstance(raw_types, list):
-            for raw_type in range(len(raw_types)):
-                print(raw_types[raw_type])
-                options["raw_types"] = {raw_type: True}
-        else:
-           options["raw_types"] = {raw_types: True}
-
-
+        data = setRawTypes(data, raw_types)
         data = setAttributes(data, ["edges", "vertices"])
         data = setOptions(data, options)
         sizes = dict({
@@ -267,15 +251,17 @@ def add_data_dewg(file_name, raw_types):
             for i in range(int(number_edges)):
                 graph_list[i] = [0] * 3
 
+        values= []
         if each_line[0] == "e":
-            e, nv, ne, ew = each_line.split()
+            #e, nv, ne, ew = each_line.split()
+            values = each_line.split()
 
-            adj_matrix[int(nv) - 1][int(ne) - 1] = int(ew)  # upper triangular matrix
-            #adj_matrix[int(ne)-1][int(nv)-1] = int(ew)    # lower triangular matrix
+            adj_matrix[int(values[1]) - 1][int(values[2]) - 1] = int(values[3])  # upper triangular matrix
+            adj_matrix[int(values[2])-1][int(values[1])-1] = int(values[3])     # lower triangular matrix
 
-            graph_list[counter][0] = int(nv)
-            graph_list[counter][1] = int(ne)
-            graph_list[counter][2] = int(ew)
+            graph_list[counter][0] = int(values[1])
+            graph_list[counter][1] = int(values[2])
+            graph_list[counter][2] = int(values[3])
             counter += 1
 
     with open(path_def+"general_graph.def") as json_file:
@@ -288,12 +274,7 @@ def add_data_dewg(file_name, raw_types):
 			           "directed": True
 			}
         })
-        if isinstance(raw_types, list):
-            for raw_type in range(len(raw_types)):
-                print(raw_types[raw_type])
-                options["raw_types"] = {raw_type: True}
-        else:
-           options["raw_types"] = {raw_types: True}
+        data = setRawTypes(data, raw_types)
 
         data = setAttributes(data, ["edges"])
         data = setOptions(data, options)
@@ -339,14 +320,16 @@ def add_data_vwg(file_name, raw_types):
             # for vertices
             vertices_list = [0] * int(number_nodes)
 
+        values= []
         if each_line[0] == "e":
-            e, nv, ne, ew = each_line.split()
+            #e, nv, ne, ew = each_line.split()
+            values = each_line.split()
 
-            adj_matrix[int(nv) - 1][int(ne) - 1] = 1  # upper triangular matrix
-            adj_matrix[int(ne)-1][int(nv)-1] = 1    # lower triangular matrix
+            adj_matrix[int(values[1]) - 1][int(values[2]) - 1] = 1  # upper triangular matrix
+            adj_matrix[int(values[2])-1][int(values[1])-1] = 1    # lower triangular matrix
 
-            graph_list[counter][0] = int(nv)
-            graph_list[counter][1] = int(ne)
+            graph_list[counter][0] = int(values[1])
+            graph_list[counter][1] = int(values[2])
             counter += 1
 
         if each_line[0] == "n":
@@ -362,12 +345,7 @@ def add_data_vwg(file_name, raw_types):
 			           "weighted": True
 			}
         })
-        if isinstance(raw_types, list):
-            for raw_type in range(len(raw_types)):
-                print(raw_types[raw_type])
-                options["raw_types"] = {raw_type: True}
-        else:
-           options["raw_types"] = {raw_types: True}
+        data = setRawTypes(data, raw_types)
 
         data = setAttributes(data, ["edges", "vertices"])
         data = setOptions(data, options)
@@ -409,16 +387,17 @@ def add_data_ewg(file_name, raw_types):
             graph_list = [0] * int(number_edges)
             for i in range(int(number_edges)):
                 graph_list[i] = [0] * 3
-
+        values= []
         if each_line[0] == "e":
-            e, nv, ne, ew = each_line.split()
+            #e, nv, ne, ew = each_line.split()
+            values = each_line.split()
 
-            adj_matrix[int(nv) - 1][int(ne) - 1] = int(ew)  # upper triangular matrix
-            adj_matrix[int(ne)-1][int(nv)-1] = int(ew)    # lower triangular matrix
+            adj_matrix[int(values[1]) - 1][int(values[2]) - 1] = int(values[3])  # upper triangular matrix
+            adj_matrix[int(values[2])-1][int(values[1])-1] = int(values[3])     # lower triangular matrix
 
-            graph_list[counter][0] = int(nv)
-            graph_list[counter][1] = int(ne)
-            graph_list[counter][2] = int(ew)
+            graph_list[counter][0] = int(values[1])
+            graph_list[counter][1] = int(values[2])
+            graph_list[counter][2] = int(values[3])
             counter += 1
 
     with open(path_def+"general_graph.def") as json_file:
@@ -431,14 +410,7 @@ def add_data_ewg(file_name, raw_types):
 		           "weighted": True
 			}
         })
-        if isinstance(raw_types, list):
-            for raw_type in range(len(raw_types)):
-                print(raw_types[raw_type])
-                options["raw_types"] = {raw_type: True}
-        else:
-           options["raw_types"] = {raw_types: True}
-
-
+        data = setRawTypes(data, raw_types)
         data = setAttributes(data, ["edges"])
         data = setOptions(data, options)
         sizes = dict({
@@ -483,14 +455,16 @@ def add_data_dg(file_name, raw_types):
             for i in range(int(number_edges)):
                 graph_list[i] = [0] * 2
 
+        values= []
         if each_line[0] == "e":
-            e, nv, ne, ew = each_line.split()
+            #e, nv, ne, ew = each_line.split()
+            values = each_line.split()
 
-            adj_matrix[int(nv) - 1][int(ne) - 1] = 1  # upper triangular matrix
-            #adj_matrix[int(ne)-1][int(nv)-1] = 1    # lower triangular matrix
+            adj_matrix[int(values[1]) - 1][int(values[2]) - 1] = 1  # upper triangular matrix
+            adj_matrix[int(values[2])-1][int(values[1])-1] = 1    # lower triangular matrix
 
-            graph_list[counter][0] = int(nv)
-            graph_list[counter][1] = int(ne)
+            graph_list[counter][0] = int(values[1])
+            graph_list[counter][1] = int(values[2])
             counter += 1
 
     with open(path_def+"general_graph.def") as json_file:
@@ -503,14 +477,7 @@ def add_data_dg(file_name, raw_types):
 	           "directed": True
 		}
         })
-        if isinstance(raw_types, list):
-            for raw_type in range(len(raw_types)):
-                print(raw_types[raw_type])
-                options["raw_types"] = {raw_type: True}
-        else:
-           options["raw_types"] = {raw_types: True}
-
-
+        data = setRawTypes(data, raw_types)
         data = setAttributes(data, ["edges"])
         data = setOptions(data, options)
         sizes = dict({
@@ -552,37 +519,31 @@ def add_data_g(file_name, raw_types):
             graph_list = [0] * int(number_edges)
             for i in range(int(number_edges)):
                 graph_list[i] = [0] * 2
-
+        values= []
         if each_line[0] == "e":
-            e, nv, ne, ew = each_line.split()
+            #e, nv, ne, ew = each_line.split()
+            values = each_line.split()
 
-            adj_matrix[int(nv) - 1][int(ne) - 1] = 1  # upper triangular matrix
-            adj_matrix[int(ne)-1][int(nv)-1] = 1    # lower triangular matrix
+            adj_matrix[int(values[1]) - 1][int(values[2]) - 1] = 1  # upper triangular matrix
+            adj_matrix[int(values[2])-1][int(values[1])-1] = 1    # lower triangular matrix
 
-            graph_list[counter][0] = int(nv)
-            graph_list[counter][1] = int(ne)
+            graph_list[counter][0] = int(values[1])
+            graph_list[counter][1] = int(values[2])
             counter += 1
 
     with open(path_def+"general_graph.def") as json_file:
         data = json.load(json_file)
 	data = setName(data, "Graph")
         data = setPlural(data, "Graphs")
-        options = dict()
-        if isinstance(raw_types, list):
-            for raw_type in range(len(raw_types)):
-                print(raw_types[raw_type])
-                options["raw_types"] = {raw_type: True}
-        else:
-            options["raw_types"] = {raw_types: True}
-
-
-        data = setAttributes(data, ["edges"])
-        data = setOptions(data, options)
         sizes = dict({
             "edges": int(number_edges),
             "vertices": int(number_nodes)
         })
         data = setSize(data, sizes)
+        options = dict()
+        data = setAttributes(data, ["edges"])
+        data = setOptions(data, options)
+        data = setRawTypes(data, raw_types)
         raw = dict()
         if isinstance(raw_types, list):
             for raw_type in raw_types:
@@ -634,12 +595,10 @@ def setOptions(data, options):
     for option in data["options"]:
         for s_option in data["options"][option]:
              data["options"][option][s_option] = False
-    for option in options:
-         for sub_option in options[option]:
-            data["options"][option][sub_option] = True
-    for s_option in data["options"]["raw_types"]:
-         if data["options"]["raw_types"][s_option] == False:
-             del data["raw"][s_option]    
+    if len(options) != 0:
+        for option in options:
+            for sub_option in options[option]:
+                data["options"][option][sub_option] = True   
     return data
 
 def setSize(data, sizes):
@@ -649,13 +608,26 @@ def setSize(data, sizes):
 
 def setRaw(data, raw):
     for raw_type in raw:
-        if data["options"]["raw_types"][raw_type] == True:
+        if data["raw_types"][raw_type] == True:
             for attr_raw in raw[raw_type]:     
                 if data["attributes"][attr_raw] == True:
                     data["raw"][raw_type][attr_raw] = raw[raw_type][attr_raw]
                 else:
-                   print(data["raw"][raw_type][attr_raw])
                    del data["raw"][raw_type][attr_raw]
+    return data
+
+def setRawTypes(data, raw_types):
+    for raw_type in data["raw_types"]:
+        data["raw_types"][raw_type] = False
+    if isinstance(raw_types, list):
+        for raw_type in raw_types:
+            data["raw_types"][raw_type] = True
+    else:
+        data["raw_types"][raw_types] = True
+
+    for raw_type in data["raw_types"]:
+         if data["raw_types"][raw_type] == False:
+             del data["raw"][raw_type] 
     return data
 
 def main(file_name):
@@ -663,14 +635,14 @@ def main(file_name):
     for raw_type in raw_types:
         add_data_g(file_name, raw_type)
         add_data_dg(file_name, raw_type)
-        add_data_ewg(file_name, raw_type)
-        add_data_dewg(file_name, raw_type)
+        #add_data_ewg(file_name, raw_type)
+        #add_data_dewg(file_name, raw_type)
         add_data_vwg(file_name, raw_type)
         add_data_dvwg(file_name, raw_type)
-        add_data_evwg(file_name, raw_type)
-        add_data_devwg(file_name, raw_type)
+        #add_data_evwg(file_name, raw_type)
+        #add_data_devwg(file_name, raw_type)
 
-#main("GEOM20.col")
+'''main("GEOM20.col")
 main("GEOM20a.col")
 main("GEOM20b.col")
 
@@ -712,8 +684,56 @@ main("GEOM110b.col")
 
 main("GEOM120.col")
 main("GEOM120a.col")
-main("GEOM120b.col")
+main("GEOM120b.col")'''
 
+main("myciel5g.col")
+main("myciel5gb.col")
+main("myciel6g.col")
+main("myciel6gb.col")
+main("myciel7g.col")
+main("myciel7gb.col")
+
+main("queen8_8g.col")
+main("queen8_8gb.col")
+
+main("queen9_9g.col")
+main("queen9_9gb.col")
+
+main("queen10_10g.col")
+main("queen10_10gb.col")
+
+main("queen11_11g.col")
+main("queen11_11gb.col")
+
+main("queen12_12g.col")
+main("queen12_12gb.col")
+
+main("R50_1g.col")
+main("R50_1gb.col")
+
+main("R50_5g.col")
+main("R50_5gb.col")
+
+main("R50_9g.col")
+main("R50_9gb.col")
+
+main("R75_1g.col")
+main("R75_1gb.col")
+
+main("R75_5g.col")
+main("R75_5gb.col")
+
+main("R75_9g.col")
+main("R75_9gb.col")
+
+main("R100_1g.col")
+main("R100_1gb.col")
+
+main("R100_5g.col")
+main("R100_5gb.col")
+
+main("R100_9g.col")
+main("R100_9gb.col")
 
 
 # to try any function
