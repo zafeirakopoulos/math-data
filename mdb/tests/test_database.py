@@ -1,6 +1,15 @@
-from mdb.database import io
-from mdb.util.db import DB, Table
+import sys
 
+temp = sys.path[0]
+newpath = sys.path[0]
+newpath = newpath[:-5]
+newpath = newpath + "\\core\\db"
+sys.path[0] = newpath
+
+from io import MDB
+from db import DB, Table
+
+sys.path[0] = temp
 import os
 import json
 
@@ -16,7 +25,7 @@ def test_add_instance():
         "commit": "commit-message"
     }
 
-    response = io.add_instance(data, r)
+    response = MDB.add_instance(data, r)
     print(response)
     return response
 
