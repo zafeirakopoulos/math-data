@@ -1,5 +1,5 @@
 from threading import Lock
-from db import DB, Table
+from core.db.db import DB, Table
 import os
 import json
 # This should be a class.
@@ -12,6 +12,7 @@ class MDB:
 	mutex = Lock()
 	aspects = ["raw", "features", "semantics", "context", "typeset"]
 	def __init__(self):
+		print("debug")
 	
 	def add_instance(self, mdb: DB, data):
 		"""
