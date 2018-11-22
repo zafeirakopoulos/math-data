@@ -3,11 +3,10 @@ import sys
 temp = sys.path[0]
 newpath = sys.path[0]
 newpath = newpath[:-5]
-newpath = newpath + "\\core\\db"
 sys.path[0] = newpath
 
-from io import MDB
-from db import DB, Table
+from core.db.io import MDB
+from core.db.db import DB, Table
 
 sys.path[0] = temp
 import os
