@@ -1,5 +1,0 @@
-{
-    "inherits" : ["Vertex Weighted Graph", "Edge Weighted Graph"],
-    "name": "Vertex and Edge Weighted Graph",
-    "plural": "Vertex and Edge Weighted Graphs"
-}

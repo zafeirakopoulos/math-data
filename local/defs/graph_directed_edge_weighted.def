@@ -1,5 +1,0 @@
-{
-    "inherits" : ["Edge Weighted Graph", "Directed Graph"],
-    "name": "Directed Edge Weighted Graph",
-    "plural": "Directed Edge Weighted Graphs"
-}
