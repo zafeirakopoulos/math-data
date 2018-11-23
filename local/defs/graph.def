@@ -47,7 +47,7 @@
                   "@options.edges.weighted":true
                },
                "then":{
-                  "structure": [1,1,1],
+                  "structure": [3],
                   "element":
                      {
                         "type":["Integer","Integer","Number"]
@@ -58,7 +58,7 @@
                      "@options.edges.weighted":false
                   },
                   "then":{
-                     "structure": [1,1],
+                     "structure": [2],
                      "element":
                         {
                            "type":["Integer","Integer"]
