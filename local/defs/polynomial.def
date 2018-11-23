@@ -1,11 +1,106 @@
 {
   "name" : "Polynomial",
   "plural" : "Polynomials",
-  "inherits" : ["Formal Power Series"],
-  "features" : {
-     "number of terms" : ["Integer", "finite"],
-     "squarefree" : "Boolean",
-     "total degree" : "Integer",
-     "degree" : ["Tuple", "{{number of variables}}"]
-  }
+  "attributes": {
+    "coefficients" : "Boolean",
+    "roots" : "Boolean"
+  },
+  "options":{
+     "number_variables":  "Integer",
+     "coefficient_type" : {
+ 							"value": "Number",
+ 							"default": "Integer"
+ 						}
+  },
+  "raw_types":{
+     "dense" : "Boolean",
+     "sparse" : "Boolean",
+     "roots" : "Boolean"
+  },
+  "size":{
+     "variables":  "@options.number_variables",
+     "degree"  : {
+                   "structure" : {
+                     "type": "Tensor",
+                     "dimension" : "1",
+                     "size": "@size.variables"
+                   },
+                   {
+                         "element": "Integer"
+                   }
+                }
+  },
+  "raw" :
+    {
+      "roots" :
+      {
+        "roots" :
+          {
+              "structure" : {
+                "type": "Tensor",
+                "dimension" : "1",
+                "size": "@size.degree"
+                },
+              "element": {
+                    "type" : "Number"
+                }
+          }
+      }
+      "dense":
+        {
+          "coefficients" :
+            {
+                "structure" : {
+  								"type": "Tensor",
+  								"dimension" : "@size.variables",
+  								"size": "@size.degree"
+        			  },
+                      "element": {
+        							"value": "@options.coefficient_type",
+        							"default": 0
+        			  }
+            }
+        },
+      "sparse":
+        {
+          "coefficients":
+            {
+              "structure" : {
+								"type": "Tensor",
+								"dimension": 1,
+								"size": "Integer"
+							},
+              "element":
+                 {
+                   "structure" : {
+      								"type": "Tensor",
+      								"dimension": 1,
+      								"size": "2"
+							     },
+                   "element" :
+                       {
+                          "type" : [
+                              "Number",
+                              {
+                                  "structure" : {
+                                    "type": "Tensor",
+                                    "dimension" : "1",
+                                    "size": "@size.variables"
+                                  },
+                                  {
+                                        "element": "Integer"
+                                  }
+                              }
+                          ]
+                       }
+                 }
+            }
+        }
+   },
+   "features" : {
+      "number of terms" : {
+								"value": "Integer",
+								"default": "infinity"
+						}
+   }
 }

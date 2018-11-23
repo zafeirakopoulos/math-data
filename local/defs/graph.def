@@ -1,6 +1,6 @@
 {
-   "name":"String",
-   "plural":"String",
+   "name":"Graph",
+   "plural":"Graphs",
    "attributes":{
       "edges":"Boolean",
       "vertices":"Boolean"
@@ -27,7 +27,7 @@
          "edges":{
             "structure":{
                "dimension":2,
-               "size":"@size.vertices"
+               "size": ["@size.vertices","@size.vertices"]
             },
             "element":{
                "type":"Number",
@@ -37,7 +37,7 @@
          "vertices":{
             "structure":{
                "dimension":1,
-               "size":"@size.vertices"
+               "size": ["@size.vertices"]
             },
             "element":{
                "type":"Number",

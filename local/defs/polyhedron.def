@@ -1,34 +1,104 @@
 {
   "name" : "Polyhedron",
   "plural" : "Polyhedra",
-  "attributes": ["inequalities"],
-  "parameters" : {
-    "dimension" : [ "Integer", "2" ]
-  },
-  "raw_types": ["hrep"],
-  "raw" :
-    {
-      "hrep":
-        {
-          "inequalities":
-            {
-              "structure" : ["List", "finite"],
-              "element":
-                 {
-                   "structure" : "Pair",
-                   "element" : [
-                      {
-                        "structure" : ["Tuple", "{{dimension}}"] ,
-                        "element" : ["{{coefficient type}}"]
-                      },
-                     "{{coefficient type}}"
-                  ]
-                 }
-            }
-        }
+  "attributes":
+      {
+         "vertices" : "Boolean",
+         "rays" : "Boolean",
+         "lines" : "Boolean",
+         "inequalities" : "Boolean",
+         "equations" : "Boolean" 
+      },
+   "options":{
+      "ambient_dimension":  "Integer"
    },
-   "features" : {
-      "dimension" : "{{dimension}}",
-      "bounded" : "Boolean"
-   }
+   "raw_types":{
+      "hrep":"Boolean",
+      "vrep":"Boolean"
+   },
+   "size":{
+      "ambient_dimension":  "@options.ambient_dimension",
+      "vertices" : "Integer",
+      "rays" : "Integer",
+      "lines" : "Integer",
+      "inequalities" : "Integer",
+      "equations" : "Integer",
+   },
+   "raw":{
+      "hrep":{
+         "inequalities":{
+            "structure":{
+               "dimension":1,
+               "size":"@size.inequalities"
+            },
+            "element":{
+               "structure":{
+                  "type":"Tensor",
+                  "dimension":1,
+                  "size":"@size.ambient_dimension+1"
+               },
+               "element":{
+                  "type":"Number",
+                  "default":"0"
+               }
+           }
+         },
+         "equations":{
+            "structure":{
+               "dimension":1,
+               "size":"@size.inequalities"
+            },
+            "element":{
+               "structure":{
+                  "type":"Tensor",
+                  "dimension":1,
+                  "size":"@size.ambient_dimension+1"
+               },
+               "element":{
+                  "type":"Number",
+                  "default":"0"
+               }
+           }
+         }
+      },
+      "vrep":{
+         "vertices":{
+            "structure":{
+               "dimension":1,
+               "size":"@size.vertices"
+            },
+            "element":{
+               "type":"Tensor",
+               "dimension":1,
+               "size" : "@size.ambient_dimension"
+            }
+         },
+         "rays":{
+            "structure":{
+               "dimension":1,
+               "size":"@size.rays"
+            },
+            "element":{
+               "type":"Tensor",
+               "dimension":1,
+               "size" : "@size.ambient_dimension"
+            }
+         },
+         "lines":{
+            "structure":{
+               "dimension":1,
+               "size":"@size.lines"
+            },
+            "element":{
+               "type":"Tensor",
+               "dimension":1,
+               "size" : "@size.ambient_dimension"
+            }
+         },
+      }
+   },
+ "features" : {
+    "bounded" : "Boolean"
+    "dimension" : "Integer"
+ }
 }
