@@ -22,7 +22,6 @@
      "degree"  : {
                    "structure" : {
                      "type": "Tensor",
-                     "dimension" : "1",
                      "size": "@size.variables"
                    },
                    {
@@ -38,7 +37,6 @@
           {
               "structure" : {
                 "type": "Tensor",
-                "dimension" : "1",
                 "size": "@size.degree"
                 },
               "element": {
@@ -52,7 +50,6 @@
             {
                 "structure" : {
   								"type": "Tensor",
-  								"dimension" : "@size.variables",
   								"size": "@size.degree"
         			  },
                       "element": {
@@ -67,24 +64,21 @@
             {
               "structure" : {
 								"type": "Tensor",
-								"dimension": 1,
 								"size": "Integer"
 							},
               "element":
                  {
                    "structure" : {
       								"type": "Tensor",
-      								"dimension": 1,
       								"size": "2"
 							     },
                    "element" :
                        {
-                          "type" : [
+                            "type" : [
                               "Number",
                               {
                                   "structure" : {
                                     "type": "Tensor",
-                                    "dimension" : "1",
                                     "size": "@size.variables"
                                   },
                                   {

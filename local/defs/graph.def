@@ -26,7 +26,6 @@
       "dense":{
          "edges":{
             "structure":{
-               "dimension":2,
                "size": ["@size.vertices","@size.vertices"]
             },
             "element":{
@@ -36,7 +35,6 @@
          },
          "vertices":{
             "structure":{
-               "dimension":1,
                "size": ["@size.vertices"]
             },
             "element":{
@@ -48,12 +46,10 @@
       "sparse":{
          "edges":{
             "structure":{
-               "dimension":1,
-               "size":"@size.edges"
+               "size": ["@size.edges"]
             },
             "element":{
                "type":"Tensor",
-               "dimension":1,
                "if":{
                   "@options.edges.weighted":true
                },
@@ -77,8 +73,7 @@
          },
          "vertices":{
             "structure":{
-               "dimension":1,
-               "size":"@size.vertices"
+               "size":["@size.vertices"]
             },
             "element":{
                "type":"Number",

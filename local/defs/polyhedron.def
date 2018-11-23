@@ -7,7 +7,7 @@
          "rays" : "Boolean",
          "lines" : "Boolean",
          "inequalities" : "Boolean",
-         "equations" : "Boolean" 
+         "equations" : "Boolean"
       },
    "options":{
       "ambient_dimension":  "Integer"
@@ -22,76 +22,100 @@
       "rays" : "Integer",
       "lines" : "Integer",
       "inequalities" : "Integer",
-      "equations" : "Integer",
+      "equations" : "Integer"
    },
    "raw":{
       "hrep":{
          "inequalities":{
+
             "structure":{
                "dimension":1,
-               "size":"@size.inequalities"
+               "size": 2
             },
             "element":{
-               "structure":{
-                  "type":"Tensor",
-                  "dimension":1,
-                  "size":"@size.ambient_dimension+1"
-               },
-               "element":{
-                  "type":"Number",
-                  "default":"0"
-               }
+               "type":[
+                  {
+                     "structure":{
+                        "size": ["@size.inequalities","@size.ambient_dimension"]
+                     },
+                     "element":{
+                        "type":"Number",
+                        "default":"0"
+                     }
+                  },
+                  {
+                     "structure":{
+                        "size": ["@size.inequalities"]
+                     },
+                     "element":{
+                        "type":"Number",
+                        "default":"0"
+                     }
+                  }
+
+               ]
+            }
+
            }
          },
          "equations":{
+
             "structure":{
                "dimension":1,
-               "size":"@size.inequalities"
+               "size": 2
             },
             "element":{
-               "structure":{
-                  "type":"Tensor",
-                  "dimension":1,
-                  "size":"@size.ambient_dimension+1"
-               },
-               "element":{
-                  "type":"Number",
-                  "default":"0"
-               }
+               "type":[
+                  {
+                     "structure":{
+                        "size": ["@size.inequalities","@size.ambient_dimension"]
+                     },
+                     "element":{
+                        "type":"Number",
+                        "default":"0"
+                     }
+                  },
+                  {
+                     "structure":{
+                        "size": ["@size.inequalities"]
+                     },
+                     "element":{
+                        "type":"Number",
+                        "default":"0"
+                     }
+                  }
+
+               ]
+            }
+
            }
          }
       },
       "vrep":{
          "vertices":{
             "structure":{
-               "dimension":1,
-               "size":"@size.vertices"
+               "size": ["@size.vertices"]
             },
             "element":{
                "type":"Tensor",
-               "dimension":1,
-               "size" : "@size.ambient_dimension"
+               "size" : ["@size.ambient_dimension"]
             }
          },
          "rays":{
             "structure":{
-               "dimension":1,
-               "size":"@size.rays"
+               "size": ["@size.rays"]
             },
             "element":{
                "type":"Tensor",
-               "dimension":1,
-               "size" : "@size.ambient_dimension"
+               "size" : ["@size.ambient_dimension"]
             }
          },
          "lines":{
             "structure":{
-               "dimension":1,
-               "size":"@size.lines"
+               "size": ["@size.lines"]
             },
             "element":{
                "type":"Tensor",
-               "dimension":1,
                "size" : "@size.ambient_dimension"
             }
          },
