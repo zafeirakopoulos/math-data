@@ -20,12 +20,9 @@
   "size":{
      "variables":  "@options.number_variables",
      "degree"  : {
-                   "structure" : {
-                     "type": "Tensor",
-                     "size": "@size.variables"
-                   },
-                   {
-                         "element": "Integer"
+                   "structure" : ["@size.variables"],
+                   "element": {
+                      "type" : "Integer"
                    }
                 }
   },
@@ -35,10 +32,7 @@
       {
         "roots" :
           {
-              "structure" : {
-                "type": "Tensor",
-                "size": "@size.degree"
-                },
+              "structure" :["@size.degree"],
               "element": {
                     "type" : "Number"
                 }
@@ -48,12 +42,9 @@
         {
           "coefficients" :
             {
-                "structure" : {
-  								"type": "Tensor",
-  								"size": "@size.degree"
-        			  },
-                      "element": {
-        							"value": "@options.coefficient_type",
+                "structure" : ["@size.degree"],
+                "element": {
+        							"type": "@options.coefficient_type",
         							"default": 0
         			  }
             }
@@ -62,27 +53,18 @@
         {
           "coefficients":
             {
-              "structure" : {
-								"type": "Tensor",
-								"size": "Integer"
-							},
+              "structure" :["Integer"],
               "element":
                  {
-                   "structure" : {
-      								"type": "Tensor",
-      								"size": "2"
-							     },
+                   "structure" : ["2"],
                    "element" :
                        {
                             "type" : [
                               "Number",
                               {
-                                  "structure" : {
-                                    "type": "Tensor",
-                                    "size": "@size.variables"
-                                  },
-                                  {
-                                        "element": "Integer"
+                                  "structure" : ["@size.variables"],
+                                  "element": {
+                                      "type" : "Integer"
                                   }
                               }
                           ]

@@ -25,18 +25,14 @@
    "raw":{
       "dense":{
          "edges":{
-            "structure":{
-               "size": ["@size.vertices","@size.vertices"]
-            },
+            "structure": ["@size.vertices","@size.vertices"],
             "element":{
                "type":"Number",
                "default":"0"
             }
          },
          "vertices":{
-            "structure":{
-               "size": ["@size.vertices"]
-            },
+            "structure": ["@size.vertices"],
             "element":{
                "type":"Number",
                "default":"0"
@@ -45,36 +41,34 @@
       },
       "sparse":{
          "edges":{
-            "structure":{
-               "size": ["@size.edges"]
-            },
+            "structure": ["@size.edges"],
             "element":{
-               "type":"Tensor",
                "if":{
                   "@options.edges.weighted":true
                },
                "then":{
-                  "size":3
+                  "structure": [1,1,1],
+                  "element":
+                     {
+                        "type":["Integer","Integer","Number"]
+                     }
                },
                "else":{
                   "if":{
                      "@options.edges.weighted":false
                   },
                   "then":{
-                     "size":2
+                     "structure": [1,1],
+                     "element":
+                        {
+                           "type":["Integer","Integer"]
+                        }
                   }
-               },
-               "value":[
-                  "Integer",
-                  "Integer",
-                  "Number"
-               ]
+               }
             }
          },
          "vertices":{
-            "structure":{
-               "size":["@size.vertices"]
-            },
+            "structure": ["@size.vertices"],
             "element":{
                "type":"Number",
                "default":"0"

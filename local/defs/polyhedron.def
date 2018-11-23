@@ -28,25 +28,18 @@
       "hrep":{
          "inequalities":{
 
-            "structure":{
-               "dimension":1,
-               "size": 2
-            },
+            "structure": [2],
             "element":{
                "type":[
                   {
-                     "structure":{
-                        "size": ["@size.inequalities","@size.ambient_dimension"]
-                     },
+                     "structure": ["@size.inequalities","@size.ambient_dimension"],
                      "element":{
                         "type":"Number",
                         "default":"0"
                      }
                   },
                   {
-                     "structure":{
-                        "size": ["@size.inequalities"]
-                     },
+                     "structure": ["@size.inequalities"],
                      "element":{
                         "type":"Number",
                         "default":"0"
@@ -55,30 +48,21 @@
 
                ]
             }
-
-           }
          },
          "equations":{
 
-            "structure":{
-               "dimension":1,
-               "size": 2
-            },
+            "structure": [2],
             "element":{
                "type":[
                   {
-                     "structure":{
-                        "size": ["@size.inequalities","@size.ambient_dimension"]
-                     },
+                     "structure": ["@size.inequalities","@size.ambient_dimension"],
                      "element":{
                         "type":"Number",
                         "default":"0"
                      }
                   },
                   {
-                     "structure":{
-                        "size": ["@size.inequalities"]
-                     },
+                     "structure":  ["@size.inequalities"],
                      "element":{
                         "type":"Number",
                         "default":"0"
@@ -87,38 +71,45 @@
 
                ]
             }
-
-           }
          }
       },
       "vrep":{
          "vertices":{
-            "structure":{
-               "size": ["@size.vertices"]
-            },
+            "structure": ["@size.vertices"],
             "element":{
-               "type":"Tensor",
-               "size" : ["@size.ambient_dimension"]
+               {
+                  "structure" : ["@size.ambient_dimension"],
+                  "element":
+                     {
+                        "type" : "Number"
+                     }
+               }
             }
          },
          "rays":{
-            "structure":{
-               "size": ["@size.rays"]
-            },
+            "structure": ["@size.rays"],
             "element":{
-               "type":"Tensor",
-               "size" : ["@size.ambient_dimension"]
+               {
+                  "structure" : ["@size.ambient_dimension"],
+                  "element":
+                     {
+                        "type" : "Number"
+                     }
+               }
             }
          },
          "lines":{
-            "structure":{
-               "size": ["@size.lines"]
-            },
+            "structure": ["@size.lines"],
             "element":{
-               "type":"Tensor",
-               "size" : "@size.ambient_dimension"
+               {
+                  "structure" : ["@size.ambient_dimension"],
+                  "element":
+                     {
+                        "type" : "Number"
+                     }
+               }
             }
-         },
+         }
       }
    },
  "features" : {
