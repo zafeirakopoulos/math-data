@@ -30,3 +30,8 @@ npm run build
 jupyter lab build
 ```
 
+Or you can start JupyterLab instance in watch mode so it will keep up with changes
+
+```bash
+jupyter lab --watch
+```
