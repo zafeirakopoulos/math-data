@@ -1,0 +1,17 @@
+table {
+    border: 2px solid #000;
+}
+
+.matrixInput {
+    width: 50px;
+}
+
+.tuple-container {
+
+}
+
+.tuple {
+    margin-right: 20px;
+    border: 1px solid #ccc;
+    display: inline-block;
+}
