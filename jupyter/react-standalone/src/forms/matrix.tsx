@@ -74,7 +74,7 @@ export class Matrix extends React.Component<any, IMatrixState> {
     }
 
     // Children will call this callback when their input changes.
-    // This updates Matrix components data state.
+    // This updates Matrix components dataSource state.
     // Because we can't access child components inner state, we have to use this callback from parent.
     // By doing that we are setting Matrix component as source of thruth.
     private handleChange = (row: number, col: number, newValue: ValueType) => {

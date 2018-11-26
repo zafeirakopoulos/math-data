@@ -1,94 +1,98 @@
 // TODO replace with a service to retrieve all objects
 
+// interface IDataType {
+//     name: string,
+//     plural: string,
+//     attributes: any,
+//     options: any,
+// }
+
 export const graph = {
-    name: "Graph",
-    plural: "Graphs",
-    attributes: ["edges"],
-    raw_types: ["dense", "sparse"],
-    raw: {
-        dense: {
-            edges: {
-                structure: "Matrix",
-                element: ["Boolean", "0"]
+    "name": "Graph",
+    "plural": "Graphs",
+    "attributes": {
+        "edges": "Boolean",
+        "vertices": "Boolean"
+    },
+    "options": {
+        "edges": {
+            "weighted": "Boolean",
+            "directed": "Boolean"
+        },
+        "vertices": {
+            "weighted": "Boolean"
+        }
+    },
+    "raw_types": {
+        "dense": "Boolean",
+        "sparse": "Boolean"
+    },
+    "size": {
+        "edges": "integer",
+        "vertices": "integer"
+    },
+    "raw": {
+        "dense": {
+            "edges": {
+                "structure": ["@size.vertices", "@size.vertices"],
+                "element": {
+                    "type": "Number",
+                    "default": "0"
+                }
+            },
+            "vertices": {
+                "structure": ["@size.vertices"],
+                "element": {
+                    "type": "Number",
+                    "default": "0"
+                }
             }
         },
-        sparse: {
-            edges: {
-                structure: "List",
-                element: {
-                    structure: ["Tuple", 2],
-                    element: ["Integer", "Integer"]
+        "sparse": {
+            "edges": {
+                "structure": ["@size.edges"],
+                "element": {
+                    "if": {
+                        "@options.edges.weighted": true
+                    },
+                    "then": {
+                        "structure": [3],
+                        "element":
+                            {
+                                "type": ["Integer", "Integer", "Number"]
+                            }
+                    },
+                    "else": {
+                        "if": {
+                            "@options.edges.weighted": false
+                        },
+                        "then": {
+                            "structure": [2],
+                            "element":
+                                {
+                                    "type": ["Integer", "Integer"]
+                                }
+                        }
+                    }
+                }
+            },
+            "vertices": {
+                "structure": ["@size.vertices"],
+                "element": {
+                    "type": "Number",
+                    "default": "0"
                 }
             }
         }
     }
-};
-
-export const graphVertexWeighted = {
-    inherits: ["Graph"],
-    name: "Vertex Weighted Graph",
-    plural: "Vertex Weighted Graphs",
-    attributes: ["vertices"],
-    parameters: {
-        vertex_weight_type: ["Number", "Integer"]
-    },
-    raw: {
-        dense: {
-            vertices: {
-                structure: "List",
-                element: ["{{vertex_weight_type}}", "Integer"]
-            }
-        },
-        sparse: {
-            vertices: {
-                structure: "List",
-                element: ["{{vertex_weight_type}}", "Integer"]
-            }
-        }
-    }
-};
-
-export const graphEdgeWeighted = {
-    inherits: ["Graph"],
-    name: "Edge Weighted Graph",
-    parameters: {
-        edge_weight_type: ["Number", "Integer"]
-    },
-    raw: {
-        dense: {
-            edges: {
-                element: ["{{edge_weight_type}}", "Integer"]
-            }
-        },
-        sparse: {
-            edges: {
-                element: {
-                    structure: ["Tuple", 3],
-                    element: [
-                        ["Integer", "Integer", "{{edge_weight_type}}"],
-                        [1, 1, "Integer"]
-                    ]
-                }
-            }
-        }
-    }
-};
-
-export const graphVertexWeightedEdgeWeighted = {
-    inherits: ["Vertex Weighted Graph", "Edge Weighted Graph"],
-    name: "Vertex and Edge Weighted Graph",
-    plural: "Vertex and Edge Weighted Graphs"
 };
 
 export class DataDefinitionService {
-    defs = {
+    static defs = {
         "Graph": graph,
-        "Vertex Weighted Graph": graphVertexWeighted,
-        "Edge Weighted Graph": graphEdgeWeighted,
-        "Vertex and Edge Weighted Graph": graphVertexWeightedEdgeWeighted,
     };
 
-    get(name: string) {
+    static get(name: string) {
         return this.defs[name];
     }
 }
