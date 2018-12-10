@@ -15,24 +15,17 @@ export class InputGroup extends Component<any, any> {
 
         for (const key in this.props.items) {
             if (this.props.items.hasOwnProperty(key)) {
-                // if the enable for current input is undefined or false, we don't show it. Go to next iteration.
-                if (this.props.enable && !this.props.enable[key]) {
+                // if the dependsOn for current input is undefined or false, we don't show it. Go to next iteration.
+                if (this.props.dependsOn && !this.props.dependsOn[key]) {
                     continue;
                 }
                 const value = this.props.items[key];
                 console.log('kv', key, value);
                 let inputType;
                 if (isObject(value)) {
-                    console.log('NESTED', value);
                     inputs.push(
                         <div>
-                            {key}:
-                            {/*<input key={key}*/}
-                                   {/*name={key}*/}
-                                   {/*type={inputType}*/}
-                                   {/*onChange={this.props.onChange}/>*/}
-
-                            <InputGroup items={value} onChange={this.props.onChange}/>
+                            {key}: <InputGroup items={value} onChange={this.props.onChange} parentKey={key}/>
                         </div>
                     );
                 } else {
@@ -42,11 +35,18 @@ export class InputGroup extends Component<any, any> {
                         inputType = "text";
                     }
 
+                    let newKey;
+                    if (this.props.parentKey) {
+                        newKey = this.props.parentKey + '-' + key;
+                    } else {
+                        newKey = key;
+                    }
+
                     inputs.push(
                         <div>
                             {key}:
-                            <input key={key}
-                                   name={key}
+                            <input key={newKey}
+                                   name={newKey}
                                    type={inputType}
                                    onChange={this.props.onChange}/>
                         </div>

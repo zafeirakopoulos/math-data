@@ -15,6 +15,7 @@
     "no-unused-variable": false,
     "no-unused-expression": false,
     "no-empty": false,
-    "triple-equals": false
+    "triple-equals": false,
+    "jsx-no-lambda": false
   }
 }

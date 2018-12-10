@@ -1,7 +1,6 @@
 import * as React from "react";
 import {graph} from "../definitions/all-definitions";
 import {InputGroup} from "./input-group";
-import {InputGroupDetailed} from "./input-group-detailed";
 
 export interface IGraphFormState {
     data_type: number,
@@ -41,25 +40,29 @@ export class GraphForm extends React.Component<any, any> {
                 <div className="input-group">
                     Sizes:
                     <InputGroup items={this.state.definition.size}
-                                enable={this.state.attributes}
+                                dependsOn={this.state.attributes}
                                 onChange={this.createHandler('sizes')}/>
                 </div>
 
                 <div className="input-group">
-                    Attribute Details:
+                    Options:
                     <InputGroup items={this.state.definition.options}
                                 onChange={this.createHandler('options')}
                     />
-                    {/*<InputGroupDetailed*/}
-                        {/*items={this.state.definition.attributes}*/}
-                        {/*enable={this.state.attributes}*/}
-                        {/*onChange={this.createHandler('sizes')}/>*/}
                 </div>
+
+                <div className="input-group">
+                    Raw Types:
+                    <InputGroup items={this.state.definition.raw_types}
+                                onChange={this.createHandler('raw_types')}/>
+                </div>
+
+                <button onClick={() => {console.log(this.state)}}>Generate Form</button>
             </div>
         );
     }
 
-    createHandler = (stateName: string, extraValue?: object) => (event: any) => {
+    createHandler = (stateName: string, extraValue?: string) => (event: any) => {
         const target = event.target;
         const value = target.type === 'checkbox' ? target.checked : target.value;
         const name = target.name;
@@ -70,5 +73,5 @@ export class GraphForm extends React.Component<any, any> {
                 [name]: value
             }
         }));
-    }
+    };
 }
