@@ -11,7 +11,7 @@ export class InputGroup extends Component<any, any> {
     render() {
         const inputs = [];
 
-        console.log(this.props);
+        // console.log(this.props);
 
         for (const key in this.props.items) {
             if (this.props.items.hasOwnProperty(key)) {
@@ -20,12 +20,15 @@ export class InputGroup extends Component<any, any> {
                     continue;
                 }
                 const value = this.props.items[key];
-                console.log('kv', key, value);
+                // console.log('kv', key, value);
                 let inputType;
                 if (isObject(value)) {
                     inputs.push(
-                        <div>
-                            {key}: <InputGroup items={value} onChange={this.props.onChange} parentKey={key}/>
+                        <div key={key}>
+                            {key}:
+                            <InputGroup items={value}
+                                        onChange={this.props.onChange}
+                                        parentKey={key}/>
                         </div>
                     );
                 } else {
@@ -35,18 +38,12 @@ export class InputGroup extends Component<any, any> {
                         inputType = "text";
                     }
 
-                    let newKey;
-                    if (this.props.parentKey) {
-                        newKey = this.props.parentKey + '-' + key;
-                    } else {
-                        newKey = key;
-                    }
+                    const newKey = this.props.parentKey ? (this.props.parentKey + '.' + key) : key;
 
                     inputs.push(
-                        <div>
+                        <div key={newKey}>
                             {key}:
-                            <input key={newKey}
-                                   name={newKey}
+                            <input name={newKey}
                                    type={inputType}
                                    onChange={this.props.onChange}/>
                         </div>

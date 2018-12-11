@@ -1,6 +1,8 @@
 import * as React from "react";
 import {graph} from "../definitions/all-definitions";
+import {convertToHierarcy} from "../util/helpers";
 import {InputGroup} from "./input-group";
+import MathObject from "./math-object";
 
 export interface IGraphFormState {
     data_type: number,
@@ -21,14 +23,22 @@ export class GraphForm extends React.Component<any, any> {
             attributes: {},
             options: {},
             raw_types: {},
-            sizes: {},
-            raw: null
+            size: {},
+            showDataTable: false
         }
 
         // console.log(this.state.definition.attributes);
     }
 
     render() {
+        const {
+            attributes,
+            options,
+            raw_types,
+            size,
+            raw,
+        } = this.state;
+
         return (
             <div>
                 <div className="input-group">
@@ -41,7 +51,7 @@ export class GraphForm extends React.Component<any, any> {
                     Sizes:
                     <InputGroup items={this.state.definition.size}
                                 dependsOn={this.state.attributes}
-                                onChange={this.createHandler('sizes')}/>
+                                onChange={this.createHandler('size')}/>
                 </div>
 
                 <div className="input-group">
@@ -57,10 +67,26 @@ export class GraphForm extends React.Component<any, any> {
                                 onChange={this.createHandler('raw_types')}/>
                 </div>
 
-                <button onClick={() => {console.log(this.state)}}>Generate Form</button>
+                <button onClick={this.toggleDataTable}>Toggle Data Table</button>
+
+                {
+                    this.state.showDataTable &&
+                    <MathObject attributes={attributes}
+                                size={size}
+                                options={convertToHierarcy(options)}
+                                raw_types={raw_types}
+                                raw={this.state.definition.raw}
+                                onChange={this.onDataChange}/>
+                }
             </div>
         );
     }
+
+    toggleDataTable = (event: any) => {
+        this.setState({
+            showDataTable: !this.state.showDataTable
+        })
+    };
 
     createHandler = (stateName: string, extraValue?: string) => (event: any) => {
         const target = event.target;
@@ -73,5 +99,9 @@ export class GraphForm extends React.Component<any, any> {
                 [name]: value
             }
         }));
+    };
+
+    onDataChange = (event: any) => {
+        console.log('onDataChange', event);
     };
 }
