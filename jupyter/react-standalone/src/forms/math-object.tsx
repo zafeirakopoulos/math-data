@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
-import {flattenObject} from "../util/helpers";
+import {countProperties, flattenObject} from "../util/helpers";
+import {InputElement} from "./input-element";
 
 class MathObject extends Component<any, any> {
 
@@ -21,29 +22,58 @@ class MathObject extends Component<any, any> {
             raw,
         } = this.props;
 
+        // console.log('size: ', size);
+
         // loop over this.prop.raw. If current item is true in this.prop.raw_types that's our type.
         let type = null;
         for (const key of Object.keys(raw_types)) {
-            // console.log(`${key}${raw_types[key]} ${raw[key]} ${raw}`)
-            // console.log(key, raw_types[key], raw[key], raw);
             if (raw[key]) {
                 type = key;
             }
         }
-        const structures = this.parseStructure(raw[type]);
-        console.log(structures);
-        // loop over this.props.attributes. If value is true, we need to parse "structure" and "element".
-        for (const key of Object.keys(attributes)) {
-            if (attributes[key]) {
 
+        // Representation of the object
+        const repr = [];
+
+        // Structure defines this objects representation
+        const structures = this.parseStructure(raw[type]);
+        const element = this.parseElement(raw[type]);
+        console.log(element);
+        console.log(structures);
+        for (const key of Object.keys(structures)) {
+            // How many dimensions this structure has
+            const description = (<caption>{type} - {key}</caption>);
+            const dimensionCount = structures[key].length;
+            const firstDimension = structures[key][0];
+            const currentElement = element[key];
+            const vector = [];
+            for (let i = 0; i < firstDimension; ++i) {
+                if (dimensionCount == 1) { // This is a vector
+                    vector.push(<tr><td>{currentElement}</td></tr>);
+                } else if (dimensionCount == 2) { // This is a matrix
+                    const secondDimension = structures[key][1];
+                    const innerElems = [];
+                    for (let j = 0; j < secondDimension; ++j) {
+                        innerElems.push(<td>{currentElement}</td>);
+                    }
+                    vector.push(<tr>{innerElems}</tr>);
+                }
             }
+
+            repr.push(<table>{description}{vector}</table>);
         }
 
-        return (
-            <div>
-                mathobj
-            </div>
-        );
+
+        // console.log(structures);
+
+        // loop over this.props.attributes. If value is true, we need to parse "structure" and "element".
+        // for (const key of Object.keys(attributes)) {
+        //     if (attributes[key]) {
+        //
+        //     }
+        // }
+
+        return (<div>{repr}</div>);
     }
 
     // Checks if a string contains a variable.
@@ -52,7 +82,8 @@ class MathObject extends Component<any, any> {
     variableFilter = (input: string | number) => {
         if (typeof input === 'string' && input.startsWith('@')) {
             const withoutAtSymbol = input.substring(1);
-            return this.state.flatProps[withoutAtSymbol];
+            const asStr = this.state.flatProps[withoutAtSymbol];
+            return Number(asStr);
         }
 
         return input;
@@ -75,20 +106,31 @@ class MathObject extends Component<any, any> {
 
         return objs;
     };
-}
 
-/*
-We take option as:
-{
-  "edges.weighted" = true,
-  "edges.directed" = true,
-  "vertices.weighted" = true
-}
+    parseElement = (hasElement: object) => {
+        const objs = {};
+        for (const key of Object.keys(hasElement)) {
+            if (hasElement[key] && this.props.attributes.hasOwnProperty(key) && this.props.attributes[key] === true) {
+                const element = hasElement[key].element;
+                let conditionResolved = null;
 
-so we want to be able to
-*/
-function findInOption(key: string) {
+                if (element.hasOwnProperty('type')) {
+                    if (element.type == "Number") {
+                        const defaultValue = element.default ? element.defaultValue : 0;
+                        objs[key] = (<InputElement defaultValue={defaultValue}/>);
+                    }
+                } else if (element.hasOwnProperty('if')) {
+                    const condition = Object.keys(element.if)[0];
+                    conditionResolved = this.variableFilter(condition);
+                    const defaultValue = element.default ? element.defaultValue : 0;
+                    const elems = element.then.element.type;
+                    objs[key] = elems.map((val, index) => <InputElement key={key+'-'+index} defaultValue={defaultValue} constraint={val}/>);
+                }
+            }
+        }
 
+        return objs;
+    };
 }
 
 export default MathObject;

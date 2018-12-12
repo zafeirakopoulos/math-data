@@ -80,3 +80,7 @@ export function flattenObject(ob) {
     }
     return toReturn;
 }
+
+export function countProperties(obj) {
+    return Object.keys(obj).length;
+}

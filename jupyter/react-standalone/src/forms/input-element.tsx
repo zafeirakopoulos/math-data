@@ -29,7 +29,7 @@ export class InputElement extends React.Component<any, IInputElementState> {
     render() {
         return (<input type="text"
                        pattern="[0-9]*"
-                       value={this.props.value}
+                       defaultValue={this.props.value}
                        onChange={this.onChange}
                        className="matrixInput"
         />);
