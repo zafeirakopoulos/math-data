@@ -50,7 +50,7 @@ def add_data_devwg(file_name, raw_types):
             n, nn, vw = each_line.split()
             vertices_list[int(nn) - 1] = int(vw)
 		
-    with open(path_def+"general_graph.def") as json_file:
+    with open(path_def+"graph.def") as json_file:
         data = json.load(json_file)
         data = setName(data, "Directed Edge and Vertex Weighted Graph")
         data = setPlural(data, "Directed Edge and Vertex Weighted Graphs")
@@ -124,7 +124,7 @@ def add_data_evwg(file_name, raw_types):
             n, nn, vw = each_line.split()
             vertices_list[int(nn) - 1] = int(vw)
 		
-    with open(path_def+"general_graph.def") as json_file:
+    with open(path_def+"graph.def") as json_file:
         data = json.load(json_file)
         data = setName(data, "Edge and Vertex Weighted Graph")
         data = setPlural(data, "Edge and Vertex Weighted Graphs")
@@ -197,7 +197,7 @@ def add_data_dvwg(file_name, raw_types):
             n, nn, vw = each_line.split()
             vertices_list[int(nn) - 1] = int(vw)
 		
-    with open(path_def+"general_graph.def") as json_file:
+    with open(path_def+"graph.def") as json_file:
         data = json.load(json_file)
         data = setName(data, "Directed Vertex Weighted Graph")
         data = setPlural(data, "Directed Vertex Weighted Graphs")
@@ -264,7 +264,7 @@ def add_data_dewg(file_name, raw_types):
             graph_list[counter][2] = int(values[3])
             counter += 1
 
-    with open(path_def+"general_graph.def") as json_file:
+    with open(path_def+"graph.def") as json_file:
         data = json.load(json_file)
         data = setName(data, "Directed Edge Weighted Graph")
         data = setPlural(data, "Directed Edge Weighted Graphs")
@@ -336,7 +336,7 @@ def add_data_vwg(file_name, raw_types):
             n, nn, vw = each_line.split()
             vertices_list[int(nn) - 1] = int(vw)
 		
-    with open(path_def+"general_graph.def") as json_file:
+    with open(path_def+"graph.def") as json_file:
         data = json.load(json_file)
         data = setName(data, "Vertex Weighted Graph")
         data = setPlural(data, "Vertex Weighted Graphs")
@@ -400,7 +400,7 @@ def add_data_ewg(file_name, raw_types):
             graph_list[counter][2] = int(values[3])
             counter += 1
 
-    with open(path_def+"general_graph.def") as json_file:
+    with open(path_def+"graph.def") as json_file:
         data = json.load(json_file)
         data = setName(data, "Edge Weighted Graph")
         data = setPlural(data, "Edge Weighted Graphs")
@@ -467,7 +467,7 @@ def add_data_dg(file_name, raw_types):
             graph_list[counter][1] = int(values[2])
             counter += 1
 
-    with open(path_def+"general_graph.def") as json_file:
+    with open(path_def+"graph.def") as json_file:
         data = json.load(json_file)
 	data = setName(data, "Directed Graph")
         data = setPlural(data, "Directed Graphs")
@@ -531,7 +531,7 @@ def add_data_g(file_name, raw_types):
             graph_list[counter][1] = int(values[2])
             counter += 1
 
-    with open(path_def+"general_graph.def") as json_file:
+    with open(path_def+"graph.def") as json_file:
         data = json.load(json_file)
 	data = setName(data, "Graph")
         data = setPlural(data, "Graphs")
@@ -687,7 +687,7 @@ main("GEOM120a.col")
 main("GEOM120b.col")'''
 
 main("myciel5g.col")
-main("myciel5gb.col")
+'''main("myciel5gb.col")
 main("myciel6g.col")
 main("myciel6gb.col")
 main("myciel7g.col")
@@ -733,7 +733,7 @@ main("R100_5g.col")
 main("R100_5gb.col")
 
 main("R100_9g.col")
-main("R100_9gb.col")
+main("R100_9gb.col")'''
 
 
 # to try any function
