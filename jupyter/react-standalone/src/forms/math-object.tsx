@@ -49,12 +49,12 @@ class MathObject extends Component<any, any> {
             const vector = [];
             for (let i = 0; i < firstDimension; ++i) {
                 if (dimensionCount == 1) { // This is a vector
-                    vector.push(<tr><td>{currentElement}</td></tr>);
+                    vector.push(<tr><td>{currentElement(i)}</td></tr>);
                 } else if (dimensionCount == 2) { // This is a matrix
                     const secondDimension = structures[key][1];
                     const innerElems = [];
                     for (let j = 0; j < secondDimension; ++j) {
-                        innerElems.push(<td>{currentElement}</td>);
+                        innerElems.push(<td>{currentElement(i, j)}</td>);
                     }
                     vector.push(<tr>{innerElems}</tr>);
                 }
@@ -117,14 +117,19 @@ class MathObject extends Component<any, any> {
                 if (element.hasOwnProperty('type')) {
                     if (element.type == "Number") {
                         const defaultValue = element.default ? element.defaultValue : 0;
-                        objs[key] = (<InputElement defaultValue={defaultValue}/>);
+                        objs[key] = (row) => (<InputElement defaultValue={defaultValue} onChange={this.props.onChange} row={row} col={0}/>);
                     }
                 } else if (element.hasOwnProperty('if')) {
                     const condition = Object.keys(element.if)[0];
                     conditionResolved = this.variableFilter(condition);
                     const defaultValue = element.default ? element.defaultValue : 0;
                     const elems = element.then.element.type;
-                    objs[key] = elems.map((val, index) => <InputElement key={key+'-'+index} defaultValue={defaultValue} constraint={val}/>);
+                    objs[key] = elems.map((val, index) => {
+                        return (row, col) => {
+                            console.log('row, col: ', row, col);
+                            return (<InputElement key={key+'-'+index} defaultValue={defaultValue} constraint={val} onChange={this.props.onChange} row={row} col={col}/>);
+                        }
+                    });
                 }
             }
         }

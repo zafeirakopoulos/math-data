@@ -1,5 +1,5 @@
 import * as React from "react";
-import {graph} from "../definitions/all-definitions";
+import {graph, polyhedron} from "../definitions/all-definitions";
 import {convertToHierarcy} from "../util/helpers";
 import {InputGroup} from "./input-group";
 import MathObject from "./math-object";
@@ -24,7 +24,8 @@ export class GraphForm extends React.Component<any, any> {
             options: {},
             raw_types: {},
             size: {},
-            showDataTable: false
+            showDataTable: false,
+            data: [],
         }
 
         // console.log(this.state.definition.attributes);
@@ -101,7 +102,24 @@ export class GraphForm extends React.Component<any, any> {
         }));
     };
 
-    onDataChange = (event: any) => {
+    onDataChange = (row, col) => (event: any) => {
+        const target = event.target;
+        const value = target.value;
+
+        console.log('rc', row, col);
+
+        const index = this.state.data.indexOf(val => val.row === row && val.col === col);
+        if (index >= 0) {
+            const copy = this.state.data[index];
+            copy.value = value;
+            this.setState({
+                data: copy
+            })
+        } else {
+            this.setState({
+                data: this.state.data.concat({'row': row, 'col': col, 'value': value})
+            })
+        }
         console.log('onDataChange', event);
     };
 }
