@@ -1,25 +1,17 @@
+import _ from 'lodash';
 import * as React from "react";
 import {graph, polyhedron} from "../definitions/all-definitions";
-import {convertToHierarcy} from "../util/helpers";
+import {convertToHierarchy} from "../util/helpers";
 import {InputGroup} from "./input-group";
 import MathObject from "./math-object";
 
-export interface IGraphFormState {
-    data_type: number,
-    raw_type: number,
-    input_elements: JSX.Element,
-    json_output: object,
-    definition: object
-}
-
 export class GraphForm extends React.Component<any, any> {
-    dataSource = null;
+    private definition: any;
 
     constructor(props: any) {
         super(props);
-
+        this.definition = graph;
         this.state = {
-            definition: graph,
             attributes: {},
             options: {},
             raw_types: {},
@@ -28,7 +20,7 @@ export class GraphForm extends React.Component<any, any> {
             data: [],
         }
 
-        // console.log(this.state.definition.attributes);
+        // console.log(this.definition.attributes);
     }
 
     render() {
@@ -42,29 +34,50 @@ export class GraphForm extends React.Component<any, any> {
 
         return (
             <div>
+                <button onClick={() => {
+                    this.setState({
+                        attributes: {
+                            edges: true,
+                            vertices: true,
+                        },
+                        size: {
+                            edges: 5,
+                            vertices: 5,
+                        },
+                        options: {
+                            'edges.weighted': true,
+                        },
+                        raw_types: {
+                            dense: true,
+                        }
+                    })
+                }}>
+                    Demo Settings
+                </button>
+                {this.state.error && this.state.showDataTable && <div>Error!!</div>}
                 <div className="input-group">
                     Attributes:
-                    <InputGroup items={this.state.definition.attributes}
+                    <InputGroup items={this.definition.attributes}
                                 onChange={this.createHandler('attributes')}/>
                 </div>
 
                 <div className="input-group">
                     Sizes:
-                    <InputGroup items={this.state.definition.size}
+                    <InputGroup items={this.definition.size}
                                 dependsOn={this.state.attributes}
                                 onChange={this.createHandler('size')}/>
                 </div>
 
                 <div className="input-group">
                     Options:
-                    <InputGroup items={this.state.definition.options}
+                    <InputGroup items={this.definition.options}
                                 onChange={this.createHandler('options')}
                     />
                 </div>
 
                 <div className="input-group">
                     Raw Types:
-                    <InputGroup items={this.state.definition.raw_types}
+                    <InputGroup items={this.definition.raw_types}
                                 onChange={this.createHandler('raw_types')}/>
                 </div>
 
@@ -72,12 +85,15 @@ export class GraphForm extends React.Component<any, any> {
 
                 {
                     this.state.showDataTable &&
-                    <MathObject attributes={attributes}
-                                size={size}
-                                options={convertToHierarcy(options)}
-                                raw_types={raw_types}
-                                raw={this.state.definition.raw}
-                                onChange={this.onDataChange}/>
+                    this.checkFormComplete() &&
+                    <MathObject
+                        definition={this.definition}
+                        attributes={attributes}
+                        size={size}
+                        options={convertToHierarchy(options)}
+                        raw_types={raw_types}
+                        raw={this.definition.raw}
+                        onChange={this.onDataChange}/>
                 }
             </div>
         );
@@ -85,9 +101,18 @@ export class GraphForm extends React.Component<any, any> {
 
     toggleDataTable = (event: any) => {
         this.setState({
-            showDataTable: !this.state.showDataTable
+            showDataTable: !this.state.showDataTable,
+            complete: this.checkFormComplete()
         })
     };
+
+    checkFormComplete() {
+        if (!_.isEmpty(this.state.attributes) && !_.isEmpty(this.state.size) && !_.isEmpty(this.state.options) && !_.isEmpty(this.state.raw_types)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 
     createHandler = (stateName: string, extraValue?: string) => (event: any) => {
         const target = event.target;

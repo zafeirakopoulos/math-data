@@ -1,8 +1,58 @@
 import _ from 'lodash';
 
+/**
+ * Author: M. Oguzhan Ataman
+ * Description:
+ * This class is for parsing "MathData" objects.
+ * Rules for parsing these objects are defined as "MathDataLanguage"
+ *
+ * This class designed to return UI components after parsing.
+ *
+ * We don't store any state except object definition. So we can give new definition by calling setObjDefinition and
+ * call parse function on it.
+ */
 export class MathObjectParser {
-    constructor(objDefinition) {
-        this.objDefinition = objDefinition;
+
+    /**
+     * Sets object definition
+     *
+     * @param objDef The object definition. It should have at least these fields:
+     *               "attributes", "options", "raw_types", "size", "raw"
+     *               This class expects to filled out fields, for example:
+     *               for graphs "attributes.edges": "Boolean", so this class expects a boolean value from user.
+     *               All fields except "raw" expected to filled by user.
+     */
+    setObjDefinition(objDef) {
+        const hasAllFields = ['attributes', 'options', 'raw_types', 'size', 'raw'].every(elem => _.has(objDef, elem));
+        if (hasAllFields) {
+            this.objDefinition = objDef;
+            return true;
+        } else {
+            console.log('given objDef doesnt have some attributes required: ', objDef);
+            return false;
+        }
+    }
+
+    /**
+     * Parse a mathematical object
+     *
+     * @param parsePath Where to parse. We can partially parse.
+     *                  By default it parses "raw" field which contains structure and element pairs.
+     * @returns {Array} Array of UI components
+     */
+    parse(parsePath = 'raw.dense') {
+        // const objectsToParse = _.at(this.objDefinition, parsePath)[0];
+        // return _.map(objectsToParse, obj => {
+        //     console.log('obj', obj);
+        //     this.parseStructureElementPair(obj);
+        // });
+
+        return _.flatMap(this.objDefinition.raw_types, (val, key) =>
+            _.map(this.objDefinition.raw[key], (objToParse) =>
+                this.parseStructureElementPair(objToParse))
+        )
+
+        // return this.parseStructureElementPair(this.objDefinition.raw.dense.edges);
     }
 
     static hasSEPair(obj) {
@@ -14,7 +64,7 @@ export class MathObjectParser {
     }
 
     static elementComponent(type, index, ...options) {
-        return `<element type="${type}" index="${index}" />`;
+        return `<input type="${type}" index="${index}" />`;
     }
 
     /**
@@ -23,7 +73,7 @@ export class MathObjectParser {
      * @param {string[]|string|number} arg Parameter we want to convert to size.
      * @returns {number|number[]}
      */
-    sizeParser(arg) {
+    variableParser(arg) {
         if (_.isArray(arg)) {
             return arg.map(currentSize => {
                 return _.toNumber(
@@ -44,18 +94,7 @@ export class MathObjectParser {
             return arg;
         }
 
-        throw new Error("sizeParser: can't parse this argument: " + arg);
-    }
-
-    /**
-     * Parse a mathematical object
-     *
-     * @param {Object} objDef Object definition to parse.
-     * @param {string[]} attrArr List of attributes that defines this object's structure.
-     * @returns {Array} Array of UI components
-     */
-    parseObject(attrArr) {
-        return this.parseStructureElementPair(_.at(this.objDefinition, attrArr), []);
+        throw new Error("variableParser: can't parse this argument: " + arg);
     }
 
     /**
@@ -67,10 +106,10 @@ export class MathObjectParser {
     parseConditional(obj) {
         const ifStmt = obj.if;
 
-        const conditionResult = _.map(ifStmt, (boolean, expression) => {
+        const conditionResult = _.map(ifStmt, (booleanExpr, expression) => {
             const booleanExpression = _
                 .at(this.objDefinition, expression.slice(1))[0] === 'true';
-            return booleanExpression === boolean;
+            return booleanExpression === booleanExpr;
         })[0];
 
         if (conditionResult) {
@@ -89,10 +128,11 @@ export class MathObjectParser {
      * Parse a single structure & element pair, create necessary UI components.
      *
      * @param {Object} elem Object that contains structure and element
-     * @param {Array} prevSizes If this is a recursive structure we need to hold previous sizes to "nest" and "index" UI components
+     * @param {Array} prevSizes If this is a recursive structure we need to hold previous sizes to "nest" and "index"
+     *                UI components. By default it is empty array.
      * @returns {*} Array of UI components
      */
-    parseStructureElementPair(elem, prevSizes) {
+    parseStructureElementPair(elem, prevSizes = []) {
         if (typeof elem !== 'object') {
             return elem;
         } else if (MathObjectParser.hasSEPair(elem)) {
@@ -138,16 +178,15 @@ export class MathObjectParser {
      */
     elementLoop(element, sizeArr, parentSizes) {
         const type = element.type;
-
-        const dimension = this.sizeParser(sizeArr[0]);
-        // console.log('dim', dimension);
+        const dimension = this.variableParser(sizeArr[0]);
 
         const nextSizeArr = sizeArr.slice(1);
         const result = [];
 
+        let i;
         // element.type is array
         if (_.isArray(type)) {
-            for (var i = 0; i < dimension; i++) {
+            for (i = 0; i < dimension; i++) {
                 if (sizeArr.length > 1) {
                     result.push(this.elementLoop(element, nextSizeArr, [...parentSizes, i]));
                 } else {
@@ -155,7 +194,7 @@ export class MathObjectParser {
                 }
             }
         } else {
-            for (var i = 0; i < dimension; i++) {
+            for (i = 0; i < dimension; i++) {
                 if (sizeArr.length > 1) {
                     result.push(this.elementLoop(element, nextSizeArr, [...parentSizes, i]));
                 } else {

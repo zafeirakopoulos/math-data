@@ -1,9 +1,12 @@
+// import _ from 'lodash';
+// import {graph} from "../definitions/all-definitions";
 import React, {Component} from 'react';
-import {countProperties, flattenObject} from "../util/helpers";
-import {InputElement} from "./input-element";
+import {MathObjectParser} from '../parser/MathObjectParser';
+import {flattenObject} from "../util/helpers";
 
 class MathObject extends Component<any, any> {
-
+    private parser: MathObjectParser;
+    private parsed: any;
 
     constructor(props) {
         super(props);
@@ -12,6 +15,16 @@ class MathObject extends Component<any, any> {
         }
     }
 
+    componentDidMount() {
+    }
+
+    // componentDidUpdate(prevProps) {
+    //     console.log('componentDidUpdate', this.props);
+    //     if (!_.isEqual(this.props, prevProps)) {
+    //         this.parser.setObjDefinition(this.props.raw);
+    //         this.parsed = this.parser.parse();
+    //     }
+    // }
 
     render() {
         const {
@@ -22,120 +35,17 @@ class MathObject extends Component<any, any> {
             raw,
         } = this.props;
 
-        // console.log('size: ', size);
-
-        // loop over this.prop.raw. If current item is true in this.prop.raw_types that's our type.
-        let type = null;
-        for (const key of Object.keys(raw_types)) {
-            if (raw[key]) {
-                type = key;
-            }
+        const parser = new MathObjectParser();
+        const setDefinition = parser.setObjDefinition(this.props);
+        if (!setDefinition) {
+            console.log(`can't set definition, parser:`, parser);
         }
+        const result = parser.parse('raw.dense');
+        console.log('result', result);
+        // var sparseVert = this.parser.parse();
 
-        // Representation of the object
-        const repr = [];
-
-        // Structure defines this objects representation
-        const structures = this.parseStructure(raw[type]);
-        const element = this.parseElement(raw[type]);
-        console.log(element);
-        console.log(structures);
-        for (const key of Object.keys(structures)) {
-            // How many dimensions this structure has
-            const description = (<caption>{type} - {key}</caption>);
-            const dimensionCount = structures[key].length;
-            const firstDimension = structures[key][0];
-            const currentElement = element[key];
-            const vector = [];
-            for (let i = 0; i < firstDimension; ++i) {
-                if (dimensionCount == 1) { // This is a vector
-                    vector.push(<tr><td>{currentElement(i)}</td></tr>);
-                } else if (dimensionCount == 2) { // This is a matrix
-                    const secondDimension = structures[key][1];
-                    const innerElems = [];
-                    for (let j = 0; j < secondDimension; ++j) {
-                        innerElems.push(<td>{currentElement(i, j)}</td>);
-                    }
-                    vector.push(<tr>{innerElems}</tr>);
-                }
-            }
-
-            repr.push(<table>{description}{vector}</table>);
-        }
-
-
-        // console.log(structures);
-
-        // loop over this.props.attributes. If value is true, we need to parse "structure" and "element".
-        // for (const key of Object.keys(attributes)) {
-        //     if (attributes[key]) {
-        //
-        //     }
-        // }
-
-        return (<div>{repr}</div>);
+        return "";
     }
-
-    // Checks if a string contains a variable.
-    // For example in structure if we got @size.vertices
-    // We need to include this.props.size.vertices
-    variableFilter = (input: string | number) => {
-        if (typeof input === 'string' && input.startsWith('@')) {
-            const withoutAtSymbol = input.substring(1);
-            const asStr = this.state.flatProps[withoutAtSymbol];
-            return Number(asStr);
-        }
-
-        return input;
-    };
-
-    // parse (structure, element) pairs
-    parseStructure = (hasStructure: object) => {
-        const objs = {};
-        for (const key of Object.keys(hasStructure)) {
-            if (hasStructure[key] && this.props.attributes.hasOwnProperty(key) && this.props.attributes[key] === true) {
-                const structure: string[] = hasStructure[key].structure;
-                // console.log('structure', structure);
-                const map = structure.map(this.variableFilter);
-                // console.log('parseStructure', key, map);
-                objs[key] = map;
-            }
-        }
-
-        // TODO recurse if hasStructure.element has structure inside
-
-        return objs;
-    };
-
-    parseElement = (hasElement: object) => {
-        const objs = {};
-        for (const key of Object.keys(hasElement)) {
-            if (hasElement[key] && this.props.attributes.hasOwnProperty(key) && this.props.attributes[key] === true) {
-                const element = hasElement[key].element;
-                let conditionResolved = null;
-
-                if (element.hasOwnProperty('type')) {
-                    if (element.type == "Number") {
-                        const defaultValue = element.default ? element.defaultValue : 0;
-                        objs[key] = (row) => (<InputElement defaultValue={defaultValue} onChange={this.props.onChange} row={row} col={0}/>);
-                    }
-                } else if (element.hasOwnProperty('if')) {
-                    const condition = Object.keys(element.if)[0];
-                    conditionResolved = this.variableFilter(condition);
-                    const defaultValue = element.default ? element.defaultValue : 0;
-                    const elems = element.then.element.type;
-                    objs[key] = elems.map((val, index) => {
-                        return (row, col) => {
-                            console.log('row, col: ', row, col);
-                            return (<InputElement key={key+'-'+index} defaultValue={defaultValue} constraint={val} onChange={this.props.onChange} row={row} col={col}/>);
-                        }
-                    });
-                }
-            }
-        }
-
-        return objs;
-    };
 }
 
 export default MathObject;

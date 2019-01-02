@@ -74,9 +74,124 @@ export const graph = {
                     "default": "0"
                 }
             }
-        }
+        },
+
     }
 };
+
+export const polyhedron = {
+    "name": "Polyhedron",
+    "plural": "Polyhedra",
+    "attributes": {
+        "vertices": "Boolean",
+        "rays": "Boolean",
+        "lines": "Boolean",
+        "inequalities": "Boolean",
+        "equations": "Boolean"
+    },
+    "options": {
+        "ambient_dimension": "Integer"
+    },
+    "raw_types": {
+        "hrep": "Boolean",
+        "vrep": "Boolean"
+    },
+    "size": {
+        "ambient_dimension": "@options.ambient_dimension",
+        "vertices": "Integer",
+        "rays": "Integer",
+        "lines": "Integer",
+        "inequalities": "Integer",
+        "equations": "Integer"
+    },
+    "raw": {
+        "hrep": {
+            "inequalities": {
+
+                "structure": [2],
+                "element": {
+                    "type": [
+                        {
+                            "structure": ["@size.inequalities", "@size.ambient_dimension"],
+                            "element": {
+                                "type": "Number",
+                                "default": "0"
+                            }
+                        },
+                        {
+                            "structure": ["@size.inequalities"],
+                            "element": {
+                                "type": "Number",
+                                "default": "0"
+                            }
+                        }
+
+                    ]
+                }
+            },
+            "equations": {
+
+                "structure": [2],
+                "element": {
+                    "type": [
+                        {
+                            "structure": ["@size.inequalities", "@size.ambient_dimension"],
+                            "element": {
+                                "type": "Number",
+                                "default": "0"
+                            }
+                        },
+                        {
+                            "structure": ["@size.inequalities"],
+                            "element": {
+                                "type": "Number",
+                                "default": "0"
+                            }
+                        }
+
+                    ]
+                }
+            }
+        },
+        "vrep": {
+            "vertices": {
+                "structure": ["@size.vertices"],
+                "element": {
+
+                    "structure": ["@size.ambient_dimension"],
+                    "element":
+                        {
+                            "type": "Number"
+                        }
+
+                }
+            },
+            "rays": {
+                "structure": ["@size.rays"],
+                "element": {
+                    "structure": ["@size.ambient_dimension"],
+                    "element": {
+                        "type": "Number"
+                    }
+                }
+            },
+            "lines": {
+                "structure": ["@size.lines"],
+                "element": {
+                    "structure": ["@size.ambient_dimension"],
+                    "element": {
+                        "type": "Number"
+                    }
+                }
+            }
+        }
+    },
+    "features": {
+        "bounded": "Boolean",
+        "dimension": "Integer"
+    }
+};
+
 
 export class DataDefinitionService {
     static defs = {

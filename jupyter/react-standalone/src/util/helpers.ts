@@ -5,8 +5,8 @@ export function isArray(a: any) {
     return (!!a) && (a.constructor === Array);
 }
 
-export function isObject(a: any) {
-    return (!!a) && (a.constructor === Object);
+export function isObject(value: any) {
+    return value !== null && typeof value === 'object';
 }
 
 export function resolveInheritence(defName: string) {
@@ -46,7 +46,7 @@ function eachKeyValue(obj, fun) {
     }
 }
 
-export function convertToHierarcy(obj) {
+export function convertToHierarchy(obj) {
     const result = {};
     eachKeyValue(obj, (namespace, value) => {
         const parts = namespace.split(".");
