@@ -38,6 +38,7 @@ export class GraphForm extends React.Component<any, any> {
 
         return (
             <div className="container">
+                <h1>Math Data Interface - Definition Generation</h1>
                 {/*<button onClick={() => {*/}
                     {/*this.setState({*/}
                         {/*selectedDefinition: graph,*/}
