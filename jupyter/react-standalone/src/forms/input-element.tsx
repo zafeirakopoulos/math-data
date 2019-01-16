@@ -5,21 +5,21 @@
 import * as React from "react";
 import { ValueType } from "../definitions/types";
 
-interface IInputElementProps {
-    elementType: string,
-    value: ValueType,
-    onChange: (row: number, col: number, newVal: any) => void,
-    row: number,
-    col: number,
-}
-
-interface IInputElementState {
-    valid: boolean
-}
+// interface IInputElementProps {
+//     elementType: string,
+//     value: ValueType,
+//     onChange: (row: number, col: number, newVal: any) => void,
+//     row: number,
+//     col: number,
+// }
+//
+// interface IInputElementState {
+//     valid: boolean
+// }
 
 // Usage: <InputElement elementType=boolean|number|... value=value />
-export class InputElement extends React.Component<any, IInputElementState> {
-    constructor(props: IInputElementProps) {
+export class InputElement extends React.Component<any, any> {
+    constructor(props) {
         super(props);
         this.state = {
             valid: true
@@ -27,10 +27,11 @@ export class InputElement extends React.Component<any, IInputElementState> {
     }
 
     render() {
-        return (<input type="text"
+        return (<input type={this.props.type}
+                       name={this.props.name}
+                       onChange={this.props.onChange}
                        pattern="[0-9]*"
-                       defaultValue={this.props.value}
-                       onChange={this.props.onChange(this.props.row, this.props.col)}
+                       // onChange={this.props.onChange(this.props.row, this.props.col)}
                        className="matrixInput"
         />);
     }

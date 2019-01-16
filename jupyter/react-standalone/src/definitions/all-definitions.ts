@@ -112,7 +112,7 @@ export const polyhedron = {
                 "element": {
                     "type": [
                         {
-                            "structure": ["@size.inequalities", "@size.ambient_dimension"],
+                            "structure": ["@size.inequalities", "@options.ambient_dimension"],
                             "element": {
                                 "type": "Number",
                                 "default": "0"
@@ -135,7 +135,7 @@ export const polyhedron = {
                 "element": {
                     "type": [
                         {
-                            "structure": ["@size.inequalities", "@size.ambient_dimension"],
+                            "structure": ["@size.inequalities", "@options.ambient_dimension"],
                             "element": {
                                 "type": "Number",
                                 "default": "0"
@@ -158,7 +158,7 @@ export const polyhedron = {
                 "structure": ["@size.vertices"],
                 "element": {
 
-                    "structure": ["@size.ambient_dimension"],
+                    "structure": ["@options.ambient_dimension"],
                     "element":
                         {
                             "type": "Number"
@@ -169,7 +169,7 @@ export const polyhedron = {
             "rays": {
                 "structure": ["@size.rays"],
                 "element": {
-                    "structure": ["@size.ambient_dimension"],
+                    "structure": ["@options.ambient_dimension"],
                     "element": {
                         "type": "Number"
                     }
@@ -178,7 +178,7 @@ export const polyhedron = {
             "lines": {
                 "structure": ["@size.lines"],
                 "element": {
-                    "structure": ["@size.ambient_dimension"],
+                    "structure": ["@options.ambient_dimension"],
                     "element": {
                         "type": "Number"
                     }

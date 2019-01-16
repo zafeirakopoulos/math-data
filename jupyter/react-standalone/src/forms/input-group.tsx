@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
-import {Simulate} from "react-dom/test-utils";
-import input = Simulate.input;
 import {isObject} from "../util/helpers";
+import {InputElement} from "./input-element";
 
 export class InputGroup extends Component<any, any> {
     constructor(props) {
@@ -42,10 +41,11 @@ export class InputGroup extends Component<any, any> {
 
                     inputs.push(
                         <div key={newKey}>
-                            {key}:
-                            <input name={newKey}
-                                   type={inputType}
-                                   onChange={this.props.onChange}/>
+                            <div className="input-group-name">{key}:</div>
+                            <InputElement
+                                name={newKey}
+                                type={inputType}
+                                onChange={this.props.onChange}/>
                         </div>
                     );
                 }
@@ -55,6 +55,20 @@ export class InputGroup extends Component<any, any> {
             // checkboxes.push(<input type="checkbox" value={""} onChange={this.props.handleChange}/>);
         }
 
-        return (<div>{inputs}</div>);
+        return (<div className={this.props.className}>{inputs}</div>);
+        // return this.withLayout(inputs);
+    }
+
+    withLayout(inputs) {
+        return <div>
+            <fieldset className="form-group">
+                <div className="row">
+                    <legend className="col-form-label col-sm-2 pt-0">Radios</legend>
+                    <div className="col-sm-10">
+                        {inputs}
+                    </div>
+                </div>
+            </fieldset>
+        </div>;
     }
 }
