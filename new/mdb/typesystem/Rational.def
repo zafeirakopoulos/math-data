@@ -1,0 +1,5 @@
+{
+    "inherits" : ["AlgebraicNumber"],
+    "name" : "Rational",
+    "plural" : "Rationals"
+}

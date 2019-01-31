@@ -1,0 +1,5 @@
+{
+    "name" : "Exact",
+    "description" : "Arithmetic is always exact"
+    "properties" : ["exact arithmetic"]
+}

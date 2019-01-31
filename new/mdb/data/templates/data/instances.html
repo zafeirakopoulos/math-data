@@ -1,0 +1,5 @@
+<ul class='list-group'>
+  {% for instance in instances %}
+      <li class='list-group-item'><a href='javascript:show_instance("{{instance}}");'>{{instance}}</a></li>
+  {% endfor %}
+</ul>
