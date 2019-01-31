@@ -1,5 +1,6 @@
 import _ from 'lodash';
-
+import React from 'react';
+import {InputElement} from "../forms/input-element"; // For returning JSX elements from elementComponent method
 /**
  * Author: M. Oguzhan Ataman
  * Description:
@@ -12,7 +13,31 @@ import _ from 'lodash';
  * call parse function on it.
  */
 export class MathObjectParser {
+    // Static methods
+    /**
+     * Checks if obj has structure and element pair.
+     */
+    static hasSEPair(obj): boolean {
+        return obj.hasOwnProperty('structure') && obj.hasOwnProperty('element');
+    }
 
+    static hasConditional(obj): boolean {
+        const objKeys = _.keys(obj);
+        return _.every(['if', 'then', 'else'], expr => {
+            return _.includes(objKeys, expr);
+        });
+        // return _.includes(_.keys(obj), 'if', 'then', 'else');
+    }
+
+    static elementComponent(type, index, ...options): JSX.Element {
+        return <InputElement type={type} index={index} key={index}/>;
+    }
+
+    // Class Fields
+    private objDefinition;
+    private origDefinition;
+
+    // Instance methods
     /**
      * Sets object definition
      *
@@ -26,11 +51,17 @@ export class MathObjectParser {
         const hasAllFields = ['attributes', 'options', 'raw_types', 'size', 'raw'].every(elem => _.has(objDef, elem));
         if (hasAllFields) {
             this.objDefinition = objDef;
+            console.log('objDefinition is: ', this.objDefinition);
             return true;
         } else {
             console.log('given objDef doesnt have some attributes required: ', objDef);
             return false;
         }
+    }
+
+    setOrigDefinition(origDef) {
+        this.origDefinition = origDef;
+        this.origDefinition.raw = {};
     }
 
     /**
@@ -47,25 +78,46 @@ export class MathObjectParser {
         //     this.parseStructureElementPair(obj);
         // });
 
-        return _.flatMap(this.objDefinition.raw_types, (val, key) =>
-            _.map(this.objDefinition.raw[key], (objToParse) =>
-                this.parseStructureElementPair(objToParse))
-        )
-
-        // return this.parseStructureElementPair(this.objDefinition.raw.dense.edges);
+        const parseResults = [];
+        for (const [key] of Object.entries(this.objDefinition.raw_types)) {
+            for (const innerKey of Object.keys(this.objDefinition.raw[key])) {
+                console.log('innerKey: ', innerKey);
+                parseResults.push({
+                    [innerKey]: this.parseStructureElementPair(this.objDefinition.raw[key][innerKey])
+                });
+            }
+        }
+        // this.preprocess();
+        return parseResults;
     }
 
-    static hasSEPair(obj) {
-        return obj.hasOwnProperty('structure') && obj.hasOwnProperty('element');
-    }
-
-    static hasConditional(obj) {
-        return _.includes(_.keys(obj), 'if', 'then', 'else');
-    }
-
-    static elementComponent(type, index, ...options) {
-        return `<input type="${type}" index="${index}" />`;
-    }
+    /**
+     * Replace variable declarations with actual values.
+     */
+    // preprocess() {
+    //     const regex = /"(\w+)*":\s*"(@\w+(\.\w+)*)"/g;
+    //
+    //     const objString = JSON.stringify(this.origDefinition);
+    //
+    //     let m = regex.exec(objString);
+    //     while (m !== null) {
+    //         // This is necessary to avoid infinite loops with zero-width matches
+    //         if (m.index === regex.lastIndex) {
+    //             regex.lastIndex++;
+    //         }
+    //
+    //         console.log('match', m);
+    //
+    //         const lhs = m[1];
+    //         const rhs = m[2];
+    //
+    //         // The result can be accessed through the `m`-variable.
+    //         // m.forEach((match, groupIndex) => {
+    //         //     console.log(`Found match, group ${groupIndex}: ${match}`);
+    //         // });
+    //         m = regex.exec(objString)
+    //     }
+    // }
 
     /**
      * Parse given argument as "size".
@@ -74,23 +126,29 @@ export class MathObjectParser {
      * @returns {number|number[]}
      */
     variableParser(arg) {
+        console.log('objDef: ', this.objDefinition);
         if (_.isArray(arg)) {
-            return arg.map(currentSize => {
-                return _.toNumber(
+            const parsedVariable = arg.map(currentSize => {
+                const toNumber = _.toNumber(
                     currentSize.startsWith('@') ?
                         _.at(this.objDefinition, currentSize.slice(1))[0] :
                         currentSize);
+                console.log('XYZ', _.at(this.objDefinition, currentSize.slice(1))[0]);
+                console.log('toNumber', toNumber);
+                return toNumber;
             });
+            console.log('parsedVariable', parsedVariable);
+            return parsedVariable;
         }
 
-        if (_.isString(arg)) {
+        if (typeof arg === 'string') {
             return _.toNumber(
                 arg.startsWith('@') ?
                     _.at(this.objDefinition, arg.slice(1))[0] :
                     arg);
         }
 
-        if (_.isNumber(arg)) {
+        if (typeof arg === 'number') {
             return arg;
         }
 
@@ -106,10 +164,9 @@ export class MathObjectParser {
     parseConditional(obj) {
         const ifStmt = obj.if;
 
-        const conditionResult = _.map(ifStmt, (booleanExpr, expression) => {
-            const booleanExpression = _
-                .at(this.objDefinition, expression.slice(1))[0] === 'true';
-            return booleanExpression === booleanExpr;
+        const conditionResult = _.map(ifStmt, (localExpr, expression) => {
+            const booleanExpression = _.at(this.objDefinition, expression.slice(1))[0] === 'true';
+            return booleanExpression === localExpr;
         })[0];
 
         if (conditionResult) {
@@ -184,6 +241,9 @@ export class MathObjectParser {
         const result = [];
 
         let i;
+        console.log('type is: ', type);
+        console.log('dimension is: ', dimension);
+        console.log('sizeArr is: ', sizeArr);
         // element.type is array
         if (_.isArray(type)) {
             for (i = 0; i < dimension; i++) {
@@ -196,8 +256,10 @@ export class MathObjectParser {
         } else {
             for (i = 0; i < dimension; i++) {
                 if (sizeArr.length > 1) {
+                    console.log('in 1');
                     result.push(this.elementLoop(element, nextSizeArr, [...parentSizes, i]));
                 } else {
+                    console.log('in 2');
                     result.push(MathObjectParser.elementComponent(type, [...parentSizes, i]));
                 }
             }

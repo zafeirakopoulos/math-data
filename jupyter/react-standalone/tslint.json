@@ -16,6 +16,7 @@
     "no-unused-expression": false,
     "no-empty": false,
     "triple-equals": false,
-    "jsx-no-lambda": false
+    "jsx-no-lambda": false,
+    "ordered-imports": false
   }
 }

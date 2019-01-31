@@ -3,7 +3,7 @@ table {
 }
 
 .matrixInput {
-    width: 50px;
+    width: 100px;
 }
 
 .tuple-container {
@@ -17,8 +17,13 @@ table {
 }
 
 .input-group {
-    border: 1px solid #000000;
+    /*border: 1px solid #000000;*/
     padding: 10px;
     margin-bottom: 20px;
-    width: 400px;
+    /*width: 400px;*/
+}
+
+.input-group-name {
+    width: 30%;
+    display: inline-block;
 }
