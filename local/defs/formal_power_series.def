@@ -1,7 +1,9 @@
 {
   "name" : "Formal Power Series",
   "plural" : "Formal Power Series",
-  "attributes": ["coefficients"],
+  "attributes": {
+  "coefficients" : "Boolean"
+  }],
   "parameters" : {
     "coefficient type" : {
 							"value": "Number",
