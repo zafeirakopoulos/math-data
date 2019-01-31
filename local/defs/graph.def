@@ -19,8 +19,8 @@
       "sparse":"Boolean"
    },
    "size":{
-      "edges":"integer",
-      "vertices":"integer"
+      "edges":"Integer",
+      "vertices":"Integer"
    },
    "raw":{
       "dense":{
