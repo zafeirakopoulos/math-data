@@ -1,4 +1,5 @@
-export const graph = {
+export const graph =
+{
     "name": "Graph",
     "plural": "Graphs",
     "attributes": {
