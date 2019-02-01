@@ -1,7 +1,7 @@
 {
   "name" : "Polynomial",
   "plural" : "Polynomials",
-  "attributes": {
+  "attribute_types": {
     "coefficients" : "Boolean",
     "roots" : "Boolean"
   },

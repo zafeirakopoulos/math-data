@@ -1,7 +1,7 @@
 {
   "name" : "Polyhedron",
   "plural" : "Polyhedra",
-  "attributes":
+  "attribute_types":
       {
          "vertices" : "Boolean",
          "rays" : "Boolean",
