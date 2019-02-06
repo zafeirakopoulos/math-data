@@ -1,0 +1,85 @@
+
+{% extends 'base.html' %}
+
+{% block style %}
+{% endblock %}
+
+{% block scripts %}
+
+    {{ super() }}
+
+    <script>
+
+        function add_instance_layout(){
+            document.getElementById("list-display-area").innerHTML = "";
+            document.getElementById("data-display-area").innerHTML = response;
+        }
+
+        function show_instance(key){
+            console.log("show instance called");
+            $.get('/data/instance/'+ key, {}).done(function(response) {
+                html =  " <div class=\"dropdown\"> <button class=\"btn btn-secondary dropdown-toggle\" type=\"button\" id=\"exportDataButton\" data-toggle=\"dropdown\" aria-haspopup=\"true\" aria-expanded=\"false\">Export as </button> <div class=\"dropdown-menu\" aria-labelledby=\"exportDataButton\"><a class=\"dropdown-item\" href=\"#\">MathData</a><a class=\"dropdown-item\" href=\"#\">Some Other Format</a><a class=\"dropdown-item\" href=\"#\">Yet Another Format</a> </div></div>";
+                document.getElementById("data-display-area").innerHTML = html + response;
+            }).fail(function() {
+                document.getElementById("data-display-area").innerHTML = "{{ 'Error: Could not contact server.' }}";
+            });
+        }
+        function get_instances() {
+            console.log("instances called");
+            $.get('/data/instances', {}).done(function(response) {
+                instances= JSON.parse(response);
+                console.log(response);
+                console.log(instances);
+                tmp = "<ul class='list-group'>";
+                for (var i in instances) {
+                    tmp = tmp + "<li class='list-group-item'><a href='javascript:show_instance(\"" + instances[i] + "\");'>" + instances[i] + "</a></li>";
+                }
+                tmp = tmp + "</ul>";
+                document.getElementById("list-display-area").innerHTML = tmp;
+            }).fail(function() {
+                document.getElementById("list-display-area").innerHTML = "{{ 'Error: Could not contact server.' }}";
+            });
+        }
+
+    </script>
+{% endblock %}
+
+{% block content %}
+    <h1>MathDataBase</h1>
+
+
+
+    <div class="container">
+  <div class="row">
+    <div class="col-sm">
+        <button type="button" class="btn btn-primary"  id="alldata" onclick="get_instances();">All data</button>
+        <div class="dropdown">
+          <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Dropdown button
+          </button>
+          <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+            <a class="dropdown-item" href="#">Action</a>
+            <a class="dropdown-item" href="#">Another action</a>
+            <a class="dropdown-item" href="#">Something else here</a>
+          </div>
+        </div>
+    </div>
+    <div class="col-sm">
+        <div id="list-display-area">
+            Not yet
+        </div>
+    </div>
+    <div class="col-sm">
+        <div id="data-display-area">
+            Not yet
+        </div>    </div>
+  </div>
+</div>
+
+
+<ul>
+    <li><a href="{{ url_for('data.shutdown') }}">Shutdown</a></li>
+    <li><a href="{{ url_for('data.instances') }}">Instances</a></li>
+</ul>
+
+{% endblock %}

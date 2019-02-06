@@ -77,6 +77,8 @@
       "number of terms" : {
 								"value": "Integer",
 								"default": "infinity"
-						}
+						},
+        "label": "String",
+        "value": "Type"
    }
 }

@@ -113,7 +113,9 @@
       }
    },
  "features" : {
-    "bounded" : "Boolean"
-    "dimension" : "Integer"
+    "bounded" : "Boolean",
+    "dimension" : "Integer",
+    "label": "String",
+    "value": "Type"
  }
 }

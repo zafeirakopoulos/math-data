@@ -1,6 +1,7 @@
 {
    "name":"Graph",
    "plural":"Graphs",
+   "definition": "Graph as a data type in Mathdata Language",
    "attribute_types":{
       "edges":"Boolean",
       "vertices":"Boolean"
@@ -75,5 +76,10 @@
             }
          }
       }
+   },
+
+   "features": {
+        "label": "String",
+        "value": "Type"
    }
 }
