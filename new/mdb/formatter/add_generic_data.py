@@ -3,13 +3,15 @@ import string
 import os
 import sys
 import collections
+from tulip import tlp
+from pprint import pprint
 new_path = sys.path[0]
 new_path = new_path[:-10] + "/language/"
 sys.path[0] = new_path
-path_def = new_path[:-24] + "/local/defs/"
-new_path = new_path[:-24] + "/local/third_party/"
+path_def = new_path[:-18] + "/local/defs/"
+new_path = new_path[:-18] + "/local/third_party/"
 PATH = new_path   #should be changed
-
+print(PATH)
 
 
 def add_data_devwg(file_name, raw_types):
@@ -581,12 +583,12 @@ def setPlural(data, plural):
     return data
 
 def setAttributes(data, attributes):
-    for default in data["attributes"]:
-        data["attributes"][default] = False
+    for default in data["attribute_types"]:
+        data["attribute_types"][default] = False
     for attribute in attributes:
-        data["attributes"][attribute] = True
-    for default in data["attributes"]:
-        if data["attributes"][default] == False:
+        data["attribute_types"][attribute] = True
+    for default in data["attribute_types"]:
+        if data["attribute_types"][default] == False:
             for raw_type in data["raw"]:
                 del data["raw"][raw_type][default]  
     return data
@@ -610,7 +612,7 @@ def setRaw(data, raw):
     for raw_type in raw:
         if data["raw_types"][raw_type] == True:
             for attr_raw in raw[raw_type]:     
-                if data["attributes"][attr_raw] == True:
+                if data["attribute_types"][attr_raw] == True:
                     data["raw"][raw_type][attr_raw] = raw[raw_type][attr_raw]
                 else:
                    del data["raw"][raw_type][attr_raw]
@@ -630,8 +632,36 @@ def setRawTypes(data, raw_types):
              del data["raw"][raw_type] 
     return data
 
+def add_data_tulip(file_name, raw_types):
+    graph = tlp.loadGraph(file_name)
+    tlp.saveGraph(graph, "temp.json")
+    with open("temp.json") as json_file:
+        json_data = json.load(json_file)
+        with open(path_def+"graph.def") as json_file_data:
+            data = json.load(json_file_data)
+            sizes = dict({
+                "edges": int(json_data["graph"]["edgesNumber"]),
+                "vertices": int(json_data["graph"]["nodesNumber"])
+            })
+            data = setSize(data, sizes)
+            options = dict()
+            if json_data["graph"]["properties"]["Weight"]["nodesValues"] != "":
+                data = setAttributes(data, ["edges", "vertices"])
+                options["vertices"] = {"weighted":"True"}
+            else:
+                data = setAttributes(data, ["edges"])
+
+            if json_data["graph"]["properties"]["Weight"]["edgesValues"] != "":
+                options["edges"] = {"weighted":"True"}
+
+            data = setOptions(data, options)
+            data = setRawTypes(data, raw_types)
+            raw = dict()
+            createOutput(raw_types, data, "TlpGraph", file_name)
+
 def main(file_name):
-    raw_types = ["sparse", "dense"]
+    add_data_tulip("graphtlp.tlp", "sparse")
+    '''raw_types = ["sparse", "dense"]
     for raw_type in raw_types:
         add_data_g(file_name, raw_type)
         add_data_dg(file_name, raw_type)
@@ -640,7 +670,7 @@ def main(file_name):
         add_data_vwg(file_name, raw_type)
         add_data_dvwg(file_name, raw_type)
         #add_data_evwg(file_name, raw_type)
-        #add_data_devwg(file_name, raw_type)
+        #add_data_devwg(file_name, raw_type)'''
 
 '''main("GEOM20.col")
 main("GEOM20a.col")
