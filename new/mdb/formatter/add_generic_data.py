@@ -645,18 +645,75 @@ def add_data_tulip(file_name, raw_types):
             })
             data = setSize(data, sizes)
             options = dict()
+            edges = json_data["graph"]["edges"]
+            node_weights = []
             if json_data["graph"]["properties"]["Weight"]["nodesValues"] != "":
                 data = setAttributes(data, ["edges", "vertices"])
                 options["vertices"] = {"weighted":"True"}
+                for w in json_data["graph"]["properties"]["Weight"]["nodesValues"]:
+                    node_weights.append(int(json_data["graph"]["properties"]["Weight"]["nodesValues"][w]))
             else:
                 data = setAttributes(data, ["edges"])
-
+            edge_weights = []
             if json_data["graph"]["properties"]["Weight"]["edgesValues"] != "":
                 options["edges"] = {"weighted":"True"}
+                for w in json_data["graph"]["properties"]["Weight"]["edgesValues"]:
+                    edge_weights.append(int(json_data["graph"]["properties"]["Weight"]["edgesValues"][w]))
 
             data = setOptions(data, options)
             data = setRawTypes(data, raw_types)
             raw = dict()
+            # to create a zero matrix
+            adj_matrix = [0] * sizes["vertices"]
+            for i in range(sizes["vertices"]):
+                adj_matrix[i] = [0] * sizes["vertices"]
+
+            # to create a empty list
+            graph_list = [0] * sizes["edges"]
+            if not edge_weights:
+                list_size=2
+            else:
+                list_size=3
+            for i in range(sizes["edges"]):
+                graph_list[i] = [0] * list_size
+                adj_matrix[edges[i][0]][edges[i][1]]=1
+                adj_matrix[edges[i][1]][edges[i][0]]=1
+                for j in range(list_size):
+                    if j == 2:
+                        graph_list[i][j]=edge_weights[i]
+                        adj_matrix[edges[i][0]][edges[i][1]]=edge_weights[i]
+                        adj_matrix[edges[i][1]][edges[i][0]]=edge_weights[i]
+                    else:
+                        graph_list[i][j]=edges[i][j]
+            
+            
+            if isinstance(raw_types, list):
+                for raw_type in raw_types:
+                    if raw_type == "dense":
+                        if node_weights:
+                            raw["dense"] = {"edges": adj_matrix, "vertices": node_weights}
+                        else:
+                            raw["dense"] = {"edges": adj_matrix}
+                    if raw_type == "sparse":
+                        if node_weights:
+                            raw["sparse"] = {"edges": graph_list, "vertices": node_weights}
+                        else:
+                            raw["sparse"] = {"edges": graph_list}
+            else:
+                if raw_types == "dense":
+                    if node_weights:
+                        raw["dense"] = {"edges": adj_matrix, "vertices": node_weights}
+                    else:
+                        raw["dense"] = {"edges": adj_matrix}
+                else:
+                    if node_weights:
+                        raw["sparse"] = {"edges": graph_list, "vertices": node_weights}
+                    else:
+                        raw["sparse"] = {"edges": graph_list}    
+
+            data = setRaw(data, raw)
+     
+
             createOutput(raw_types, data, "TlpGraph", file_name)
 
 def main(file_name):
