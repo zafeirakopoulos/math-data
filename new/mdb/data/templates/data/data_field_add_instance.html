@@ -1,0 +1,42 @@
+<form id="add_instance_form" method="POST">
+<!-- action='javascript:
+    data = $( "#add_instance_form" ).serializeFormJSON();
+    $.post( $SCRIPT_ROOT+"/data/add_instance" , data );'> -->
+  <div class="form-group">
+    <label id="label_for_data_area" for="data_entry_area">Choose a definition first</label>
+    <button type="submit" class="btn btn-primary" >Submit</button>
+    <textarea class="form-control" id="data_entry_area" rows="10"></textarea>
+  </div>
+</form>
+<script>
+  (function ($) {
+    $.fn.serializeFormJSON = function () {
+
+        var o = {};
+        var a = this.serializeArray();
+        $.each(a, function () {
+            if (o[this.name]) {
+                if (!o[this.name].push) {
+                    o[this.name] = [o[this.name]];
+                }
+                o[this.name].push(this.value || '');
+            } else {
+                o[this.name] = this.value || '';
+            }
+        });
+        return o;
+    };
+})(jQuery);
+
+$('add_instance_form').submit(function (e) {
+    e.preventDefault();
+    var data = $(this).serializeFormJSON();
+    console.log(data);
+
+    /* Object
+        email: "value"
+        name: "value"
+        password: "value"
+     */
+});
+</script>

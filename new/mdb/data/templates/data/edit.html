@@ -1,0 +1,35 @@
+
+{% extends 'index.html' %}
+
+{% block style %}
+{% endblock %}
+
+{% block scripts %}
+
+    {{ super() }}
+
+{% endblock %}
+
+{% block content %}
+Edit
+<div class="container">
+  <div class="row">
+    <div class="col-sm">
+        <button type="button" class="btn btn-primary"  id="addinstance" onclick="add_instance();">Instance</button>
+        <button type="button" class="btn btn-primary"  id="adddataset" onclick="add_instance();">Dataset</button>
+        <button type="button" class="btn btn-primary"  id="adddef" onclick="add_definition();">Definition</button>
+    </div>
+    <div class="col-sm">
+        <div id="list-display-area">
+            Not yet
+        </div>
+    </div>
+    <div class="col-sm">
+        <div id="data-display-area">
+            Not yet
+        </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

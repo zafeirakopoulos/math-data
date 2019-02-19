@@ -7,75 +7,26 @@
 {% block scripts %}
 
     {{ super() }}
-
-    <script>
-
-        function add_instance_layout(){
-            document.getElementById("list-display-area").innerHTML = "";
-            document.getElementById("data-display-area").innerHTML = response;
-        }
-
-        function show_instance(key){
-            console.log("show instance called");
-            $.get('/data/instance/'+ key, {}).done(function(response) {
-                html =  " <div class=\"dropdown\"> <button class=\"btn btn-secondary dropdown-toggle\" type=\"button\" id=\"exportDataButton\" data-toggle=\"dropdown\" aria-haspopup=\"true\" aria-expanded=\"false\">Export as </button> <div class=\"dropdown-menu\" aria-labelledby=\"exportDataButton\"><a class=\"dropdown-item\" href=\"#\">MathData</a><a class=\"dropdown-item\" href=\"#\">Some Other Format</a><a class=\"dropdown-item\" href=\"#\">Yet Another Format</a> </div></div>";
-                document.getElementById("data-display-area").innerHTML = html + response;
-            }).fail(function() {
-                document.getElementById("data-display-area").innerHTML = "{{ 'Error: Could not contact server.' }}";
-            });
-        }
-        function get_instances() {
-            console.log("instances called");
-            $.get('/data/instances', {}).done(function(response) {
-                document.getElementById("list-display-area").innerHTML = response;
-            }).fail(function() {
-                document.getElementById("list-display-area").innerHTML = "{{ 'Error: Could not contact server.' }}";
-            });
-        }
-
-        function get_definitions() {
-            console.log("definitions called");
-            $.get('/data/definitions', {}).done(function(response) {
-                document.getElementById("list-display-area").innerHTML = response;
-            }).fail(function() {
-                document.getElementById("list-display-area").innerHTML = "{{ 'Error: Could not contact server.' }}";
-            });
-        }
-
-        function show_definition(key){
-            console.log("show definition called");
-            $.get('/data/definition/'+ key, {}).done(function(response) {
-                document.getElementById("data-display-area").innerHTML =  response;
-            }).fail(function() {
-                document.getElementById("data-display-area").innerHTML = "{{ 'Error: Could not contact server.' }}";
-            });
-        }
-
-
-    </script>
 {% endblock %}
 
-{% block content %}
-    <h1>MathDataBase</h1>
+{% block top %}
 
-<div class="container">
-  <div class="row">
-    <div class="col-sm">
-        <button type="button" class="btn btn-primary"  id="alldata" onclick="get_instances();">Browse Data</button>
-        <button type="button" class="btn btn-primary"  id="alldatasets" onclick="get_definitions();">Browse Datasets</button>
-        <button type="button" class="btn btn-primary"  id="alldefinitions" onclick="get_definitions();">Browse Definitions</button>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+            {{ render_nav_item('data.browse', 'Browse', use_li=True) }}
+            {{ render_nav_item('data.create', 'Create', use_li=True) }}
+            {{ render_nav_item('data.edit', 'Edit', use_li=True) }}
+        </ul>
     </div>
-    <div class="col-sm">
-        <div id="list-display-area">
-            Not yet
-        </div>
-    </div>
-    <div class="col-sm">
-        <div id="data-display-area">
-            Not yet
-        </div>
-    </div>
-  </div>
-</div>
+</nav>
+{% endblock %}
+
+
+{% block content %}
 
 {% endblock %}

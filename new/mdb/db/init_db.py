@@ -9,16 +9,27 @@ def init_mdb(mdb_path,mdb_name,mdb_definition):
 
     data2 = '{"name": "Directed Edge and Vertex Weighted Graph", "raw": {"dewdew":55}, "options": {"dewetrue":3}, "size": {"edges": 40, "vertices": 20}}'
 
+    def_version="22ac84f9b99e024dad8e98bc1d2c7c4b03cdd71e"
     data_json = json.loads(data)
-    tree = mdb.add_instance_to_database(data_json)
-    print(mdb.retrieve_instance_from_database(tree))
+    tree = mdb.add_instance_to_database(data_json,def_version)
+    #print(mdb.retrieve_instance_from_database(tree))
     ckey = mdb.approve_instance(tree, "First one ever")
-    print(ckey)
+    #print(ckey)
 
     data_json = json.loads(data2)
-    tree = mdb.add_instance_to_database(data_json)
-    print(mdb.retrieve_instance_from_database(tree))
+    tree = mdb.add_instance_to_database(data_json,def_version)
+    #print(mdb.retrieve_instance_from_database(tree))
     ckey = mdb.approve_instance(tree, "Second one ever")
-    print(ckey)
+    #print(ckey)
+
+    formate = '{"from": { "type":"graph", "format":"MathDataJSON", "version": "ab5d9ad418600aa01e35d414207ef1acfcd64c84"  }, "to": {"type":"graph", "format":"dimacs", "version": ""},"template":"thetemplate"}'
+    data_formatter = json.loads(formate)
+    tree = mdb.add_formatter(data_formatter)
+    ckey = mdb.approve_formatter(data_formatter,tree, "fromatter")
+    #print(ckey)
+    formate = '{"from": { "type":"graph", "format":"MathDataJSON", "version": ""  }, "to": {"type":"graph", "format":"gizem", "version": ""},"template":"thetemplate"}'
+    data_formatter = json.loads(formate)
+    tree = mdb.add_formatter(data_formatter)
+    ckey = mdb.approve_formatter(data_formatter,tree, "fromatter")
 
     return mdb

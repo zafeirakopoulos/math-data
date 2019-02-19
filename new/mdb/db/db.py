@@ -51,11 +51,13 @@ class MathDataBase:
                         data = json.load(def_file)
                         defkey = self.add_definition(json.dumps(data))
                         defname = "".join(filename.split(".")[:-1])
+                        print("===================> defkey ", defkey)
                         self.approve_definition(defname,defkey, "".join(defname+" definition approved"))
+            with open('formatter_index.txt', 'w') as mdb_index:
+                print("To add formatters at setup")
 
 
-        ################################
-    ########################################
+    ########################################################################
     ########################################################################
     ##########################  Add  #######################################
     ########################################################################
@@ -70,17 +72,28 @@ class MathDataBase:
 
         .. warnings also:: Not exposed to API."""
         os.chdir(self.base_path)
+        print("Add data to repo:")
+        print(data)
+        print(path)
         process = Popen(["git", "hash-object", "-w", "--stdin", "--path", path], stdout=PIPE, stdin=PIPE, stderr=STDOUT)
         stdo = process.communicate(input=str.encode(data))[0]
         return stdo.decode()[:-1]
 
 
-    def add_instance_to_database(self, data):
+    def add_instance_to_database(self, data, def_version):
         os.chdir(self.base_path)
+        print("data")
+        print("data")
+        print("data")
+        print("data")
+        print("data")
+        print(data)
         for path in self.definition["paths"]:
             if path in data:
-                data_key = self.add_data_to_repo(path, str(data[path]))
+                data_key = self.add_data_to_repo(str(data[path]),path)
                 subprocess.check_output(["git", "update-index", "--add", "--cacheinfo", "100644",data_key, path]).decode()
+        data_key = self.add_data_to_repo(def_version,"definition_version")
+        subprocess.check_output(["git", "update-index", "--add", "--cacheinfo", "100644",data_key, "definition_version"]).decode()
         return subprocess.check_output(["git", "write-tree"]).decode()[:-1]
 
 
@@ -111,24 +124,35 @@ class MathDataBase:
         subprocess.check_output(["git", "update-index", "--add", "--cacheinfo", "100644",def_key, "definitions"]).decode()
         return subprocess.check_output(["git", "write-tree"]).decode()[:-1]
 
+
+    def add_formatter(self, formatter):
+        """Register a formatter in the MathDataBase.
+
+        :param formatter: A JSON object as a string
+        :returns: The SHA key of the formatter"""
+        os.chdir(self.base_path)
+        # It stores formatter definitions under the "formatters" path
+        process = Popen(["git", "hash-object", "-w", "--stdin", "--path", "formatters"], stdout=PIPE, stdin=PIPE, stderr=STDOUT)
+        stdo = process.communicate(input=str.encode(json.dumps(formatter)))[0]
+        formatter_key = stdo.decode()[:-1]
+        subprocess.check_output(["git", "update-index", "--add", "--cacheinfo", "100644",formatter_key, "formatters"]).decode()
+        return subprocess.check_output(["git", "write-tree"]).decode()[:-1]
+
     ########################################################################
     ########################################################################
     ##########################  Retrieve  ##################################
     ########################################################################
     ########################################################################
 
-    def retrieve_instance_from_repo(self,repo,key):
-        os.chdir(self.base_path)
-        return subprocess.check_output(["git", "cat-file", "-p", key]).decode()
-
     def retrieve_instance_from_database(self, key):
         response = []
         for path in self.definition["paths"]:
             try:
-                response.append( '"'+path+'":'+subprocess.check_output(["git", "show", key+":"+path]).decode())
+                response.append( "'"+path+"':"+subprocess.check_output(["git", "show", key+":"+path]).decode())
             except:
                 pass
-        return ",".join(response)
+        response.append( "'definition_version':'" + subprocess.check_output(["git", "show", key+":definition_version"]).decode()+"'")
+        return json.dumps("{"+ ",".join(response) + "}")
 
 
     def retrieve_definition(self, key):
@@ -136,10 +160,17 @@ class MathDataBase:
 
         :param key: The SHA key of the definition
         :returns: A JSON object as a string"""
-        # return subprocess.check_output(["git", "diff", key]).decode()
-        response = subprocess.check_output(["git", "diff", key]).decode().split("\n")[1:]
-        return response
+        return subprocess.check_output(["git", "show", key+":"+"definitions"]).decode()
+        #response = subprocess.check_output(["git", "diff", key]).decode().split("\n")[1:]
+        #return response
 
+    def retrieve_formatter_signature(self, key):
+        """Get the formatter signature registered under the given key.
+
+        :param key: The SHA key of the formatter
+        :returns: A JSON object as a string"""
+        data = JSON.loads(subprocess.check_output(["git", "show", key+":"+"formatters"]).decode())
+        return data["to"]
 
     ########################################################################
     ########################################################################
@@ -170,6 +201,23 @@ class MathDataBase:
             mdb_index.write(json.dumps(def_index))
         return response
 
+    def approve_formatter(self,formatter,key, message):
+        os.chdir(self.base_path)
+        response = subprocess.check_output(["git", "commit-tree", key, "-m", message]).decode()[:-1]
+        formatter_index = {}
+        with open('formatter_index.txt', 'r') as mdb_index:
+            try:
+                formatter_index = json.load(mdb_index)
+            except:
+                pass
+        with open('formatter_index.txt', 'w') as mdb_index:
+            from_version_key = formatter["from"]["version"]
+            if from_version_key in formatter_index.keys():
+                formatter_index[from_version_key].append(key)
+            else:
+                formatter_index[from_version_key] = [key]
+            mdb_index.write(json.dumps(formatter_index))
+        return response
     ########################################################################
     ########################################################################
     ##########################  Indices ####################################
@@ -198,4 +246,12 @@ class MathDataBase:
         :returns: List of keys for the registered definitions"""
         os.chdir(self.base_path)
         with open('definition_index.txt', 'r') as mdb_index:
+            return json.load(mdb_index)
+
+    def formatter_index(self):
+        """Get all the formatters currently registered in the MathDataDase.
+
+        :returns: List of keys for the registered formatters"""
+        os.chdir(self.base_path)
+        with open('formatter_index.txt', 'r') as mdb_index:
             return json.load(mdb_index)
