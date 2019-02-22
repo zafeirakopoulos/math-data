@@ -1,7 +1,7 @@
 {
   "name" : "Polynomial",
   "plural" : "Polynomials",
-  "attributes": {
+  "attribute_types": {
     "coefficients" : "Boolean",
     "roots" : "Boolean"
   },
@@ -77,6 +77,8 @@
       "number of terms" : {
 								"value": "Integer",
 								"default": "infinity"
-						}
+						},
+        "label": "String",
+        "value": "Type"
    }
 }
