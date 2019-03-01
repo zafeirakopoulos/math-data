@@ -25,9 +25,6 @@ RUN apt-get update && apt-get install -yq --no-install-recommends \
    python3-dev \
    python3-wheel
 
-
-
-
 RUN pip3 install flask
 RUN pip3 install request
 RUN pip3 install jinja2
@@ -42,6 +39,13 @@ COPY mdb /mathdata/mdb
 COPY local /mathdata/local
 COPY md_def.py /mathdata/md_def.py
 
+ENV LC_ALL=C.UTF-8
+ENV LANG=C.UTF-8
 
 WORKDIR /mathdata
-ENTRYPOINT ["python3","run_mdb.py"]
+ENV FLASK_APP=mdb
+ENV FLASK_ENV=development
+
+EXPOSE 5000
+
+ENTRYPOINT ["flask", "run", "--host=0.0.0.0"]

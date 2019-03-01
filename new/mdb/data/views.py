@@ -29,21 +29,21 @@ def api_definitions():
 ##########################
 @data_app.route('/',methods=['GET', 'POST'])
 def index():
-    return render_template("index.html")
+    return render_template("data/index.html")
 
 
 @data_app.route('/browse',methods=['GET', 'POST'])
 def browse():
-    return render_template("browse.html")
+    return render_template("data/browse.html")
 
 
 @data_app.route('/create',methods=['GET', 'POST'])
 def create():
-    return render_template("create.html")
+    return render_template("data/create.html")
 
 @data_app.route('/edit',methods=['GET', 'POST'])
 def edit():
-    return render_template("edit.html")
+    return render_template("data/edit.html")
 
 @data_app.route('/instance/<key>',methods=['GET', 'POST'])
 def instance(key):
@@ -52,17 +52,17 @@ def instance(key):
     formatters= data_app.active_mdb.formatter_index()
     #[data["def_version"]]
     print("formatters",formatters)
-    return render_template("instance.html",instance=data,formatters=formatters)
+    return render_template("data/instance.html",instance=data,formatters=formatters)
 
 @data_app.route('/instances', methods=["GET"])
 def instances():
     response = data_app.active_mdb.instance_index()
-    return render_template("instances.html",instances=response)
+    return render_template("data/instances.html",instances=response)
 
 @data_app.route('/definition/<key>',methods=['GET', 'POST'])
 def definition(key):
     response = data_app.active_mdb.retrieve_definition(key)
-    return render_template("definition.html",definition=response)
+    return render_template("data/definition.html",definition=response)
 
 @data_app.route('/definitions/<action>', methods=["GET"])
 def definitions(action):
@@ -72,7 +72,7 @@ def definitions(action):
         action="show"
 
     response = data_app.active_mdb.definition_index()
-    return render_template("definitions.html",definitions=response,action=action)
+    return render_template("data/definitions.html",definitions=response,action=action)
 
 @data_app.route('/add_instance', methods=["POST"])
 def add_instance():
@@ -89,4 +89,4 @@ def add_instance():
 
 @data_app.route('/add_instance_data_field', methods=["GET"])
 def add_instance_data_field():
-    return render_template("data_field_add_instance.html")
+    return render_template("data/data_field_add_instance.html")
