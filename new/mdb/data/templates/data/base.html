@@ -1,57 +1,25 @@
-{% from 'bootstrap/nav.html' import render_nav_item %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>MathDataBase</title>
-    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles/default.css') }}">
+{% extends 'base.html' %}
 
-    {{ bootstrap.load_css() }}
+{% block content %}
+    
+         <div class="row justify-content-between">
+            <div class="col-4">
+                <div class="list-group list-group-flush" style="width: 15rem;">
+                    <a href={{ url_for('data.browse') }} class="list-group-item list-group-item-action bg-light">Browse</a>
+                    <a href="#" class="list-group-item list-group-item-action bg-light">Create</a>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="btn-group btn-group-lg" role="group">
+                    <button type="button" id="instance_button" class="btn btn-secondary" onclick="{% block instance_command %}  {% endblock %}">Instance</button>
+                    <button type="button" id="dataset_button" class="btn btn-secondary" onclick="{% block dataset_command %}   {% endblock %}">Dataset</button>
+                    <button type="button" id="definition_button" class="btn btn-secondary" onclick="{% block definition_command %}{% endblock %}">Definition</button>
+                </div>
 
-    {% block style %}{% endblock %}
+                {% block data_content %}
 
-    <!-- <script src="{{ url_for('static', filename='highlight.js') }}"></script> -->
-    <script src="{{ url_for('static', filename='jquery.js') }}"></script>
-    <script src="{{ url_for('static', filename='jquery.form.js') }}"></script>
-    <script src="{{ url_for('static', filename='mdb.js') }}"></script>
-
-
-    <!-- <script>hljs.initHighlightingOnLoad();</script> -->
-
-    <script type=text/javascript>
-      $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
-    </script>
-    {% block scripts %}{% endblock %}
-
-</head>
-<body>
-<main class="container">
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
-                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav mr-auto">
-                {{ render_nav_item('data.index', 'Home', use_li=True) }}
-            </ul>
+                {% endblock %}
+            </div>
         </div>
-    </nav>
-    <h1>MathDataBase</h1>
 
-    {% block top %}{% endblock %}
-    {% block content %}{% endblock %}
-
-    <footer class="text-center">
-        {% block footer %}
-            <small> &copy; 2019 <a href="http://mathdata.io" title="MathData team">MathData team</a>
-            </small>
-        {% endblock %}
-    </footer>
-</main>
-
-{{ bootstrap.load_js() }}
-</body>
-</html>
+{% endblock %}

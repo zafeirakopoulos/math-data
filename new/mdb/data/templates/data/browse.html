@@ -1,14 +1,16 @@
 
-{% extends 'data/main.html' %}
+{% extends 'data/index.html' %}
 
 {{ super() }}
 
 {% block instance_command %}
 get_instances();
 {% endblock %}
+
 {% block dataset_command %}
 get_datasets();
 {% endblock %}
+
 {% block definition_command %}
 get_definitions('browse_definitions');
 {% endblock %}
@@ -16,6 +18,7 @@ get_definitions('browse_definitions');
 {% block list_area %}
 Nothing to list yet
 {% endblock %}
+
 {% block data_area %}
 No data yet
 {% endblock %}
