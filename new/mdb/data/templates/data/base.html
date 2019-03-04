@@ -2,7 +2,7 @@
 
 {% block content %}
     
-         <div class="row justify-content-between">
+         <div class="row ">
             <div class="col-4">
                 <div class="list-group list-group-flush" style="width: 15rem;">
                     <a href={{ url_for('data.browse') }} class="list-group-item list-group-item-action bg-light">Browse</a>
@@ -11,12 +11,12 @@
             </div>
             <div class="col-6">
                 <div class="btn-group btn-group-lg" role="group">
-                    <button type="button" id="instance_button" class="btn btn-secondary" onclick="{% block instance_command %}  {% endblock %}">Instance</button>
-                    <button type="button" id="dataset_button" class="btn btn-secondary" onclick="{% block dataset_command %}   {% endblock %}">Dataset</button>
-                    <button type="button" id="definition_button" class="btn btn-secondary" onclick="{% block definition_command %}{% endblock %}">Definition</button>
-                </div>
+                <button type="button" id="instance_button" class="btn btn-secondary" onclick="{% block instance_command %}  {% endblock %}">Instance</button>
+                <button type="button" id="dataset_button" class="btn btn-secondary" onclick="{% block dataset_command %}   {% endblock %}">Dataset</button>
+                <button type="button" id="definition_button" class="btn btn-secondary" onclick="{% block definition_command %}{% endblock %}">Definition</button>
+            </div>
 
-                {% block data_content %}
+            {% block data_content %}
 
                 {% endblock %}
             </div>

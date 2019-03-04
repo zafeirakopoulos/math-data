@@ -23,16 +23,18 @@
 
 
 {% block data_content %}
-    <div class="col">
-        <div id="list-display-area">
-            {% block list_area %}
-            {% endblock %}
+    <div class="row">
+        <div class="col">
+            <div id="list-display-area">
+                {% block list_area %}
+                {% endblock %}
+            </div>
         </div>
-    </div>
-    <div class="col">
-        <div id="data-display-area">
-            {% block data_area %}
-            {% endblock %}
+        <div class="col">
+            <div id="data-display-area">
+                {% block data_area %}
+                {% endblock %}
+            </div>
         </div>
     </div>
 {% endblock %}
