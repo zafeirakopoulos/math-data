@@ -1,25 +1,15 @@
 {% extends 'base.html' %}
 
-{% block content %}
+{% block top %}
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="navbar-nav">
+      <a class="nav-item nav-link active" href={{ url_for('data.instances') }}>Instance<span class="sr-only">(current)</span></a>
+      <a class="nav-item nav-link active" href="#">Dataset</a>
+      <a class="nav-item nav-link active" href={{ url_for('data.definitions', action='browse_definitions') }}>Definition</a>
+    </div>
+</nav>
+{% endblock %}
+
+{% block rest %}
     
-         <div class="row ">
-            <div class="col-4">
-                <div class="list-group list-group-flush" style="width: 15rem;">
-                    <a href={{ url_for('data.browse') }} class="list-group-item list-group-item-action bg-light">Browse</a>
-                    <a href="#" class="list-group-item list-group-item-action bg-light">Create</a>
-                </div>
-            </div>
-            <div class="col-6">
-                <div class="btn-group btn-group-lg" role="group">
-                <button type="button" id="instance_button" class="btn btn-secondary" onclick="{% block instance_command %}  {% endblock %}">Instance</button>
-                <button type="button" id="dataset_button" class="btn btn-secondary" onclick="{% block dataset_command %}   {% endblock %}">Dataset</button>
-                <button type="button" id="definition_button" class="btn btn-secondary" onclick="{% block definition_command %}{% endblock %}">Definition</button>
-            </div>
-
-            {% block data_content %}
-
-                {% endblock %}
-            </div>
-        </div>
-
 {% endblock %}

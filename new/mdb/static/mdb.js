@@ -17,7 +17,7 @@ function get_instances() {
 
 function show_definition(key){
     $.get('/data/definition/'+ key, {}).done(function(response) {
-        document.getElementById("data-display-area").innerHTML =  "<pre><code class=\"json\">"+ response + "</code></pre>";
+        document.getElementById("data-display-area").innerHTML =  response;
         console.log(document.getElementById("data-display-area").innerHTML);
     }).fail(function() {
         document.getElementById("data-display-area").innerHTML = "{{ 'Error: Could not contact server.' }}";

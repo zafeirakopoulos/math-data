@@ -1,6 +1,8 @@
 from flask import Flask, Blueprint, request, json, render_template
 from mdb.data import data_app
 
+import json as json_beautifier
+
 ##########################
 ##########################
 ##   API
@@ -21,6 +23,12 @@ def api_definition(key):
 @data_app.route('api/definitions', methods=["GET"])
 def api_definitions():
     return data_app.active_mdb.definition_index()
+
+def pp_json(json_thing, sort=True, indents=4):
+    if type(json_thing) is str:
+        return json_beautifier.dumps(json_beautifier.loads(json_thing), sort_keys=sort, indent=indents)
+    else:
+        return json_beautifier.dumps(json_thing, sort_keys=sort, indent=indents)
 
 ##########################
 ##########################
@@ -45,19 +53,19 @@ def create():
 def edit():
     return render_template("data/edit.html")
 
-@data_app.route('/instance/<key>',methods=['GET', 'POST'])
+@data_app.route('/instance/<key>', methods=['GET', 'POST'])
 def instance(key):
     response = data_app.active_mdb.retrieve_instance_from_database(key)
     data = json.loads(response)
     formatters= data_app.active_mdb.formatter_index()
     #[data["def_version"]]
     print("formatters",formatters)
-    return render_template("data/instance.html",instance=data,formatters=formatters)
+    return render_template("data/instance.html", instance=response, formatters=formatters)
 
 @data_app.route('/instances', methods=["GET"])
 def instances():
     response = data_app.active_mdb.instance_index()
-    return render_template("data/instances.html",instances=response)
+    return render_template("data/instances.html", instances=response)
 
 @data_app.route('/definition/<key>',methods=['GET', 'POST'])
 def definition(key):
@@ -72,7 +80,7 @@ def definitions(action):
         action="show"
 
     response = data_app.active_mdb.definition_index()
-    return render_template("data/definitions.html",definitions=response,action=action)
+    return render_template("data/definitions.html", definitions=response, action=action)
 
 @data_app.route('/add_instance', methods=["POST"])
 def add_instance():
