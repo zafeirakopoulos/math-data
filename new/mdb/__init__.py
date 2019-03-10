@@ -6,6 +6,8 @@ from flask_cors import CORS
 from flask_migrate import Migrate
 from sqlalchemy_utils import create_database, database_exists
 from flask_bootstrap import Bootstrap
+from flask_security import Security
+
 
 from mdb.config import config
 from mdb.core import all_exception_handler
@@ -74,10 +76,12 @@ def create_app(test_config=None):
 
     # register sqlalchemy to this app
     from mdb.models import db
+    from mdb.models import user_datastore
 
     db.init_app(app)  # initialize Flask SQLALchemy with this flask app
     Migrate(app, db)
     Bootstrap(app)
+    security = Security(app, user_datastore)
 
     # import and register blueprints
     from mdb.views.home import home_app

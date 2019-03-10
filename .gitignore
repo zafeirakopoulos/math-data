@@ -136,4 +136,11 @@ dmypy.json
 # Ignore all local history of files
 .history
 
-# End of https://www.gitignore.io/api/flask,visualstudiocode
+migrations/
+postgres-data/
+.mypy_cache
+.pytest_cache
+api.log
+test.db
+creds.ini
+live.git

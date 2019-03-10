@@ -55,7 +55,7 @@
                 <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
                 <button class="btn btn-outline-success" type="submit">Search</button>
             </form>
-            <button class="btn btn-outline-primary" type="submit" style="margin-left: 5px; margin-right: 0px;">Login</button>
+            <a class="btn btn-outline-primary" type="button" href= {{ url_for('security.login') }} style="margin-left: 5px; margin-right: 0px;" role="button">Login</a>
         </nav>
 
         {% block top %}{% endblock %}

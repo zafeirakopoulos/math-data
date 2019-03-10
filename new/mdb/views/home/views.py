@@ -1,6 +1,6 @@
 from flask import Flask, Blueprint, request, json, render_template
 from mdb.views.home import home_app
-from mdb.models import Person
+from mdb.models import User
 from mdb.core import create_response, serialize_list, logger
 
 @home_app.route('/', methods=['GET'])
@@ -29,6 +29,6 @@ def index():
 # function that is called when you visit /persons
 @home_app.route("/persons", methods=["GET"])
 def get_persons():
-    persons = Person.query.all()
+    persons = User.query.all()
     logger.info("Hello World!")
     return create_response(data={"persons": serialize_list(persons)})

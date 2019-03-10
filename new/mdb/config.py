@@ -5,6 +5,9 @@ from mdb.core import get_pg_url
 # more configuration options here http://flask.pocoo.org/docs/1.0/config/
 class Config:
     SECRET_KEY = "testkey"
+    SECURITY_REGISTERABLE = True
+    SECURITY_PASSWORD_HASH = "sha512_crypt"
+    SECURITY_PASSWORD_SALT = "fhasdgihwntlgy8f"
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     LOG_FILE = "api.log"
 

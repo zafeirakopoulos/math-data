@@ -1,7 +1,7 @@
 from flask_script import Manager
 from flask_migrate import Migrate, MigrateCommand
 from mdb import create_app
-from mdb.models import db
+from mdb.models import db, user_datastore
 
 # sets up the app
 app = create_app()
@@ -32,6 +32,7 @@ def recreate_db():
     """
     db.drop_all()
     db.create_all()
+    user_datastore.create_user(email='qwe', password='pw')
     db.session.commit()
 
 
