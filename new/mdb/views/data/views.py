@@ -1,5 +1,5 @@
 from flask import Flask, Blueprint, request, json, render_template
-from mdb.data import data_app
+from mdb.views.data import data_app
 
 import json as json_beautifier
 

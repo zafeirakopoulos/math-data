@@ -73,7 +73,7 @@ def generate_attributes(PolyObj):
     return PolyObj
     
 def generate_raw_types(PolyObj):
-        
+    print('??')        
 
 def getPoly():
     with open(path_def+"polynomial.def") as json_file:

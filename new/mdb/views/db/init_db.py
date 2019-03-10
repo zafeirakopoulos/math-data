@@ -1,6 +1,6 @@
 import os
 import json
-from mdb.db.db import MathDataBase
+from mdb.views.db.db import MathDataBase
 
 def init_mdb(mdb_path,mdb_name,mdb_definition):
     mdb = MathDataBase(mdb_path,mdb_name,mdb_definition)

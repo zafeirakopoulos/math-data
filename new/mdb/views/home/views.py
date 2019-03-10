@@ -1,5 +1,7 @@
 from flask import Flask, Blueprint, request, json, render_template
-from mdb.home import home_app
+from mdb.views.home import home_app
+from mdb.models import Person
+from mdb.core import create_response, serialize_list, logger
 
 @home_app.route('/', methods=['GET'])
 def index():
@@ -22,5 +24,11 @@ def index():
         'zipCode': '41400',
         'office': 'A2 Block, 234'
     }
-
     return render_template('index.html', definition=static_definition, stats=stats, contact1=contact1, contact2=contact2)
+
+# function that is called when you visit /persons
+@home_app.route("/persons", methods=["GET"])
+def get_persons():
+    persons = Person.query.all()
+    logger.info("Hello World!")
+    return create_response(data={"persons": serialize_list(persons)})

@@ -1,51 +1,32 @@
-# Set base image as debian
-FROM debian:stable-slim as base
-
+FROM python:3.7-alpine
 LABEL description = "MDB Container"
 
-RUN apt-get update && apt-get install -yq --no-install-recommends \
-	  apt-utils \
-    wget \
-    bash \
-    bzip2 \
-    ca-certificates \
-    sudo \
-    locales \
-    build-essential \
-    m4 \
-    yasm \
-    cmake \
-    git
+COPY requirements.txt requirements.txt
+RUN apk update && \
+    apk add --virtual build-deps gcc musl-dev && \
+    apk add wget && \
+    apk add bash && \
+    apk add bzip2 && \
+    apk add ca-certificates && \
+    apk add sudo && \
+    apk add m4 && \
+    apk add yasm && \
+    apk add cmake && \
+    apk add git && \
+    apk add postgresql-dev && \
+    rm -rf /var/cache/apk/*
 
-RUN apt-get update && apt-get install -yq --no-install-recommends \
-   python3-pip \
-   python3-venv \
-   python3-git \
-   python3-setuptools \
-   python3-dev \
-   python3-wheel
+RUN pip install -r requirements.txt
 
-RUN pip3 install flask
-RUN pip3 install request
-RUN pip3 install jinja2
-RUN pip3 install gevent
-RUN pip3 install GitPython
+# delete dependencies required to install certain python packages 
+# so the docker image size is low enough for Zeit now
+RUN apk del build-deps gcc musl-dev
 
-RUN pip3 install  bootstrap-flask
+COPY . /app
+WORKDIR /app
 
-
-COPY docker_assets/run_mdb.py /mathdata/run_mdb.py
-COPY mdb /mathdata/mdb
-COPY local /mathdata/local
-COPY md_def.py /mathdata/md_def.py
-
-ENV LC_ALL=C.UTF-8
-ENV LANG=C.UTF-8
-
-WORKDIR /mathdata
-ENV FLASK_APP=mdb
-ENV FLASK_ENV=development
+# for the flask config
+ENV FLASK_ENV=prod
 
 EXPOSE 5000
-
-ENTRYPOINT ["flask", "run", "--host=0.0.0.0"]
+ENTRYPOINT [ "gunicorn", "-b", "0.0.0.0:5000", "--log-level", "INFO", "manage:app" ]

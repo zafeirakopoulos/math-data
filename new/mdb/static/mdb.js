@@ -15,6 +15,10 @@ function get_instances() {
     });
 }
 
+function view_json(jsObj) {
+    return JSON.stringify(jsObj, null, 4);
+}
+
 function show_definition(key){
     $.get('/data/definition/'+ key, {}).done(function(response) {
         document.getElementById("data-display-area").innerHTML =  response;
