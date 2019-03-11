@@ -142,3 +142,4 @@ api.log
 test.db
 creds.ini
 live.git
+flask-app-db/

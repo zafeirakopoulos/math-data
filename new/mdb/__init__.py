@@ -3,11 +3,8 @@ import logging
 
 from flask import Flask, request
 from flask_cors import CORS
-from flask_migrate import Migrate
 from sqlalchemy_utils import create_database, database_exists
 from flask_bootstrap import Bootstrap
-from flask_security import Security
-
 
 from mdb.config import config
 from mdb.core import all_exception_handler
@@ -71,17 +68,15 @@ def create_app(test_config=None):
     # decide whether to create database
     if env != "prod":
         db_url = app.config["SQLALCHEMY_DATABASE_URI"]
+        print("GOING IN")
         if not database_exists(db_url):
+            print("!!! ITS IN !!!")
             create_database(db_url)
 
     # register sqlalchemy to this app
-    from mdb.models import db
-    from mdb.models import user_datastore
-
-    db.init_app(app)  # initialize Flask SQLALchemy with this flask app
-    Migrate(app, db)
+    from mdb.models import construct_app
+    app = construct_app(app)    
     Bootstrap(app)
-    security = Security(app, user_datastore)
 
     # import and register blueprints
     from mdb.views.home import home_app
