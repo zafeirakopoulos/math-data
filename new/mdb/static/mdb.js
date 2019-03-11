@@ -44,9 +44,32 @@ function get_definitions(action) {
 }
 
 
+function enable_edit(btnId, textAreId, key) {
+    $("#" + textAreId).prop("disabled", false);
+    $("#" + btnId).html("Commit Changes");
 
+    var functionName = "edit_instance";
+    if (btnId === "editDefinitionBtn")
+        functionName = "edit_definition";
+        
+    $("#" + btnId).attr("onClick", functionName + "('" + key + "')");
+}
 
+function edit_instance(instanceKey) {
+    $.post('/data/edit_instance', {instanceKey}).done(function(response) {
+        console.log(response);
+    }).fail(function() {
+        console.log("we got error");
+    });
+}
 
+function edit_definition(definitionKey) {
+    $.post('/data/edit_definition', {definitionKey}).done(function(response) {
+        console.log(response);
+    }).fail(function() {
+        console.log("we got error");
+    });
+}
 
 function add_definition(key){
     $.get('/data/definition/'+ key, {}).done(function(response) {

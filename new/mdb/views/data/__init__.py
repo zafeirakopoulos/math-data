@@ -5,9 +5,9 @@ from mdb.views.db import active_db
 data_app = Blueprint('data', __name__)
 data_app.active_mdb = active_db
 
-@data_app.before_request
-@login_required
-def before_request():
-    pass
+#@data_app.before_request
+#@login_required
+#def before_request():
+#    pass
 
 import mdb.views.data.views

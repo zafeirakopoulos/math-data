@@ -60,7 +60,7 @@ def instance(key):
     formatters= data_app.active_mdb.formatter_index()
     #[data["def_version"]]
     print("formatters",formatters)
-    return render_template("data/instance.html", instance=response, formatters=formatters)
+    return render_template("data/instance.html", instance=response, key=key, formatters=formatters)
 
 @data_app.route('/instances', methods=["GET"])
 def instances():
@@ -70,7 +70,7 @@ def instances():
 @data_app.route('/definition/<key>',methods=['GET', 'POST'])
 def definition(key):
     response = data_app.active_mdb.retrieve_definition(key)
-    return render_template("data/definition.html",definition=response)
+    return render_template("data/definition.html", definition=response, key=key)
 
 @data_app.route('/definitions/<action>', methods=["GET"])
 def definitions(action):
@@ -98,3 +98,13 @@ def add_instance():
 @data_app.route('/add_instance_data_field', methods=["GET"])
 def add_instance_data_field():
     return render_template("data/data_field_add_instance.html")
+
+@data_app.route('/edit_instance', methods=["POST"])
+def edit_instance():
+    key = request.form['instanceKey']
+    return "we got the key for instance: " + key
+
+@data_app.route('/edit_definition', methods=["POST"])
+def edit_definition():
+    key = request.form['definitionKey']
+    return "we got the key for definition: " + key
