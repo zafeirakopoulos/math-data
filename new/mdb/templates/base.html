@@ -28,7 +28,7 @@
 </head>
 
 <body>
-    <main class="container">
+    <main class="container" style="margin: 0 auto; text-align: left;">
         <nav class="navbar navbar-dark navbar-expand-lg bg-dark" style="background-color: #e3f2fd; margin-bottom: 10px">
             <a class="navbar-brand" href= {{ url_for('home.index') }}>MathData <span class="sr-only">(current)</span></a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
@@ -55,13 +55,17 @@
                 <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
                 <button class="btn btn-outline-success" type="submit">Search</button>
             </form>
-            <a class="btn btn-outline-primary" type="button" href= {{ url_for('security.login') }} style="margin-left: 5px; margin-right: 0px;" role="button">Login</a>
+            {% if not current_user.is_authenticated %}
+                <a class="btn btn-success" role="button" href={{ url_for('security.login') }} style="margin-left: 5px; margin-right: 0px;">Login</a>
+            {% else %}
+                <a class="btn btn-success" role="button" href={{ url_for('security.logout') }} style="margin-left: 5px; margin-right: 0px;">Logout</a>
+            {% endif %}
         </nav>
 
         {% block top %}{% endblock %}
         {% block content %}{% endblock %}
         {% block rest %}{% endblock %}
-        <footer class="text-center">
+        <footer class="text-center" style="margin-top: 20px">
             {% block footer %}
                 <small> &copy; 2019 <a href="http://mathdata.io" title="MathData team">MathData team</a>
                 </small>
