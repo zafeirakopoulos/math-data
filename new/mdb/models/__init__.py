@@ -36,8 +36,15 @@ class User(db.Model, UserMixin):
         return d_out
 
 def construct_app(app):
-    db = SQLAlchemy(app)
+    db.init_app(app)
+    db.app = app
     user_datastore = SQLAlchemyUserDatastore(db, User, Role)
     Migrate(app, db)
     security = Security(app, user_datastore)
-    return app
+
+    db.drop_all()
+    db.create_all()
+    user_datastore.create_user(email='qwe', password='pw')
+    db.session.commit()
+    
+    return app, db, user_datastore

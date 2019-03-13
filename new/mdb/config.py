@@ -9,6 +9,7 @@ class Config:
     #SECURITY_PASSWORD_HASH = "sha512_crypt"
     #SECURITY_PASSWORD_SALT = "fhasdgihwntlgy8f"
     SECURITY_PASSWORD_HASH = "plaintext"
+    SECURITY_SEND_REGISTER_EMAIL = False
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     LOG_FILE = "api.log"
 

@@ -5,6 +5,7 @@ from flask import Flask, request
 from flask_cors import CORS
 from sqlalchemy_utils import create_database, database_exists
 from flask_bootstrap import Bootstrap
+from flask_security import Security, RoleMixin, UserMixin, Security, SQLAlchemyUserDatastore
 
 from mdb.config import config
 from mdb.core import all_exception_handler
@@ -75,20 +76,18 @@ def create_app(test_config=None):
 
     # register sqlalchemy to this app
     from mdb.models import construct_app
-    app = construct_app(app)    
+    app, db, user_datastore = construct_app(app)    
     Bootstrap(app)
-
+    
     # import and register blueprints
     from mdb.views.home import home_app
     from mdb.views.data import data_app
     from mdb.views.formatter import formatter_app
 
-    # why blueprints http://flask.pocoo.org/docs/1.0/blueprints/
     app.register_blueprint(home_app)
     app.register_blueprint(data_app, url_prefix="/data")
     #app.register_blueprint(formatter_app, url_prefix="/formatter")
 
     # register error Handler
     app.register_error_handler(Exception, all_exception_handler)
-
     return app
