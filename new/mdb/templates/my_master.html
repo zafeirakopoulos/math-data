@@ -1,9 +1,0 @@
-{% extends 'admin/base.html' %}
-
-{% block access_control %}
-{% if current_user.is_authenticated %}
-
-Hello  {{ current_user.email }}
-
-{% endif %}
-{% endblock %}
