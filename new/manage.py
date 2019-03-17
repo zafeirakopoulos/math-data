@@ -7,7 +7,7 @@ from mdb.models import db, user_datastore
 app = create_app()
 
 manager = Manager(app)
-migrate = Migrate(app, db)
+#migrate = Migrate(app, db)
 
 # adds the python manage.py db init, db migrate, db upgrade commands
 manager.add_command("db", MigrateCommand)

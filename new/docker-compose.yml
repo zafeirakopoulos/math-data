@@ -27,6 +27,7 @@ services:
     networks:
       - net
     volumes:
+      - mathdatadb:/app/live.git/
       - .:/app
     depends_on:
       - postgres
@@ -37,6 +38,7 @@ services:
 
 volumes:
   postgres:
+  mathdatadb:
 
 networks:
   net:

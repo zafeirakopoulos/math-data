@@ -1,6 +1,14 @@
 from flask_sqlalchemy import SQLAlchemy
-from flask_security import Security, RoleMixin, UserMixin, Security, SQLAlchemyUserDatastore
+from flask_security import Security, RoleMixin, UserMixin, Security, SQLAlchemyUserDatastore, current_user
 from flask_migrate import Migrate
+from flask_security.utils import hash_password
+from flask_security.forms import RegisterForm, LoginForm, Required
+from flask import url_for, redirect, render_template, request, abort
+from wtforms import StringField
+from flask import current_app as app
+import flask_admin
+from flask_admin.contrib import sqla
+from flask_admin import Admin, AdminIndexView
 
 db = SQLAlchemy()
 user_datastore = None
@@ -21,7 +29,10 @@ class Role(db.Model, RoleMixin):
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(255), unique=True)
+    user_name = db.Column(db.String(31), unique=True)
     password = db.Column(db.String(255))
+    first_name = db.Column(db.String(31))
+    last_name = db.Column(db.String(31))
     active = db.Column(db.Boolean())
     confirmed_at = db.Column(db.DateTime())
     roles = db.relationship('Role', secondary='roles_users', backref=db.backref('users', lazy='dynamic'))
@@ -35,16 +46,52 @@ class User(db.Model, UserMixin):
         d_out["_id"] = d_out.pop("id", None)  # rename id key to interface with response
         return d_out
 
-def construct_app(app):
+class ExtendedRegisterForm(RegisterForm):
+    first_name = StringField('First Name', [Required()])
+    last_name = StringField('Last Name', [Required()])
+    user_name = StringField('Username', [Required()])
+
+class ExtendedLoginForm(LoginForm):
+    email = StringField('Username or Email', [Required()])
+
+class MyAdminIndexView(AdminIndexView):
+    def is_accessible(self):
+        #return True
+        return current_user.has_role('admin')
+    
+    #def _handle_view(self, name, **kwargs):
+    #    return redirect(url_for('security.login', next=request.url)) # login
+
+# Create customized model view class
+class MyModelView(sqla.ModelView):
+    def is_accessible(self):
+        #return True
+        # current_user.is_authenticated() and 
+        return current_user.has_role('admin')
+
+    #def _handle_view(self, name, **kwargs):
+    #    return redirect(url_for('security.login', next=request.url)) # login
+
+def construct_app():
     db.init_app(app)
     db.app = app
     user_datastore = SQLAlchemyUserDatastore(db, User, Role)
     Migrate(app, db)
-    security = Security(app, user_datastore)
+    security = Security(app, user_datastore, register_form=ExtendedRegisterForm, login_form=ExtendedLoginForm)
 
     db.drop_all()
     db.create_all()
-    user_datastore.create_user(email='qwe', password='pw')
+
+    user_datastore.find_or_create_role(name='admin', description='Admin of the Mathdata.')
+    user_datastore.find_or_create_role(name='editor', description='Editor for the Mathdata. Can review and accept changes.')
+    user_datastore.find_or_create_role(name='user', description='Ordinary user.')
+    user_datastore.create_user(email='admin@admin.com', user_name='admin', password=hash_password('admin'))
+    user_datastore.add_role_to_user('admin@admin.com', 'admin')
     db.session.commit()
-    
-    return app, db, user_datastore
+
+    # Add model views
+    admin = Admin(app, name='Mathdata Admin', template_mode='bootstrap3', index_view=MyAdminIndexView())
+    admin.add_view(MyModelView(Role, db.session))
+    admin.add_view(MyModelView(User, db.session))
+
+    return db, user_datastore

@@ -1,11 +1,13 @@
 import os
 import logging
 
-from flask import Flask, request
+from flask import Flask, request, url_for
 from flask_cors import CORS
 from sqlalchemy_utils import create_database, database_exists
 from flask_bootstrap import Bootstrap
 from flask_security import Security, RoleMixin, UserMixin, Security, SQLAlchemyUserDatastore
+from flask_security.utils import hash_password
+from flask_security.decorators import roles_accepted
 
 from mdb.config import config
 from mdb.core import all_exception_handler
@@ -74,11 +76,8 @@ def create_app(test_config=None):
             print("!!! ITS IN !!!")
             create_database(db_url)
 
-    # register sqlalchemy to this app
-    from mdb.models import construct_app
-    app, db, user_datastore = construct_app(app)    
     Bootstrap(app)
-    
+
     # import and register blueprints
     from mdb.views.home import home_app
     from mdb.views.data import data_app
@@ -88,6 +87,11 @@ def create_app(test_config=None):
     app.register_blueprint(data_app, url_prefix="/data")
     #app.register_blueprint(formatter_app, url_prefix="/formatter")
 
+    from mdb.models import construct_app
+    with app.app_context():
+        db, user_datastore = construct_app()
+
     # register error Handler
+    # TODO: uncomment this on production
     app.register_error_handler(Exception, all_exception_handler)
     return app

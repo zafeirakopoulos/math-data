@@ -6,12 +6,14 @@ from mdb.core import get_pg_url
 class Config:
     SECRET_KEY = "testkey"
     SECURITY_REGISTERABLE = True
-    #SECURITY_PASSWORD_HASH = "sha512_crypt"
-    #SECURITY_PASSWORD_SALT = "fhasdgihwntlgy8f"
-    SECURITY_PASSWORD_HASH = "plaintext"
+    SECURITY_PASSWORD_HASH = "sha512_crypt"
+    SECURITY_PASSWORD_SALT = "fhasdgihwntlgy8f"
+    #SECURITY_PASSWORD_HASH = "plaintext"
     SECURITY_SEND_REGISTER_EMAIL = False
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    SECURITY_USER_IDENTITY_ATTRIBUTES = ('user_name', 'email')
     LOG_FILE = "api.log"
+    FLASK_ADMIN_SWATCH = "cosmo"
 
 
 class DevelopmentConfig(Config):

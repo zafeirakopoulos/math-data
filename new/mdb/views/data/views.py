@@ -86,10 +86,10 @@ def definitions(action):
 def add_instance():
 
     content = request.form
-    print("=========================")
-    print( request.args)
-    print( request.form)
-    print( request.values)
+    #print("=========================")
+    #print( request.args)
+    #print( request.form)
+    #print( request.values)
 
     response = data_app.active_mdb.add_instance_to_database(content)
     js = json.dumps()
