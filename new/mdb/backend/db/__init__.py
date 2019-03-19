@@ -4,7 +4,7 @@ import subprocess
 # Import the definition of the mathdata server
 from mdb.md_def import *
 
-from mdb.views.db.init_db import *
+from mdb.backend.db.init_db import *
 
 
 subprocess.run(["git","config","--global","user.email","admin@mdb.io"])

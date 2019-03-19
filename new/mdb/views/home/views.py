@@ -30,5 +30,4 @@ def index():
 @home_app.route("/persons", methods=["GET"])
 def get_persons():
     persons = User.query.all()
-    logger.info("Hello World!")
     return create_response(data={"persons": serialize_list(persons)})
