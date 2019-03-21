@@ -1,74 +1,61 @@
-
 {% extends 'base.html' %}
 
-{{ super() }}
-
-{% block style %}
-{% endblock %}
-
-{% block scripts %}
-{% endblock %}
-
-{% block top %}
-{% endblock %}
-
-
 {% block content %}
-        <div class="row">
-            <div class="col-12 col-md-8">
-                <div class="card border-dark mb-3">
-                    <h4 class="card-header" style="text-align:center">What is Mathdata?</h5>
-                    <div class="card-body text dark">
-                        <p class="card-text"> {{ definition }}</p>
-                    </div>
-                </div>
-
-                <div class="card border-dark mb-3">
-                    <h4 class="card-header" style="text-align:center">Stats</h5>
-                    <div class="card-body text dark">
-                        <p class="card-text"> {{ stats }}</p>
-                    </div>
-                </div>
-
-                <div class="card border-dark mb-3">
-                    <h4 class="card-header" style="text-align:center">Credits - Contact</h5>
-                    <div class="row">
-                        <div class="col-sm-6">
-                            <div class="card border-dark mb-3">
-                                <div class="card-body text dark">
-                                    <h5 class="card-title"> {{ contact1.name }} </h5>
-                                    <p class="card-text"><b>Phone:</b> {{ contact1.phone}} </p>
-                                    <p class="card-text"><b>Email:</b> <a href = 'mailto:' + {{ contact1.email }}> {{ contact1.email }} </a></p>
-                                    <p class="card-text"><b>Address:</b> {{ contact1.address}} </p>
-                                    <p class="card-text"><b>Office:</b> {{ contact1.office}} </p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-sm-6">
-                            <div class="card border-dark mb-3">
-                                <div class="card-body text dark">
-                                    <h5 class="card-title"> {{ contact2.name }} </h5>
-                                    <p class="card-text"><b>Phone:</b> {{ contact2.phone}} </p>
-                                    <p class="card-text"><b>Email:</b> <a href = 'mailto:' + {{ contact2.email }}> {{ contact2.email }} </a></p>
-                                    <p class="card-text"><b>Address:</b> {{ contact2.address}} </p>
-                                    <p class="card-text"><b>Office:</b> {{ contact2.office}} </p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+    <div class="row">
+        <div class="col-12 col-md-8">
+            <div class="card border-dark mb-3">
+                <h4 class="card-header mdb-card-block">What is Mathdata?</h5>
+                <div class="card-body text dark">
+                    <p class="card-text"> {{ definition }}</p>
                 </div>
             </div>
 
-            <div class="col-6 col-md-4">
-                <div class="card border-dark mb-3">
-                    <h4 class="card-header" style="text-align:center">News</h5>
-                    <div class="card-body text dark">
-                        <ul style="list-style-type:disc;">
-                            <li>Meet new Mathdata!</li>
-                        </ul>  
+            <div class="card border-dark mb-3">
+                <h4 class="card-header mdb-card-block">Stats</h5>
+                <div class="card-body text dark">
+                    <p class="card-text"> {{ stats }}</p>
+                </div>
+            </div>
+
+            <div class="card border-dark mb-3">
+                <h4 class="card-header mdb-card-block">Credits - Contact</h5>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="card border-dark mb-3">
+                            <div class="card-body text dark">
+                                <h5 class="card-title"> {{ contact1.name }} </h5>
+                                <p class="card-text"><b>Phone:</b> {{ contact1.phone}} </p>
+                                <p class="card-text"><b>Email:</b> <a href = 'mailto:' + {{ contact1.email }}> {{ contact1.email }} </a></p>
+                                <p class="card-text"><b>Address:</b> {{ contact1.address}} </p>
+                                <p class="card-text"><b>Office:</b> {{ contact1.office}} </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="card border-dark mb-3">
+                            <div class="card-body text dark">
+                                <h5 class="card-title"> {{ contact2.name }} </h5>
+                                <p class="card-text"><b>Phone:</b> {{ contact2.phone}} </p>
+                                <p class="card-text"><b>Email:</b> <a href = 'mailto:' + {{ contact2.email }}> {{ contact2.email }} </a></p>
+                                <p class="card-text"><b>Address:</b> {{ contact2.address}} </p>
+                                <p class="card-text"><b>Office:</b> {{ contact2.office}} </p>
+                            </div>
+                        </div>
                     </div>
                 </div>
-  
             </div>
         </div>
+
+        <div class="col-6 col-md-4">
+            <div class="card border-dark mb-3">
+                <h4 class="card-header mdb-card-block">News</h5>
+                <div class="card-body text dark">
+                    <ul style="list-style-type:disc;">
+                        <li>Meet new Mathdata!</li>
+                    </ul>  
+                </div>
+            </div>
+
+        </div>
+    </div>
 {% endblock %}

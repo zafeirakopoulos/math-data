@@ -1,0 +1,27 @@
+
+.mdb-container {
+    margin: 0 auto; 
+    text-align: left;
+}
+
+.mdb-footer {
+    margin-top: 20px;
+}
+
+.mdb-nav-right-btn {
+    margin-left: 5px; 
+    margin-right: 0px;
+}
+
+.mdb-navbar {
+    background-color: #e3f2fd; 
+    margin-bottom: 10px;
+}
+
+.mdb-card-block {
+    text-align: center;
+}
+
+.mdb-form-group {
+    margin-top: 10px;
+}
