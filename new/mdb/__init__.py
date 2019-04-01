@@ -35,15 +35,8 @@ def create_app(test_config=None):
 
     CORS(app)  # add CORS
 
-    # check environment variables to see which config to load
-    env = os.environ.get("FLASK_ENV", "dev")
-    # for configuration options, look at api/config.py
+    env = os.environ.get("FLASK_ENV", "docker")
     if test_config:
-        # purposely done so we can inject test configurations
-        # this may be used as well if you'd like to pass
-        # in a separate configuration although I would recommend
-        # adding/changing it in api/config.py instead
-        # ignore environment variable config if config was given
         app.config.from_mapping(**test_config)
     else:
         app.config.from_object(config[env])  # config dict is from api/config.py
@@ -71,9 +64,7 @@ def create_app(test_config=None):
     # decide whether to create database
     if env != "prod":
         db_url = app.config["SQLALCHEMY_DATABASE_URI"]
-        print("GOING IN")
         if not database_exists(db_url):
-            print("!!! ITS IN !!!")
             create_database(db_url)
 
     Bootstrap(app)

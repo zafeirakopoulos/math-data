@@ -26,7 +26,7 @@ COPY . /app
 WORKDIR /app
 
 # for the flask config
-ENV FLASK_ENV=prod
+ENV FLASK_ENV=docker
 
 EXPOSE 5000
-ENTRYPOINT [ "gunicorn", "-b", "0.0.0.0:5000", "--log-level", "INFO", "manage:app" ]
+#ENTRYPOINT [ "gunicorn", "-b", "0.0.0.0:5000", "--log-level", "INFO", "manage:app" ]
