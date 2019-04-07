@@ -24,11 +24,10 @@ def api_definition(key):
 def api_definitions():
     return data_app.active_mdb.definition_index()
 
-def pp_json(json_thing, sort=True, indents=4):
-    if type(json_thing) is str:
-        return json_beautifier.dumps(json_beautifier.loads(json_thing), sort_keys=sort, indent=indents)
-    else:
-        return json_beautifier.dumps(json_thing, sort_keys=sort, indent=indents)
+def pp_json(json_thing, sort=False, indents=4):
+    parsed_json = json_beautifier.loads(json_thing)
+    return json_beautifier.dumps(parsed_json, indent = indents, sort_keys=sort)
+
 
 ##########################
 ##########################
@@ -70,7 +69,7 @@ def instances():
 @data_app.route('/definition/<key>',methods=['GET', 'POST'])
 def definition(key):
     response = data_app.active_mdb.retrieve_definition(key)
-    return render_template("data/definition.html", definition=response, key=key)
+    return render_template("data/definition.html", definition=pp_json(response), key=key)
 
 @data_app.route('/definitions/<action>', methods=["GET"])
 def definitions(action):
