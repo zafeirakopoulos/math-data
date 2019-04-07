@@ -28,5 +28,8 @@ WORKDIR /app
 # for the flask config
 ENV FLASK_ENV=docker
 
+RUN chmod +x docker_script.sh
+
 EXPOSE 5000
+#ENTRYPOINT [ "python", "manage.py", "runserver" ]
 #ENTRYPOINT [ "gunicorn", "-b", "0.0.0.0:5000", "--log-level", "INFO", "manage:app" ]

@@ -51,10 +51,10 @@ class MathDataBase:
                         data = json.load(def_file)
                         defkey = self.add_definition(json.dumps(data))
                         defname = "".join(filename.split(".")[:-1])
-                        print("===================> defkey ", defkey)
+                        #print("===================> defkey ", defkey)
                         self.approve_definition(defname,defkey, "".join(defname+" definition approved"))
             with open('formatter_index.txt', 'w') as mdb_index:
-                print("To add formatters at setup")
+                print("")
 
 
     ########################################################################
@@ -72,9 +72,11 @@ class MathDataBase:
 
         .. warnings also:: Not exposed to API."""
         os.chdir(self.base_path)
-        print("Add data to repo:")
-        print(data)
-        print(path)
+        
+        #print("Add data to repo:")
+        #print(data)
+        #print(path)
+        
         process = Popen(["git", "hash-object", "-w", "--stdin", "--path", path], stdout=PIPE, stdin=PIPE, stderr=STDOUT)
         stdo = process.communicate(input=str.encode(data))[0]
         return stdo.decode()[:-1]
@@ -82,12 +84,13 @@ class MathDataBase:
 
     def add_instance_to_database(self, data, def_version):
         os.chdir(self.base_path)
-        print("data")
-        print("data")
-        print("data")
-        print("data")
-        print("data")
-        print(data)
+        #print("data")
+        #print("data")
+        #print("data")
+        #print("data")
+        #print("data")
+        #print(data)
+        
         for path in self.definition["paths"]:
             if path in data:
                 data_key = self.add_data_to_repo(str(data[path]),path)

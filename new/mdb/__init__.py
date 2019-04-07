@@ -22,15 +22,6 @@ class RequestFormatter(logging.Formatter):
 
 # why we use application factories http://flask.pocoo.org/docs/1.0/patterns/appfactories/#app-factories
 def create_app(test_config=None):
-    """
-    The flask application factory. To run the app somewhere else you can:
-    ```
-    from api import create_app
-    app = create_app()
-
-    if __main__ == "__name__":
-        app.run()
-    """
     app = Flask(__name__)
 
     CORS(app)  # add CORS
@@ -62,6 +53,7 @@ def create_app(test_config=None):
     root.addHandler(strm)
 
     # decide whether to create database
+    
     if env != "prod":
         db_url = app.config["SQLALCHEMY_DATABASE_URI"]
         if not database_exists(db_url):
@@ -78,11 +70,14 @@ def create_app(test_config=None):
     app.register_blueprint(data_app, url_prefix="/data")
     #app.register_blueprint(formatter_app, url_prefix="/formatter")
 
+    #app.register_error_handler(Exception, all_exception_handler)
+
     from mdb.models import construct_app
     with app.app_context():
         db, user_datastore = construct_app()
+        return app, db, user_datastore
 
     # register error Handler
     # TODO: uncomment this on production
-    app.register_error_handler(Exception, all_exception_handler)
-    return app
+    
+    

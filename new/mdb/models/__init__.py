@@ -47,8 +47,6 @@ class User(db.Model, UserMixin):
         return d_out
 
 class ExtendedRegisterForm(RegisterForm):
-    first_name = StringField('First Name', [Required()])
-    last_name = StringField('Last Name', [Required()])
     user_name = StringField('Username', [Required()])
 
 class ExtendedLoginForm(LoginForm):
@@ -57,7 +55,7 @@ class ExtendedLoginForm(LoginForm):
 class MyAdminIndexView(AdminIndexView):
     def is_accessible(self):
         #return True
-        return current_user.has_role('admin')
+        return current_user and current_user.has_role('admin')
     
     #def _handle_view(self, name, **kwargs):
     #    return redirect(url_for('security.login', next=request.url)) # login
@@ -67,7 +65,7 @@ class MyModelView(sqla.ModelView):
     def is_accessible(self):
         #return True
         # current_user.is_authenticated() and 
-        return current_user.has_role('admin')
+        return current_user and current_user.has_role('admin')
 
     #def _handle_view(self, name, **kwargs):
     #    return redirect(url_for('security.login', next=request.url)) # login
@@ -79,19 +77,25 @@ def construct_app():
     Migrate(app, db)
     security = Security(app, user_datastore, register_form=ExtendedRegisterForm, login_form=ExtendedLoginForm)
 
-    db.drop_all()
+    #db.drop_all()
     db.create_all()
 
-    user_datastore.find_or_create_role(name='admin', description='Admin of the Mathdata.')
-    user_datastore.find_or_create_role(name='editor', description='Editor for the Mathdata. Can review and accept changes.')
-    user_datastore.find_or_create_role(name='user', description='Ordinary user.')
-    user_datastore.create_user(email='admin@admin.com', user_name='admin', password=hash_password('admin'))
-    user_datastore.add_role_to_user('admin@admin.com', 'admin')
-    db.session.commit()
+    if not User.query.first():
+        user_datastore.find_or_create_role(name='admin', description='Admin of the Mathdata.')
+        user_datastore.find_or_create_role(name='editor', description='Editor for the Mathdata. Can review and accept changes.')
+        user_datastore.find_or_create_role(name='user', description='Ordinary user.')
+        user_datastore.create_user(email='admin@admin.com', user_name='admin', password=hash_password('admin'))
+        user_datastore.add_role_to_user('admin@admin.com', 'admin')
+
+        user_datastore.create_user(email='qwe', user_name='qwe', password=hash_password('pw'))
+
+        db.session.commit()
+    print("committing...")
 
     # Add model views
     admin = Admin(app, name='Mathdata Admin', template_mode='bootstrap3', index_view=MyAdminIndexView())
-    admin.add_view(MyModelView(Role, db.session))
     admin.add_view(MyModelView(User, db.session))
+    admin.add_view(MyModelView(Role, db.session))
+    admin.add_view(MyModelView(RolesUsers, db.session))
 
     return db, user_datastore

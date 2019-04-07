@@ -2,9 +2,10 @@ from flask_script import Manager
 from flask_migrate import Migrate, MigrateCommand
 from mdb import create_app
 from mdb.models import db, user_datastore
+from flask_security.utils import hash_password
 
 # sets up the app
-app = create_app()
+app, db, user_datastore = create_app()
 
 manager = Manager(app)
 #migrate = Migrate(app, db)
@@ -30,10 +31,8 @@ def recreate_db():
     when there's a new database instance. This shouldn't be
     used when you migrate your database.
     """
-    db.drop_all()
-    db.create_all()
-    user_datastore.create_user(email='qwe', password='pw')
-    db.session.commit()
+
+    pass
 
 
 if __name__ == "__main__":
