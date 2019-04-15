@@ -107,3 +107,34 @@ def edit_instance():
 def edit_definition():
     key = request.form['definitionKey']
     return "we got the key for definition: " + key
+
+@data_app.route('/editor', methods=["GET", "POST"])
+def editor_page():
+    change1 = {
+        'change_name': 'Change 1',
+        'change_date': '13.10.2019',
+        'change_owner': 'ea@ea.com',
+        'change_id': '123456'
+    }
+
+    change2 = {
+        'change_name': 'Change 2',
+        'change_date': '13.09.2019',
+        'change_owner': 'xyz@xyz.com',
+        'change_id': '987665'
+    }
+
+    change_list = [change1, change2]
+    return render_template("data/editor.html", changes=change_list)
+
+@data_app.route('/change/<change_id>', methods=['GET'])
+def get_change(change_id):
+    change = {
+        'change_name': 'A Change',
+        'change_date': '13.10.2019',
+        'change_owner': 'ea@ea.com',
+        'change_id': change_id,
+        'change_body': 'There will be a diff showing the differences. Now it is just a text to demonstrate.ksdgsdfssnfoeıfm23dm239dj239dj293dj329fnıdsjfksfjskdfhk32hfufn28fhu28ufh2efhı2fhksjfjksdfhe2ufnvn28evn8vn8vnsuıdvnskdvnsdk'
+    }
+    
+    return render_template("data/change.html", change=change)

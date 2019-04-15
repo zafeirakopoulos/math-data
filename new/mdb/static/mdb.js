@@ -22,7 +22,6 @@ function view_json(jsObj) {
 function show_definition(key){
     $.get('/data/definition/'+ key, {}).done(function(response) {
         document.getElementById("data-display-area").innerHTML =  response;
-        console.log(document.getElementById("data-display-area").innerHTML);
     }).fail(function() {
         document.getElementById("data-display-area").innerHTML = "{{ 'Error: Could not contact server.' }}";
     });
@@ -93,3 +92,10 @@ function add_instance(){
     });
 }
  
+function get_change(change_id) {
+    $.get('/data/change/'+ change_id, {}).done(function(response) {
+        document.getElementById("change-display-area").innerHTML =  response;
+    }).fail(function() {
+        document.getElementById("change-display-area").innerHTML = "{{ 'Error: Could not contact server.' }}";
+    });
+}

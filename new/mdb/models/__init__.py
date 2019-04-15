@@ -9,6 +9,7 @@ from flask import current_app as app
 import flask_admin
 from flask_admin.contrib import sqla
 from flask_admin import Admin, AdminIndexView
+from flask_admin import helpers as admin_helpers
 
 db = SQLAlchemy()
 user_datastore = None
@@ -48,6 +49,8 @@ class User(db.Model, UserMixin):
 
 class ExtendedRegisterForm(RegisterForm):
     user_name = StringField('Username', [Required()])
+    first_name = StringField('First Name', [Required()])
+    last_name = StringField('Last Name', [Required()])
 
 class ExtendedLoginForm(LoginForm):
     email = StringField('Username or Email', [Required()])
@@ -87,6 +90,9 @@ def construct_app():
         user_datastore.create_user(email='admin@admin.com', user_name='admin', password=hash_password('admin'))
         user_datastore.add_role_to_user('admin@admin.com', 'admin')
 
+        user_datastore.create_user(email='editor@editor.com', user_name='editor', password=hash_password('editor'))
+        user_datastore.add_role_to_user('editor@editor.com', 'editor')
+
         user_datastore.create_user(email='qwe', user_name='qwe', password=hash_password('pw'))
 
         db.session.commit()
@@ -97,5 +103,17 @@ def construct_app():
     admin.add_view(MyModelView(User, db.session))
     admin.add_view(MyModelView(Role, db.session))
     admin.add_view(MyModelView(RolesUsers, db.session))
+
+    # define a context processor for merging flask-admin's template context into the
+    # flask-security views.
+    @security.context_processor
+    def security_context_processor():
+        return dict(
+            admin_base_template=admin.base_template,
+            admin_view=admin.index_view,
+            h=admin_helpers,
+            get_url=url_for
+        )
+
 
     return db, user_datastore
