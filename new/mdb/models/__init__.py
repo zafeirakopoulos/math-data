@@ -96,7 +96,7 @@ def construct_app():
         user_datastore.create_user(email='qwe', user_name='qwe', password=hash_password('pw'))
 
         db.session.commit()
-    print("committing...")
+        print("committing...")
 
     # Add model views
     admin = Admin(app, name='Mathdata Admin', template_mode='bootstrap3', index_view=MyAdminIndexView())
