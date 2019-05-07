@@ -93,7 +93,8 @@ def construct_app():
         user_datastore.create_user(email='editor@editor.com', user_name='editor', password=hash_password('editor'))
         user_datastore.add_role_to_user('editor@editor.com', 'editor')
 
-        user_datastore.create_user(email='qwe', user_name='qwe', password=hash_password('pw'))
+        user_datastore.create_user(email='user@user.com', user_name='user', password=hash_password('user'))
+        user_datastore.add_role_to_user('user@user.com', 'user')
 
         db.session.commit()
         print("committing...")
