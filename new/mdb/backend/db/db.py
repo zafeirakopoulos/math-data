@@ -93,7 +93,7 @@ class MathDataBase:
         
         for path in self.definition["paths"]:
             if path in data:
-                data_key = self.add_data_to_repo(str(data[path]),path)
+                data_key = self.add_data_to_repo(json.dumps(data[path]),path)
                 subprocess.check_output(["git", "update-index", "--add", "--cacheinfo", "100644",data_key, path]).decode()
         data_key = self.add_data_to_repo(def_version,"definition_version")
         subprocess.check_output(["git", "update-index", "--add", "--cacheinfo", "100644",data_key, "definition_version"]).decode()
@@ -148,14 +148,15 @@ class MathDataBase:
     ########################################################################
 
     def retrieve_instance_from_database(self, key):
-        response = []
+        response = {}
         for path in self.definition["paths"]:
             try:
-                response.append( "'"+path+"':"+subprocess.check_output(["git", "show", key+":"+path]).decode())
+                response[path] = json.loads(subprocess.check_output(["git", "show", key+":"+path]).decode())
             except:
                 pass
-        response.append( "'definition_version':'" + subprocess.check_output(["git", "show", key+":definition_version"]).decode()+"'")
-        return json.dumps("{"+ ",".join(response) + "}")
+        
+        response["definition_version"] = subprocess.check_output(["git", "show", key+":definition_version"]).decode()
+        return json.dumps(response)
 
 
     def retrieve_definition(self, key):

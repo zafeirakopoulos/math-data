@@ -55,11 +55,11 @@ def edit():
 @data_app.route('/instance/<key>', methods=['GET', 'POST'])
 def instance(key):
     response = data_app.active_mdb.retrieve_instance_from_database(key)
-    data = json.loads(response)
+    #data = json.loads(response)
     formatters= data_app.active_mdb.formatter_index()
     #[data["def_version"]]
-    print("formatters",formatters)
-    return render_template("data/instance.html", instance=response, key=key, formatters=formatters)
+    #print("formatters",formatters)
+    return render_template("data/instance.html", instance=pp_json(response), key=key, formatters=formatters)
 
 @data_app.route('/instances', methods=["GET"])
 def instances():
