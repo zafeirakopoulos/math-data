@@ -1,4 +1,4 @@
-from flask import Flask, Blueprint, request, json, render_template
+from flask import Flask, Blueprint, request, json, render_template, jsonify
 from mdb.views.data import data_app
 
 import json as json_beautifier
@@ -55,21 +55,30 @@ def edit():
 @data_app.route('/instance/<key>', methods=['GET', 'POST'])
 def instance(key):
     response = data_app.active_mdb.retrieve_instance_from_database(key)
-    #data = json.loads(response)
-    formatters= data_app.active_mdb.formatter_index()
-    #[data["def_version"]]
-    #print("formatters",formatters)
-    return render_template("data/instance.html", instance=pp_json(response), key=key, formatters=formatters)
+    formatters = data_app.active_mdb.formatter_index()
+
+    json_data = json_beautifier.loads(response)
+
+    out = {}
+    out["page"] = render_template("data/instance.html", instance=json_beautifier.dumps(json_data, indent = 4, sort_keys=False), key=key, formatters=formatters)
+    out["data"] = json_data
+    return jsonify(out)
 
 @data_app.route('/instances', methods=["GET"])
 def instances():
     response = data_app.active_mdb.instance_index()
     return render_template("data/instances.html", instances=response)
 
-@data_app.route('/definition/<key>',methods=['GET', 'POST'])
+@data_app.route('/definition/<key>', methods=['GET', 'POST'])
 def definition(key):
     response = data_app.active_mdb.retrieve_definition(key)
-    return render_template("data/definition.html", definition=pp_json(response), key=key)
+
+    json_data = json_beautifier.loads(response)
+
+    out = {}
+    out["page"] = render_template("data/definition.html", definition=json_beautifier.dumps(json_data, indent = 4, sort_keys=False), key=key)
+    out["data"] = json_data
+    return jsonify(out)
 
 @data_app.route('/definitions/<action>', methods=["GET"])
 def definitions(action):

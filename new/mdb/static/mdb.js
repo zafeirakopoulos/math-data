@@ -2,7 +2,8 @@ var current_definition="";
 
 function show_instance(key){
     $.get('/data/instance/'+ key, {}).done(function(response) {
-        document.getElementById("data-display-area").innerHTML = response;
+        document.getElementById("data-display-area").innerHTML = response["page"];
+        document.getElementById("jsonArea").appendChild(renderjson.set_show_to_level(2)(response["data"]));
     }).fail(function() {
         document.getElementById("data-display-area").innerHTML = "{{ 'Error: Could not contact server.' }}";
     });
@@ -21,7 +22,8 @@ function view_json(jsObj) {
 
 function show_definition(key){
     $.get('/data/definition/'+ key, {}).done(function(response) {
-        document.getElementById("data-display-area").innerHTML =  response;
+        document.getElementById("data-display-area").innerHTML = response["page"];
+        document.getElementById("jsonArea").appendChild(renderjson.set_show_to_level(2)(response["data"]));
     }).fail(function() {
         document.getElementById("data-display-area").innerHTML = "{{ 'Error: Could not contact server.' }}";
     });
@@ -43,8 +45,10 @@ function get_definitions(action) {
 }
 
 
-function enable_edit(btnId, textAreId, key) {
-    $("#" + textAreId).prop("disabled", false);
+function enable_edit(btnId, textAreaId, key) {
+    var textArea = document.getElementById(textAreaId);
+    textArea.style.visibility = "visible";
+
     $("#" + btnId).html("Commit Changes");
 
     var functionName = "edit_instance";
