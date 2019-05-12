@@ -4,6 +4,57 @@ function show_instance(key){
     $.get('/data/instance/'+ key, {}).done(function(response) {
         document.getElementById("data-display-area").innerHTML = response["page"];
         document.getElementById("jsonArea").appendChild(renderjson.set_show_to_level(2)(response["data"]));
+
+        document.getElementById("graph-container").innerHTML = "";
+
+        const edges = response["data"]["raw"]["dense"]["edges"];
+        if (edges) {
+            let i = 0, j = 0, c = 0;
+            let g = {
+                nodes: [],
+                edges: []
+            };
+
+            for (; i < edges.length; ++i) {
+                g.nodes.push({
+                    id: i,
+                    label: 'Node ' + i,
+                    x: Math.floor(Math.random() * 501),
+                    y: Math.floor(Math.random() * 501),
+                    size: Math.floor(Math.random() * 10),
+                    color: '#666'
+                });
+            }
+
+            for (i = 0; i < edges.length; ++i) {
+                let connections = edges[i];
+                j = 0;
+                for (; j < connections.length; ++j) {
+                    if (connections[j] != 0) {
+                        g.edges.push({
+                            id: 'e' + c,
+                            source: i,
+                            target: j,
+                            size: Math.random(),
+                            color: '#ccc'
+                        });
+                        
+                        c++;
+                    }
+                }
+            }
+
+            console.log(g);
+            
+            s = new sigma({
+                graph: g,
+                renderer: {
+                    container: document.getElementById('graph-container'),
+                    type: 'canvas'
+                }
+            });
+        }
+
     }).fail(function() {
         document.getElementById("data-display-area").innerHTML = "{{ 'Error: Could not contact server.' }}";
     });
