@@ -57,11 +57,15 @@ def instance(key):
     response = data_app.active_mdb.retrieve_instance_from_database(key)
     formatters = data_app.active_mdb.formatter_index()
 
+    # get actual json from json_dumps
     json_data = json_beautifier.loads(response)
 
     out = {}
+    # get html for instance
     out["page"] = render_template("data/instance.html", instance=json_beautifier.dumps(json_data, indent = 4, sort_keys=False), key=key, formatters=formatters)
+    # send actual json
     out["data"] = json_data
+    
     return jsonify(out)
 
 @data_app.route('/instances', methods=["GET"])

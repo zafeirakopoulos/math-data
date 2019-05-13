@@ -19,8 +19,8 @@ function show_instance(key){
                 g.nodes.push({
                     id: i,
                     label: 'Node ' + i,
-                    x: Math.floor(Math.random() * 501),
-                    y: Math.floor(Math.random() * 501),
+                    x: Math.floor(Math.random() * 300),
+                    y: Math.floor(Math.random() * 300),
                     size: Math.floor(Math.random() * 10),
                     color: '#666'
                 });
@@ -43,8 +43,6 @@ function show_instance(key){
                     }
                 }
             }
-
-            console.log(g);
             
             s = new sigma({
                 graph: g,
@@ -98,7 +96,7 @@ function get_definitions(action) {
 
 function enable_edit(btnId, textAreaId, key) {
     var textArea = document.getElementById(textAreaId);
-    textArea.style.visibility = "visible";
+    textArea.style.display = "initial";
 
     $("#" + btnId).html("Commit Changes");
 

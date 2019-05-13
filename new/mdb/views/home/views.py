@@ -24,7 +24,12 @@ def contact():
         'email': 'gizeumsungu@gtu.edu.tr'
     }
 
-    return render_template('contact.html', contact1=contact1, contact2=contact2)
+    contact3 = {
+        'name': 'Elif Armağan',
+        'email': 'esarmagan@gtu.edu.tr'
+    }
+
+    return render_template('contact.html', contact1=contact1, contact2=contact2, contact3=contact3)
 
 # function that is called when you visit /persons
 @home_app.route("/persons", methods=["GET"])
