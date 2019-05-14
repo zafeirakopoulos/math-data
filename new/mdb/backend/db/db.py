@@ -73,10 +73,6 @@ class MathDataBase:
         .. warnings also:: Not exposed to API."""
         os.chdir(self.base_path)
         
-        #print("Add data to repo:")
-        #print(data)
-        #print(path)
-        
         process = Popen(["git", "hash-object", "-w", "--stdin", "--path", path], stdout=PIPE, stdin=PIPE, stderr=STDOUT)
         stdo = process.communicate(input=str.encode(data))[0]
         return stdo.decode()[:-1]
@@ -84,13 +80,8 @@ class MathDataBase:
 
     def add_instance_to_database(self, data, def_version):
         os.chdir(self.base_path)
-        #print("data")
-        #print("data")
-        #print("data")
-        #print("data")
-        #print("data")
-        #print(data)
-        
+
+        # add data to repo as json_dump not string so that we can get it correctly
         for path in self.definition["paths"]:
             if path in data:
                 data_key = self.add_data_to_repo(json.dumps(data[path]),path)
@@ -148,14 +139,19 @@ class MathDataBase:
     ########################################################################
 
     def retrieve_instance_from_database(self, key):
+        # initialize output as object
         response = {}
         for path in self.definition["paths"]:
             try:
+                # get data as json (because we added the data as json)
                 response[path] = json.loads(subprocess.check_output(["git", "show", key+":"+path]).decode())
             except:
                 pass
         
+        # add definition_version to output
         response["definition_version"] = subprocess.check_output(["git", "show", key+":definition_version"]).decode()
+        
+        # return output as json dump so that we can use it correctly
         return json.dumps(response)
 
 

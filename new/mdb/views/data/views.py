@@ -52,6 +52,7 @@ def create():
 def edit():
     return render_template("data/edit.html")
 
+# retrieves an instance object
 @data_app.route('/instance/<key>', methods=['GET', 'POST'])
 def instance(key):
     response = data_app.active_mdb.retrieve_instance_from_database(key)
@@ -61,27 +62,39 @@ def instance(key):
     json_data = json_beautifier.loads(response)
 
     out = {}
-    # get html for instance
+    
+    # get html representation for instance object and add to output
     out["page"] = render_template("data/instance.html", instance=json_beautifier.dumps(json_data, indent = 4, sort_keys=False), key=key, formatters=formatters)
-    # send actual json
+    
+    # add actual json to output
     out["data"] = json_data
     
+    # return data with jsonify. otherwise the json object won't go correctly
     return jsonify(out)
 
+# function to list all instances
 @data_app.route('/instances', methods=["GET"])
 def instances():
     response = data_app.active_mdb.instance_index()
     return render_template("data/instances.html", instances=response)
 
+# function to retrieve a definition
 @data_app.route('/definition/<key>', methods=['GET', 'POST'])
 def definition(key):
     response = data_app.active_mdb.retrieve_definition(key)
 
+    # get actual json from json_dumps
     json_data = json_beautifier.loads(response)
 
     out = {}
+
+    # get html representation for defnition object and add to output
     out["page"] = render_template("data/definition.html", definition=json_beautifier.dumps(json_data, indent = 4, sort_keys=False), key=key)
+    
+    # add actual json to output
     out["data"] = json_data
+
+    # return data with jsonify. otherwise the json object won't go correctly
     return jsonify(out)
 
 @data_app.route('/definitions/<action>', methods=["GET"])
@@ -111,22 +124,32 @@ def add_instance():
 def add_instance_data_field():
     return render_template("data/data_field_add_instance.html")
 
+
+# this method is called when the edit button is clicked for instances
+# input is the edited instance object
 @data_app.route('/edit_instance', methods=["POST"])
 def edit_instance():
+    # TODO: fill this function to actually send edit request to backend
     key = request.form['instanceKey']
     return "we got the key for instance: " + key
 
+
+# this method is called when the edit button is clicked for definitions
+# input is the edited definition object
 @data_app.route('/edit_definition', methods=["POST"])
 def edit_definition():
+    # TODO: fill this function to actually send edit request to backend
     key = request.form['definitionKey']
     return "we got the key for definition: " + key
 
+
+# function to get change list
 @data_app.route('/editor', methods=["GET", "POST"])
 def editor_page():
     change1 = {
         'change_name': 'Change 1',
         'change_date': '13.10.2019',
-        'change_owner': 'ea@ea.com',
+        'change_owner': 'elif@elif.com',
         'change_id': '123456'
     }
 
@@ -137,9 +160,12 @@ def editor_page():
         'change_id': '987665'
     }
 
+    # TODO: get actual change list from backend and show in frontend
     change_list = [change1, change2]
     return render_template("data/editor.html", changes=change_list)
 
+
+# method that gets a change's details by id
 @data_app.route('/change/<change_id>', methods=['GET'])
 def get_change(change_id):
     change = {
@@ -150,4 +176,5 @@ def get_change(change_id):
         'change_body': 'There will be a diff showing the differences. Now it is just a text to demonstrate.ksdgsdfssnfoeıfm23dm239dj239dj293dj329fnıdsjfksfjskdfhk32hfufn28fhu28ufh2efhı2fhksjfjksdfhe2ufnvn28evn8vn8vnsuıdvnskdvnsdk'
     }
     
+    # TODO: get actual change data from backend
     return render_template("data/change.html", change=change)
