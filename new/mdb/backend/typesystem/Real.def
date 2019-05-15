@@ -1,5 +1,0 @@
-{
-    "inherits" : ["Number"],
-    "name" : "Real",
-    "plural" : "Reals"
-}

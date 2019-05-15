@@ -1,5 +1,0 @@
-{
-    "name" : "Invertible",
-    "description" : "It has an inverse"
-    "properties" : ["invertible"]
-}

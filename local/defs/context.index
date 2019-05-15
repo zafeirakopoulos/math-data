@@ -1,7 +1,0 @@
-{
-"Directed Vertex Labeled Edge Weighted Edge Labeled Graph" : [
-    ["graph_directed", 1234 ],
-    ["graph_edge_weighted", 1234 ],
-    ["graph_vertex_labeled", 1234 ],
-    ["graph_edge_labeled", 1234 ]
-}

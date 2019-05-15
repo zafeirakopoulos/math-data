@@ -1,9 +1,0 @@
-{
-  "types": ["1d array"],
-  "features": [{"name": "N", "value": "10"}, {"name": "M", "value": "100"}],
-  "generator": {
-    "deterministic": true,
-    "executable": "python3",
-    "parameters": ["./example files/gen.py", "-M", "100", "-N", "10"]
-  }
-}

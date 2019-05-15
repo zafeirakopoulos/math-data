@@ -1,8 +1,0 @@
-{
-    "inherits" : ["Rational"],
-    "name" : "Integer",
-    "plural" : "Integers",
-    "properties" : {
-            "field element" : false
-        }
-}
