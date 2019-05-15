@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-12 col-md-8">
+            <div class="card border-dark mb-3">
+                <h4 class="card-header mdb-card-block">What is Mathdata?</h5>
+                <div class="card-body text dark">
+                    <p class="card-text"> {{ definition }}</p>
+                </div>
+            </div>
+
+            <div class="card border-dark mb-3">
+                <h4 class="card-header mdb-card-block">Stats</h5>
+                <div class="card-body text dark">
+                    <p class="card-text"> {{ stats }}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-6 col-md-4">
+            <div class="card border-dark mb-3">
+                <h4 class="card-header mdb-card-block">News</h5>
+                <div class="card-body text dark">
+                    <ul style="list-style-type:disc;">
+                        <li>Meet new Mathdata!</li>
+                    </ul>  
+                </div>
+            </div>
+
+        </div>
+    </div>
+{% endblock %}

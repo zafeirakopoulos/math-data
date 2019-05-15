@@ -1,0 +1,39 @@
+
+.mdb-container {
+    margin: 0 auto; 
+    text-align: left;
+}
+
+.mdb-footer {
+    margin-top: 20px;
+}
+
+.mdb-nav-right-btn {
+    margin-left: 5px; 
+    margin-right: 0px;
+}
+
+.mdb-navbar {
+    background-color: #e3f2fd; 
+    margin-bottom: 10px;
+}
+
+.mdb-card-block {
+    text-align: center;
+}
+
+.mdb-form-group {
+    margin-top: 10px;
+}
+
+.renderjson a              { text-decoration: none; }
+.renderjson .disclosure    { color: crimson;
+                             font-size: 150%; }
+.renderjson .syntax        { color: grey; }
+.renderjson .string        { color: red; }
+.renderjson .number        { color: rgba(0, 17, 255, 0.616); }
+.renderjson .boolean       { color: plum; }
+.renderjson .key           { color: rgb(0, 0, 0); }
+.renderjson .keyword       { color: lightgoldenrodyellow; }
+.renderjson .object.syntax { color: lightseagreen; }
+.renderjson .array.syntax  { color: lightsalmon; }

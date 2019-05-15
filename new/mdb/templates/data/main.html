@@ -1,0 +1,58 @@
+{% extends 'data/index.html' %}
+
+{% block style %}
+{% endblock %}
+
+{% block scripts %}
+
+    {{ super() }}
+<!--
+    <script type="text/javascript">
+    window.onload = function() {
+        if (window.jQuery) {
+            // jQuery is loaded
+            alert("Yeah!");
+        } else {
+            // jQuery is not loaded
+            alert("Doesn't Work");
+        }
+        if (window.jQuery.ajaxForm) {
+            // jQuery is loaded
+            alert("Yeah form!");
+        } else {
+            // jQuery is not loaded
+            alert("Form Doesn't Work");
+        }
+    }
+</script> -->
+
+{% endblock %}
+
+{% block sidebar %}
+
+{% endblock %}
+
+{% block content %}
+{{ super() }}
+<div class="container">
+  <div class="row">
+    <div class="col-2">
+        <button type="button" class="btn btn-primary btn-block"  id="instance_button"   onclick="{% block instance_command %}  {% endblock %}">Instance</button>
+        <button type="button" class="btn btn-primary btn-block"  id="dataset_button"    onclick="{% block dataset_command %}   {% endblock %}">Dataset</button>
+        <button type="button" class="btn btn-primary btn-block"  id="definition_button" onclick="{% block definition_command %}{% endblock %}">Definition</button>
+    </div>
+    <div class="col">
+        <div id="list-display-area">
+            {% block list_area %}
+            {% endblock %}
+        </div>
+    </div>
+    <div class="col">
+        <div id="data-display-area">
+            {% block data_area %}
+            {% endblock %}
+        </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

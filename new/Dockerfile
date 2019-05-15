@@ -1,47 +1,21 @@
-# Set base image as debian
-FROM debian:stable-slim as base
-
+FROM python:3.7
 LABEL description = "MDB Container"
 
+COPY requirements.txt requirements.txt
 RUN apt-get update && apt-get install -yq --no-install-recommends \
-	  apt-utils \
-    wget \
-    bash \
-    bzip2 \
-    ca-certificates \
-    sudo \
-    locales \
-    build-essential \
-    m4 \
-    yasm \
-    cmake \
-    git
+    apt-utils gcc wget bash bzip2 ca-certificates \
+    sudo m4 yasm cmake git postgresql postgresql-contrib
 
-RUN apt-get update && apt-get install -yq --no-install-recommends \
-   python3-pip \
-   python3-venv \
-   python3-git \
-   python3-setuptools \
-   python3-dev \
-   python3-wheel
+RUN pip install -r requirements.txt
 
+COPY . /app
+WORKDIR /app
 
+# for the flask config
+ENV FLASK_ENV=docker
 
+RUN chmod +x docker_script.sh
 
-RUN pip3 install flask
-RUN pip3 install request
-RUN pip3 install jinja2
-RUN pip3 install gevent
-RUN pip3 install GitPython
-
-RUN pip3 install  bootstrap-flask
-
-
-COPY docker_assets/run_mdb.py /mathdata/run_mdb.py
-COPY mdb /mathdata/mdb
-COPY local /mathdata/local
-COPY md_def.py /mathdata/md_def.py
-
-
-WORKDIR /mathdata
-ENTRYPOINT ["python3","run_mdb.py"]
+EXPOSE 5000
+#ENTRYPOINT [ "python", "manage.py", "runserver" ]
+#ENTRYPOINT [ "gunicorn", "-b", "0.0.0.0:5000", "--log-level", "INFO", "manage:app" ]

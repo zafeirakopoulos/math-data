@@ -1,0 +1,44 @@
+version: "3.4"
+services:
+  postgres:
+    container_name: postgres
+    restart: always
+    image: postgres:10
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+    networks:
+      - net
+  app:
+    container_name: app
+    restart: always
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - FLASK_ENV=docker
+    ports:
+      - 5000:5000
+    networks:
+      - net
+    volumes:
+      - mathdatadb:/app/live.git/
+      - .:/app
+    depends_on:
+      - postgres
+    links:
+      - postgres
+    entrypoint:
+      - /app/docker_script.sh
+
+volumes:
+  postgres:
+  mathdatadb:
+
+networks:
+  net:

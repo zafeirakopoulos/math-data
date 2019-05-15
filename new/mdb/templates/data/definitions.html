@@ -1,0 +1,32 @@
+{% extends 'data/base.html' %}
+
+{% block content %}
+
+<div class="row">
+    <div class="col-sm">
+        <div id="list-display-area">
+            <ul class='list-group'>
+              {% for definition in definitions %}
+                <li class='list-group-item'>
+                  <div class="Dropdown">
+                    <button class="btn btn-block dropdown-toggle" type="button" id="definitionVersionDropdownButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      {{definition}}
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="definitionVersionDropdownButton" >
+                      {% for defversion in definitions[definition] %}
+                          <a class='dropdown-item' href='javascript:{{action}}_definition("{{defversion}}");'> {{defversion}} </a>
+                      {% endfor %}
+                    </div>
+                  </div>
+                </li>
+              {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+    <div class="col-sm">
+        <div id="data-display-area"></div>
+    </div>
+</div>
+
+{% endblock %}

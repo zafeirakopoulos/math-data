@@ -1,0 +1,13 @@
+
+{% extends 'data/main.html' %}
+
+{{ super() }}
+{% block instance_command %}
+add_instance();
+{% endblock %}
+{% block dataset_command %}
+add_dataset()
+{% endblock %}
+{% block definition_command %}
+add_definition();
+{% endblock %}
