@@ -164,4 +164,107 @@ class MathDataBase:
     ########################################################################
     ########################################################################
 
- 
+
+    def add_formatter(self, formatter, from, to,  message):
+        """Register a formatter in the MathDataBase.
+        It is added in the pending list waiting for approval by an editor.
+
+        :param formatter: A python script formatting data from one format to another.
+        :param from: The format of the input (given by the commit-hash of the format)
+        :param from: The format of the outut (given by the commit-hash of the format)
+        :returns: The name of the branch in which the formatter was commited"""
+        # It stores formatters under the "formatter" path
+        os.chdir(os.path.join(mdb_root,self.base_path,"formatter"))
+
+        # Get the hash of the file
+        process = Popen(["git", "hash-object", "--stdin", "--path", "formatter"], stdout=PIPE, stdin=PIPE, stderr=STDOUT)
+        stdo = process.communicate(input=str.encode(formatter+from+to))[0]
+        hash = stdo.decode()[:-1]
+
+        # Create a new branch in the repo with name the hash of the formatter
+        subprocess.check_output(["git", "branch", hash]).decode()[:-1]
+        # TODO: Check if fail
+        subprocess.check_output(["git", "checkout", hash]).decode()[:-1]
+        # TODO: Check if fail
+
+        # Write the file
+        with open(hash, 'w') as formatter_file:
+            formatter_file.write(formatter)
+
+        # Add and commit in the new branch
+        subprocess.check_output(["git", "add", os.path.join(mdb_root,self.base_path,"formatter",hash) ]).decode()[:-1]
+        subprocess.check_output(["git", "commit", "-m", message]).decode()[:-1]
+        commit_hash = subprocess.check_output(["git", "log", "-n", "1", "--pretty=format:'%H'"]).decode()[:-1]
+
+
+        # Add "from to branch name" in the pending list at the default_branch.
+        subprocess.check_output(["git", "checkout", self.definition["default_branch"]]).decode()[:-1]
+        # TODO: Check if fail
+        with open(os.path.join(mdb_root,self.base_path,'formatter_pending.txt'), 'a') as formatter_pending:
+            formatter_pending.write(from + " " + to + " " +commit_hash.strip("'") +"\n")
+
+        # Return 0 on success
+        return 0
+
+
+    def approve_formatter(self, commit_hash, message):
+        os.chdir(os.path.join(mdb_root,self.base_path))
+
+        # Remove from pending list but keep from and to
+        from = ""
+        to = ""
+        with open("formatter_pending.txt", "r") as formatter_pending:
+            lines = formatter_pending.readlines()
+        with open("formatter_pending.txt", "w") as formatter_pending:
+            for line in lines:
+                if line.strip("\n").split(" ")[2] != commit_hash:
+                    formatter_pending.write(line.strip("\n")+"\n")
+                else:
+                    from = line.strip("\n").split(" ")[0]
+                    to = line.strip("\n").split(" ")[1]
+
+        # TODO: Not thread safe! Assumes we are in default_branch.
+        subprocess.check_output(["git", "merge", "-m", message, commit_hash]).decode()[:-1]
+
+        # Add merge in index list
+        with open('formatter_index.txt', 'a') as formatter_index:
+                formatter_index.write(from + " " + to + " " + commit_hash+"\n")
+        # Commit the new index in the default_branch
+        subprocess.check_output(["git", "add", os.path.join(mdb_root,self.base_path,'formatter_index.txt') ]).decode()[:-1]
+        subprocess.check_output(["git", "commit", "-m", "Merged formatter "+commit_hash]).decode()[:-1]
+
+        return 0
+
+    def pending_formatters(self):
+        os.chdir(os.path.join(mdb_root,self.base_path))
+
+        with open("formatter_pending.txt", "r") as formatter_pending:
+            lines = formatter_pending.readlines()
+        return [ line.strip("\n") for line in lines ]
+
+    def get_formatters(self):
+        os.chdir(os.path.join(mdb_root,self.base_path))
+
+        with open("formatter_index.txt", "r") as formatter_index:
+            lines = formatter_index.readlines()
+        return [ line.strip("\n") for line in lines ]
+
+    def retrieve_formatter(self, hash):
+        files = subprocess.check_output(["git", "diff-tree", "--no-commit-id", "--name-only", "-r", hash ]).decode()[:-1]
+        files = files.split("\n")
+        if len(files)>1:
+            raise Exception("More than one files in the commit")
+        with open(os.path.join(mdb_root,self.base_path, files[0])) as formatter:
+            lines = formatter.readlines()
+        # TODO: \n or other newline feed?
+        return "\n".join(lines)
+
+    def retrieve_formatter_for(self, from):
+        formatter_lines = []
+        with open("formatter_index.txt", "r") as formatter_index:
+            lines = formatter_index.readlines()
+        for line in lines:
+            if line.split(" ")[0]==hash:
+                formatter_lines.append(line)
+        # return pairs [output format, formatter]
+        return [ [formatter[1], retrieve_formatter(formatter[2])] formatter in formatter_lines ]
