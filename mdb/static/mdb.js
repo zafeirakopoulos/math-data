@@ -91,9 +91,9 @@ function view_json(jsObj) {
 
 
 // function that is called when a definition clicked
-function show_definition(key){
+function show_datastructure(key){
     // request to flask to get the definition data
-    $.get('/data/definition/'+ key, {}).done(function(response) {
+    $.get('/data/datastructure/'+ key, {}).done(function(response) {
         // put the html that generated to represent definition in to the "data-display-area" div
         document.getElementById("data-display-area").innerHTML = response["page"];
 
@@ -131,10 +131,10 @@ function enable_edit(btnId, textAreaId, key) {
     $("#" + btnId).html("Commit Changes");
 
     var functionName = "edit_instance";
-    if (btnId === "editDefinitionBtn")
-        functionName = "edit_definition";
+    if (btnId === "editdatastructureBtn")
+        functionName = "edit_datastructure";
         
-    $("#" + btnId).attr("onClick", functionName + "('" + key + "')");
+    $("#" + btnId).attr("onClick", functionName + "('" + key + "', '" + textAreaId + "')");
 }
 
 
@@ -149,8 +149,14 @@ function edit_instance(instanceKey) {
 
 
 // function that is called when an definition object edited
-function edit_definition(definitionKey) {
-    $.post('/data/edit_definition', {definitionKey}).done(function(response) {
+function edit_datastructure(datastructureKey, textAreaId) {
+    let body = $("#" + textAreaId).text();
+    let data = {
+        "datastructureKey": datastructureKey,
+        "body": body
+    };
+
+    $.post('/data/edit_datastructure', data).done(function(response) {
         console.log(response);
     }).fail(function() {
         console.log("we got error");

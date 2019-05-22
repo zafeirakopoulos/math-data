@@ -51,7 +51,12 @@ class MathDataBase:
             with open(entity+'_pending.txt', 'w') as tmp:
                 pass
 
-            os.mkdir(entity)
+            #os.mkdir(entity)
+            try:
+                os.mkdir(entity)
+            except:
+                pass
+
             with open(os.path.join(entity,'.gitkeep'), 'w') as tmp:
                 pass
 
