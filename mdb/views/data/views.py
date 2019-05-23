@@ -148,11 +148,10 @@ def edit_datastructure():
     logger.debug("datastructureKey: " + datastructureKey)
     logger.debug("user: " + current_user.email)
 
-
     message = "Datastructure changed by " + current_user.email + " old key: " + str(datastructureKey)
     
     response = data_app.active_mdb.add_datastructure(body, message)
-    logger.debug("response: " + response)
+    logger.debug("response: " + str(response))
     
     return response
 

@@ -153,13 +153,14 @@ function edit_datastructure(datastructureKey, textAreaId) {
     let body = $("#" + textAreaId).text();
     let data = {
         "datastructureKey": datastructureKey,
-        "body": body
+        "body": '"' + body + '"'
     };
 
     $.post('/data/edit_datastructure', data).done(function(response) {
         console.log(response);
-    }).fail(function() {
+    }).fail(function(err) {
         console.log("we got error");
+        console.log(err);
     });
 }
 
