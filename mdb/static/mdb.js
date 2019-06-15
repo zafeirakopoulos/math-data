@@ -150,7 +150,7 @@ function edit_instance(instanceKey) {
 
 // function that is called when an definition object edited
 function edit_datastructure(datastructureKey, textAreaId) {
-    let body = $("#" + textAreaId).text();
+    let body = $("#" + textAreaId).val();
     let data = {
         "datastructureKey": datastructureKey,
         "body": '"' + body + '"'
@@ -192,6 +192,25 @@ function add_instance(){
 function get_change(change_id) {
     $.get('/data/change/'+ change_id, {}).done(function(response) {
         document.getElementById("change-display-area").innerHTML =  response;
+    }).fail(function(err) {
+        document.getElementById("change-display-area").innerHTML = "{{ 'Error: Could not contact server.' }}";
+        console.log(err);
+    });
+}
+
+
+function accept_change(change_id) {
+    $.get('/data/change/accept/'+ change_id, {}).done(function(response) {
+        document.getElementById("change-display-area").innerHTML =  "Accepted!";
+    }).fail(function(err) {
+        document.getElementById("change-display-area").innerHTML = "{{ 'Error: Could not contact server.' }}";
+        console.log(err);
+    });
+}
+
+function reject_change(change_id) {
+    $.get('/data/change/reject/'+ change_id, {}).done(function(response) {
+        document.getElementById("change-display-area").innerHTML =  "Rejected!";
     }).fail(function(err) {
         document.getElementById("change-display-area").innerHTML = "{{ 'Error: Could not contact server.' }}";
         console.log(err);

@@ -135,13 +135,7 @@ class MathDataBase:
     def approve_datastructure(self, commit_hash, message):
         os.chdir(self.base_path)
 
-        # Remove from pending list
-        with open("datastructure_pending.txt", "r") as datastructure_pending:
-            lines = datastructure_pending.readlines()
-        with open("datastructure_pending.txt", "w") as datastructure_pending:
-            for line in lines:
-                if line.strip("'").strip("\n") != commit_hash:
-                    datastructure_pending.write(line.strip("'").strip("\n")+"\n")
+        self.remove_hash_from_pending(commit_hash)
 
         # TODO: Not thread safe! Assumes we are in default_branch.
         subprocess.check_output(["git", "merge", "-m", message, commit_hash])
@@ -155,6 +149,10 @@ class MathDataBase:
         subprocess.check_output(["git", "commit", "-m", "Merged datastructure "+commit_hash])
 
         return 0
+
+    def reject_datastructure(self, commit_hash, message):
+        os.chdir(self.base_path)
+        self.remove_hash_from_pending(commit_hash)
 
     def get_diff(self, commit_hash):
         diff = subprocess.check_output(["git", "show", commit_hash]).decode()[:-1]
@@ -178,12 +176,28 @@ class MathDataBase:
     def retrieve_datastructure(self, hash):
         files = subprocess.check_output(["git", "diff-tree", "--no-commit-id", "--name-only", "-r", hash ]).decode()[:-1]
         files = files.split("\n")
+        
+        if len(files) == 0:
+            return "0 files!"
+
         if len(files)>1:
-            raise Exception("More than one files in the commit")
+            return "More than one files in the commit"
+        
+        print(files[0])
         with open(os.path.join(self.base_path, files[0])) as datastructure:
             lines = datastructure.readlines()
         # TODO: \n or other newline feed?
         return "\n".join(lines)
+
+
+    def remove_hash_from_pending(self, commit_hash):
+        # Remove from pending list
+        with open("datastructure_pending.txt", "r") as datastructure_pending:
+            lines = datastructure_pending.readlines()
+        with open("datastructure_pending.txt", "w") as datastructure_pending:
+            for line in lines:
+                if line.strip("'").strip("\n") != commit_hash:
+                    datastructure_pending.write(line.strip("'").strip("\n")+"\n")
 
     ########################################################################
     ########################################################################

@@ -3,6 +3,8 @@ from flask_login import current_user
 from mdb.views.data import data_app
 from mdb.core import logger
 
+import sys
+
 import json as json_beautifier
 
 ##########################
@@ -84,8 +86,6 @@ def instances():
 @data_app.route('/datastructure/<key>', methods=['GET', 'POST'])
 def datastructure(key):
     response = data_app.active_mdb.retrieve_datastructure(key)
-
-    # get actual json from json_dumps
     json_data = json_beautifier.loads(response)
 
     out = {}
@@ -140,8 +140,8 @@ def edit_instance():
 # input is the edited datastructure object
 @data_app.route('/edit_datastructure', methods=["POST"])
 def edit_datastructure():
-    # TODO: fill this function to actually send edit request to backend
     body = request.form['body']
+    body = body[1:-1]
     datastructureKey = request.form['datastructureKey']
 
     logger.debug("body: " + body)
@@ -155,6 +155,8 @@ def edit_datastructure():
     
     return response
 
+def remove_at(i, s):
+    return s[:i] + s[i+1:]
 
 # function to get change list
 @data_app.route('/editor', methods=["GET", "POST"])
@@ -169,4 +171,16 @@ def get_change(change_id):
     logger.debug("change_id: " + change_id)
     response = data_app.active_mdb.get_diff(change_id)
     logger.debug("diff: " + str(response))
-    return render_template("data/change.html", change=response)
+    return render_template("data/change.html", change_id=change_id, change=response)
+
+@data_app.route('/change/accept/<change_id>', methods=['GET'])
+def accept_change(change_id):
+    message = "Datastructure accepted by " + current_user.email # TODO: get a message from ui
+    data_app.active_mdb.approve_datastructure(change_id, message)
+    return "success"
+
+@data_app.route('/change/reject/<change_id>', methods=['GET'])
+def reject_change(change_id):
+    message = "Datastructure rejected by " + current_user.email # TODO: get a message from ui
+    data_app.active_mdb.reject_datastructure(change_id, message)
+    return "success"
