@@ -130,8 +130,6 @@ class MathDataBase:
         return "ok"
 
 
-    # bi bak burda ne oluyor. approve edilmediği için veriyi datastructre klasörüne kaydetmemişti en son. o yüzden hata geliyordu.
-    #######
     def approve_datastructure(self, commit_hash, message):
         os.chdir(self.base_path)
 
