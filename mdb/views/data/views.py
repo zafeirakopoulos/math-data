@@ -166,5 +166,7 @@ def editor_page():
 # method that gets a change's details by id
 @data_app.route('/change/<change_id>', methods=['GET'])
 def get_change(change_id):
-    response = data_app.active_mdb.retrieve_datastructure()
-    return render_template("data/change.html", change=change)
+    logger.debug("change_id: " + change_id)
+    response = data_app.active_mdb.get_diff(change_id)
+    logger.debug("diff: " + str(response))
+    return render_template("data/change.html", change=response)

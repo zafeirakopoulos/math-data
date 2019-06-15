@@ -192,7 +192,8 @@ function add_instance(){
 function get_change(change_id) {
     $.get('/data/change/'+ change_id, {}).done(function(response) {
         document.getElementById("change-display-area").innerHTML =  response;
-    }).fail(function() {
+    }).fail(function(err) {
         document.getElementById("change-display-area").innerHTML = "{{ 'Error: Could not contact server.' }}";
+        console.log(err);
     });
 }

@@ -10,6 +10,7 @@ class MathDataBase:
     base_path = None
     name = None
     definition = None
+    already_exists = False
 
     def __init__(self,path,name, mdb_def=None):
         """Initializes a MathDataBase given a definition, a path and a name.
@@ -23,50 +24,60 @@ class MathDataBase:
         self.name = name
         # The base path is the path and the name
         self.base_path = os.path.join(path, self.name)+".git"
-        if mdb_def!=None:
-            self.definition = json.loads(mdb_def)
-            # Create a bare repository in base_path
-            #subprocess.call(["git", "init", "--bare", self.base_path])
-            subprocess.call(["git", "init", self.base_path])
 
-        # Change to the directory of the repository,
-        # so that following commands will be executed in the repo
-        os.chdir(self.base_path)
-
-        if mdb_def!=None:
-            # Write the definition so that it can be read later
-            with open('mdb_def.txt', 'w') as mdb_definition:
-                mdb_definition.write(json.dumps(self.definition)+'\n')
-        else:
+        if os.path.exists(self.base_path):
+            os.chdir(self.base_path)
             with open('mdb_def.txt', 'r') as mdb_definition:
-                self.definition = mdb_definition.read()
+                self.definition = json.loads(mdb_definition.read())
+            
+            subprocess.call(["git", "checkout", self.definition["default_branch"]])
+            self.already_exists = True
 
-        for entity in self.definition["entities"]:
+        else:
+            if mdb_def!=None:
+                self.definition = json.loads(mdb_def)
+                # Create a bare repository in base_path
+                #subprocess.call(["git", "init", "--bare", self.base_path])
+                subprocess.call(["git", "init", self.base_path])
 
-            # Create entity_index file
-            with open(entity+'_index.txt', 'w') as tmp:
-                pass
+            # Change to the directory of the repository,
+            # so that following commands will be executed in the repo
+            os.chdir(self.base_path)
 
-            # Create entity_pending file
-            with open(entity+'_pending.txt', 'w') as tmp:
-                pass
+            if mdb_def!=None:
+                # Write the definition so that it can be read later
+                with open('mdb_def.txt', 'w') as mdb_definition:
+                    mdb_definition.write(json.dumps(self.definition)+'\n')
+            else:
+                with open('mdb_def.txt', 'r') as mdb_definition:
+                    self.definition = mdb_definition.read()
 
-            #os.mkdir(entity)
-            try:
-                os.mkdir(entity)
-            except:
-                pass
+            for entity in self.definition["entities"]:
 
-            with open(os.path.join(entity,'.gitkeep'), 'w') as tmp:
-                pass
+                # Create entity_index file
+                with open(entity+'_index.txt', 'w') as tmp:
+                    pass
 
-        # Commit the initial state of MDB. This enables also the creation of branches.
-        subprocess.call(["git", "add", "*"])
-        subprocess.call(["git", "commit", "-m", "Initialization of MDB"])
+                # Create entity_pending file
+                with open(entity+'_pending.txt', 'w') as tmp:
+                    pass
 
-        # Create the default branch, so that we do not commit in master
-        subprocess.call(["git", "branch", self.definition["default_branch"]])
-        subprocess.call(["git", "checkout", self.definition["default_branch"]])
+                #os.mkdir(entity)
+                try:
+                    os.mkdir(entity)
+                except:
+                    pass
+
+                with open(os.path.join(entity,'.gitkeep'), 'w') as tmp:
+                    pass
+
+            # Commit the initial state of MDB. This enables also the creation of branches.
+            subprocess.call(["git", "add", "*"])
+            subprocess.call(["git", "commit", "-m", "Initialization of MDB"])
+
+            # Create the default branch, so that we do not commit in master
+            subprocess.call(["git", "branch", self.definition["default_branch"]])
+            subprocess.call(["git", "checkout", self.definition["default_branch"]])
 
     ########################################################################
     ########################################################################
@@ -83,7 +94,7 @@ class MathDataBase:
         :param message: A description of the datastructure (the commit message)
         :returns: The name of the branch in which the datastructure was commited"""
         # It stores datastructures under the "datastructure" path
-        os.chdir(os.path.join(mdb_root,self.base_path,"datastructure"))
+        os.chdir(os.path.join(self.base_path, "datastructure"))
 
         # Get the hash of the file
         process = Popen(["git", "hash-object", "--stdin", "--path", "datastructure"], stdout=PIPE, stdin=PIPE, stderr=STDOUT)
@@ -91,9 +102,9 @@ class MathDataBase:
         hash = stdo.decode()[:-1]
 
         # Create a new branch in the repo with name the hash of the datastructure
-        subprocess.check_output(["git", "branch", hash]).decode()[:-1]
+        subprocess.call(["git", "branch", hash])
         # TODO: Check if fail
-        subprocess.check_output(["git", "checkout", hash]).decode()[:-1]
+        subprocess.call(["git", "checkout", hash])
         # TODO: Check if fail
 
         # Write the file
@@ -101,23 +112,28 @@ class MathDataBase:
             datastructure_file.write(datastructure)
 
         # Add and commit in the new branch
-        subprocess.check_output(["git", "add", os.path.join(mdb_root,self.base_path,"datastructure",hash) ]).decode()[:-1]
-        subprocess.check_output(["git", "commit", "-m", message]).decode()[:-1]
+        subprocess.call(["git", "add", os.path.join(self.base_path, "datastructure", hash) ])
+        subprocess.call(["git", "commit", "-m", message])
+        
         commit_hash = subprocess.check_output(["git", "log", "-n", "1", "--pretty=format:'%H'"]).decode()[:-1]
 
 
         # Add the branch name in the pending list at the default_branch.
-        subprocess.check_output(["git", "checkout", self.definition["default_branch"]]).decode()[:-1]
+        subprocess.call(["git", "checkout", self.definition["default_branch"]])
+
         # TODO: Check if fail
-        with open(os.path.join(mdb_root,self.base_path,'datastructure_pending.txt'), 'a') as datastructure_pending:
+        with open(os.path.join(self.base_path, 'datastructure_pending.txt'), 'a') as datastructure_pending:
             datastructure_pending.write(commit_hash+"\n")
 
+        print("donnne")
         # Return 0 on success
-        return 0
+        return "ok"
 
 
+    # bi bak burda ne oluyor. approve edilmediği için veriyi datastructre klasörüne kaydetmemişti en son. o yüzden hata geliyordu.
+    #######
     def approve_datastructure(self, commit_hash, message):
-        os.chdir(os.path.join(mdb_root,self.base_path))
+        os.chdir(self.base_path)
 
         # Remove from pending list
         with open("datastructure_pending.txt", "r") as datastructure_pending:
@@ -128,26 +144,32 @@ class MathDataBase:
                     datastructure_pending.write(line.strip("'").strip("\n")+"\n")
 
         # TODO: Not thread safe! Assumes we are in default_branch.
-        subprocess.check_output(["git", "merge", "-m", message, commit_hash]).decode()[:-1]
+        subprocess.check_output(["git", "merge", "-m", message, commit_hash])
 
         # Add merge in index list
         with open('datastructure_index.txt', 'a') as datastructure_index:
                 datastructure_index.write(commit_hash+"\n")
+
         # Commit the new index in the default_branch
-        subprocess.check_output(["git", "add", os.path.join(mdb_root,self.base_path,'datastructure_index.txt') ]).decode()[:-1]
-        subprocess.check_output(["git", "commit", "-m", "Merged datastructure "+commit_hash]).decode()[:-1]
+        subprocess.check_output(["git", "add", os.path.join(self.base_path, 'datastructure_index.txt') ])
+        subprocess.check_output(["git", "commit", "-m", "Merged datastructure "+commit_hash])
 
         return 0
 
+    def get_diff(self, commit_hash):
+        diff = subprocess.check_output(["git", "show", commit_hash]).decode()[:-1]
+        return diff
+
+
     def pending_datastructures(self):
-        os.chdir(os.path.join(mdb_root,self.base_path))
+        os.chdir(self.base_path)
 
         with open("datastructure_pending.txt", "r") as datastructure_pending:
             lines = datastructure_pending.readlines()
         return [ line.strip("'").strip("\n") for line in lines ]
 
     def get_datastructures(self):
-        os.chdir(os.path.join(mdb_root,self.base_path))
+        os.chdir(self.base_path)
 
         with open("datastructure_index.txt", "r") as datastructure_index:
             lines = datastructure_index.readlines()
@@ -158,7 +180,7 @@ class MathDataBase:
         files = files.split("\n")
         if len(files)>1:
             raise Exception("More than one files in the commit")
-        with open(os.path.join(mdb_root,self.base_path, files[0])) as datastructure:
+        with open(os.path.join(self.base_path, files[0])) as datastructure:
             lines = datastructure.readlines()
         # TODO: \n or other newline feed?
         return "\n".join(lines)
