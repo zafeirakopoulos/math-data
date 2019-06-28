@@ -199,8 +199,125 @@ class MathDataBase:
 
     ########################################################################
     ########################################################################
-    ##########################  Formatter  #################################
+    ##########################  Instance   #################################
     ########################################################################
     ########################################################################
 
- 
+
+    def add_instance(self, instance, message):
+        """Register an instance in the MathDataBase.
+        It is added in the pending list waiting for approval by an editor.
+
+        :param instance: A JSON object as a string
+        :param message: A description of the instance (the commit message)
+        :returns: The name of the branch in which the instance was commited"""
+
+        json.loads(
+
+        # Split the raw data in the instance to be stored
+        # Raw data are stored as git object to remove redundancy
+        # It stores raw data under the "data" path
+        os.chdir(os.path.join(mdb_root,self.base_path,"data"))
+        hashes = {}
+        raw = instance["raw"]
+        if type(raw) is dict:
+            for elt in raw:
+                raw[elt]
+        else:
+            process = Popen(["git", "hash-object", "-w", "--stdin", "--path", "data"], stdout=PIPE, stdin=PIPE, stderr=STDOUT)
+            stdo = process.communicate(input=str.encode(raw))[0]
+            hashes = stdo.decode()[:-1]
+
+
+        # It stores instance under the "instance" path
+        os.chdir(os.path.join(mdb_root,self.base_path,"instance"))
+
+        # Get the hash of the file
+
+        process = Popen(["git", "hash-object", "-w", "--stdin", "--path", path], stdout=PIPE, stdin=PIPE, stderr=STDOUT)
+        stdo = process.communicate(input=str.encode(data))[0]
+        h stdo.decode()[:-1]
+
+        # Get the hash of the file
+        process = Popen(["git", "hash-object", "--stdin", "--path", "datastructure"], stdout=PIPE, stdin=PIPE, stderr=STDOUT)
+        stdo = process.communicate(input=str.encode(datastructure))[0]
+        hash = stdo.decode()[:-1]
+
+        # Create a new branch in the repo with name the hash of the datastructure
+        subprocess.check_output(["git", "branch", hash]).decode()[:-1]
+        # TODO: Check if fail
+        subprocess.check_output(["git", "checkout", hash]).decode()[:-1]
+        # TODO: Check if fail
+
+        # Write the file
+        with open(hash, 'w') as datastructure_file:
+            datastructure_file.write(datastructure)
+
+        # Add and commit in the new branch
+        subprocess.check_output(["git", "add", os.path.join(mdb_root,self.base_path,"datastructure",hash) ]).decode()[:-1]
+        subprocess.check_output(["git", "commit", "-m", message]).decode()[:-1]
+        commit_hash = subprocess.check_output(["git", "log", "-n", "1", "--pretty=format:'%H'"]).decode()[:-1]
+
+
+        # Add the branch name in the pending list at the default_branch.
+        subprocess.check_output(["git", "checkout", self.definition["default_branch"]]).decode()[:-1]
+        # TODO: Check if fail
+        with open(os.path.join(mdb_root,self.base_path,'datastructure_pending.txt'), 'a') as datastructure_pending:
+            datastructure_pending.write(commit_hash+"\n")
+
+        # Return 0 on success
+        return 0
+
+
+    def approve_datastructure(self, commit_hash, message):
+        os.chdir(os.path.join(mdb_root,self.base_path))
+
+        # Remove from pending list
+        with open("datastructure_pending.txt", "r") as datastructure_pending:
+            lines = datastructure_pending.readlines()
+        with open("datastructure_pending.txt", "w") as datastructure_pending:
+            for line in lines:
+                if line.strip("'").strip("\n") != commit_hash:
+                    datastructure_pending.write(line.strip("'").strip("\n")+"\n")
+
+        # TODO: Not thread safe! Assumes we are in default_branch.
+        subprocess.check_output(["git", "merge", "-m", message, commit_hash]).decode()[:-1]
+
+        # Add merge in index list
+        with open('datastructure_index.txt', 'a') as datastructure_index:
+                datastructure_index.write(commit_hash+"\n")
+        # Commit the new index in the default_branch
+        subprocess.check_output(["git", "add", os.path.join(mdb_root,self.base_path,'datastructure_index.txt') ]).decode()[:-1]
+        subprocess.check_output(["git", "commit", "-m", "Merged datastructure "+commit_hash]).decode()[:-1]
+
+        return 0
+
+    def pending_datastructures(self):
+        os.chdir(os.path.join(mdb_root,self.base_path))
+
+        with open("datastructure_pending.txt", "r") as datastructure_pending:
+            lines = datastructure_pending.readlines()
+        return [ line.strip("'").strip("\n") for line in lines ]
+
+    def get_datastructures(self):
+        os.chdir(os.path.join(mdb_root,self.base_path))
+
+        with open("datastructure_index.txt", "r") as datastructure_index:
+            lines = datastructure_index.readlines()
+        return [ line.strip("\n") for line in lines ]
+
+    def retrieve_datastructure(self, hash):
+        files = subprocess.check_output(["git", "diff-tree", "--no-commit-id", "--name-only", "-r", hash ]).decode()[:-1]
+        files = files.split("\n")
+        if len(files)>1:
+            raise Exception("More than one files in the commit")
+        with open(os.path.join(mdb_root,self.base_path, files[0])) as datastructure:
+            lines = datastructure.readlines()
+        # TODO: \n or other newline feed?
+        return "\n".join(lines)
+
+    ########################################################################
+    ########################################################################
+    ##########################  Formatter  #################################
+    ########################################################################
+    ########################################################################
