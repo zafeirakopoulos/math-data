@@ -29,7 +29,7 @@ class MathDataBase:
             os.chdir(self.base_path)
             with open('mdb_def.txt', 'r') as mdb_definition:
                 self.definition = json.loads(mdb_definition.read())
-            
+
             subprocess.call(["git", "checkout", self.definition["default_branch"]])
             self.already_exists = True
 
@@ -114,7 +114,7 @@ class MathDataBase:
         # Add and commit in the new branch
         subprocess.call(["git", "add", os.path.join(self.base_path, "datastructure", hash) ])
         subprocess.call(["git", "commit", "-m", message])
-        
+
         commit_hash = subprocess.check_output(["git", "log", "-n", "1", "--pretty=format:'%H'"]).decode()[:-1]
 
 
@@ -174,13 +174,13 @@ class MathDataBase:
     def retrieve_datastructure(self, hash):
         files = subprocess.check_output(["git", "diff-tree", "--no-commit-id", "--name-only", "-r", hash ]).decode()[:-1]
         files = files.split("\n")
-        
+
         if len(files) == 0:
             return "0 files!"
 
         if len(files)>1:
             return "More than one files in the commit"
-        
+
         print(files[0])
         with open(os.path.join(self.base_path, files[0])) as datastructure:
             lines = datastructure.readlines()
@@ -212,7 +212,7 @@ class MathDataBase:
         :param message: A description of the instance (the commit message)
         :returns: The name of the branch in which the instance was commited"""
 
-        json.loads(
+#        json.loads(
 
         # Split the raw data in the instance to be stored
         # Raw data are stored as git object to remove redundancy
@@ -236,12 +236,9 @@ class MathDataBase:
 
         process = Popen(["git", "hash-object", "-w", "--stdin", "--path", path], stdout=PIPE, stdin=PIPE, stderr=STDOUT)
         stdo = process.communicate(input=str.encode(data))[0]
-        h stdo.decode()[:-1]
+        hash =  stdo.decode()[:-1]
 
-        # Get the hash of the file
-        process = Popen(["git", "hash-object", "--stdin", "--path", "datastructure"], stdout=PIPE, stdin=PIPE, stderr=STDOUT)
-        stdo = process.communicate(input=str.encode(datastructure))[0]
-        hash = stdo.decode()[:-1]
+
 
         # Create a new branch in the repo with name the hash of the datastructure
         subprocess.check_output(["git", "branch", hash]).decode()[:-1]
