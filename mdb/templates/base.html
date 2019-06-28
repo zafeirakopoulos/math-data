@@ -45,7 +45,7 @@
                             Use Mathdata
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                            <a class="dropdown-item" href="{{ url_for('data.instances') }}">Browse</a>
+                            <a class="dropdown-item" href={{ url_for('data.datastructures', action='browse_datastructures') }}>Browse</a>
                             <div class="dropdown-divider"></div>
                             <a class="dropdown-item disabled" href="#">Create</a>
                         </div>
