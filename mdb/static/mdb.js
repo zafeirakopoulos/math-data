@@ -139,8 +139,14 @@ function enable_edit(btnId, textAreaId, key) {
 
 
 // function that is called when an instance object edited
-function edit_instance(instanceKey) {
-    $.post('/data/edit_instance', {instanceKey}).done(function(response) {
+function edit_instance(instanceKey, textAreaId) {
+    let body = $("#" + textAreaId).val();
+    let data = {
+        "instanceKey": instanceKey,
+        "body": '"' + body + '"'
+    };
+
+    $.post('/data/edit_instance', data).done(function(response) {
         console.log(response);
     }).fail(function() {
         console.log("we got error");
@@ -189,8 +195,8 @@ function add_instance(){
 
 // function that is called when a change selected from change-list.
 // gets the change detail to show.
-function get_change(change_id) {
-    $.get('/data/change/'+ change_id, {}).done(function(response) {
+function get_change(change_id, data_type) {
+    $.get('/data/change/'+ change_id + '/' + data_type, {}).done(function(response) {
         document.getElementById("change-display-area").innerHTML =  response;
     }).fail(function(err) {
         document.getElementById("change-display-area").innerHTML = "{{ 'Error: Could not contact server.' }}";
@@ -198,9 +204,8 @@ function get_change(change_id) {
     });
 }
 
-
-function accept_change(change_id) {
-    $.get('/data/change/accept/'+ change_id, {}).done(function(response) {
+function accept_change(change_id, data_type) {
+    $.get('/data/change/accept/'+ change_id + '/' + data_type, {}).done(function(response) {
         document.getElementById("change-display-area").innerHTML =  "Accepted!";
     }).fail(function(err) {
         document.getElementById("change-display-area").innerHTML = "{{ 'Error: Could not contact server.' }}";
@@ -208,8 +213,8 @@ function accept_change(change_id) {
     });
 }
 
-function reject_change(change_id) {
-    $.get('/data/change/reject/'+ change_id, {}).done(function(response) {
+function reject_change(change_id, data_type) {
+    $.get('/data/change/reject/'+ change_id + '/' + data_type, {}).done(function(response) {
         document.getElementById("change-display-area").innerHTML =  "Rejected!";
     }).fail(function(err) {
         document.getElementById("change-display-area").innerHTML = "{{ 'Error: Could not contact server.' }}";

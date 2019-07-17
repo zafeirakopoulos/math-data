@@ -78,4 +78,21 @@ def init_mdb(mdb_path,mdb_name,mdb_definition):
         ds = mdb.retrieve_datastructure(datastructures[0])
         print(ds)
 
+        mdb.add_instance(data, "Adding first instance")
+        print("-------")
+        pending=mdb.pending_instances()
+        print(pending)
+        mdb.approve_instance(pending[0], "It's good")
+        print("-------")
+        pending=mdb.pending_datastructures()
+        print(pending)
+
+        print("========")
+        instances = mdb.get_instances()
+        print(instances)
+        print("==*****===****===")
+        instance = mdb.retrieve_instance(instances[0])
+        print(instance)
+
+
     return mdb
