@@ -75,7 +75,6 @@ function show_instance(key) {
     });
 }
 
-
 function get_instances() {
     $.get('/data/instances', {}).done(function(response) {
         document.getElementById("list-display-area").innerHTML = response;
@@ -140,14 +139,21 @@ function enable_edit(btnId, textAreaId, key) {
 
 // function that is called when an instance object edited
 function edit_instance(instanceKey, textAreaId) {
+    let infoText = get_init_element("infoText");
+
     let body = $("#" + textAreaId).val();
+    if(!isValidJson(body)) {
+        print_input_error(infoText);
+        return;
+    }
+
     let data = {
         "instanceKey": instanceKey,
         "body": '"' + body + '"'
     };
 
     $.post('/data/edit_instance', data).done(function(response) {
-        console.log(response);
+        print_input_success(infoText);
     }).fail(function() {
         console.log("we got error");
     });
@@ -156,18 +162,51 @@ function edit_instance(instanceKey, textAreaId) {
 
 // function that is called when an definition object edited
 function edit_datastructure(datastructureKey, textAreaId) {
+    let infoText = get_init_element("infoText");
+
     let body = $("#" + textAreaId).val();
+    if(!isValidJson(body)) {
+        print_input_error(infoText);
+        return;
+    }
+
     let data = {
         "datastructureKey": datastructureKey,
         "body": '"' + body + '"'
     };
 
     $.post('/data/edit_datastructure', data).done(function(response) {
-        console.log(response);
+        print_input_success(infoText);
     }).fail(function(err) {
         console.log("we got error");
         console.log(err);
     });
+}
+
+function create(textAreaId) {
+    let infoText = get_init_element("infoText");
+
+    let body = $("#" + textAreaId).val();
+    let selectedType = $("input:checked").val();
+
+    if(!isValidJson(body)) {
+        print_input_error(infoText);
+        return;
+    }
+
+    if (selectedType === 'datastructure' || selectedType === 'instance') {
+        let url = '/data/add_' + selectedType;
+        let data = {
+            "body": '"' + body + '"'
+        }
+
+        $.post(url, data).done(function(response) {
+            print_input_success(infoText);
+        }).fail(function(err) {
+            console.log("we got error while creating...");
+            console.log(err);
+        });
+    }
 }
 
 function add_definition(key){
@@ -220,4 +259,36 @@ function reject_change(change_id, data_type) {
         document.getElementById("change-display-area").innerHTML = "{{ 'Error: Could not contact server.' }}";
         console.log(err);
     });
+}
+
+function isValidJson(text){
+    if (typeof text !== "string"){
+        return false;
+    }
+
+    try{
+        JSON.parse(text);
+        return true;
+    }
+    catch (error){
+        return false;
+    }
+}
+
+function get_init_element(elementId) {
+    let infoElement = document.getElementById(elementId);
+    infoElement.style.display = "none";
+    return infoElement;
+}
+
+function print_input_error(element) {
+    element.style.display = "initial";
+    element.style.color = "red";
+    element.innerHTML = "Your input is not a valid JSON.";
+}
+
+function print_input_success(element) {
+    element.style.display = "initial";
+    element.style.color = "green";
+    element.innerHTML = "Successfull";
 }
