@@ -1,11 +1,11 @@
 
 <div class="card">
     <div class="card-header">
-        {{ change.change_name }}
+        Change
     </div>
     <div class="card-body">
-        <p class="card-text"> {{ change.change_body }} </p>
-        <a href="#" class="btn btn-primary">Accept</a>
-        <a href="#" class="btn btn-primary">Reject</a>
+        <p class="card-text"> {{ change }} </p>
+        <button class="btn btn-outline-primary" type="button" id="acceptBtn" onclick="accept_change('{{change_id}}');">Accept</button>
+        <button class="btn btn-outline-primary" type="button" id="rejectBtn" onclick="reject_change('{{change_id}}');">Reject</button>
     </div>
 </div>

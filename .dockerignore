@@ -1,0 +1,8 @@
+*
+!mdb
+!manage.py
+!requirements.txt
+!docker_script.sh
+!local
+!creds.ini
+!.env

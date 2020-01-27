@@ -144,3 +144,4 @@ creds.ini
 live.git
 flask-app-db/
 postgres/
+app

@@ -70,7 +70,7 @@ def create_app(test_config=None):
     app.register_blueprint(data_app, url_prefix="/data")
     #app.register_blueprint(formatter_app, url_prefix="/formatter")
 
-    #app.register_error_handler(Exception, all_exception_handler)
+    app.register_error_handler(Exception, all_exception_handler)
 
     from mdb.models import construct_app
     with app.app_context():

@@ -6,7 +6,7 @@
           <div class="list-group">
               {% for change in changes %}
                 <a class="list-group-item list-group-item-action" 
-                    href='javascript:get_change("{{change.change_id}}");'>{{ change.change_name }}</a>
+                    href='javascript:get_change("{{change}}");'>{{ change }}</a>
               {% endfor %}
           </div>
         </div>
