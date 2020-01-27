@@ -38,29 +38,29 @@ def pp_json(json_thing, sort=False, indents=4):
 ##   HTML
 ##########################
 ##########################
-@data_app.route('/',methods=['GET', 'POST'])
+@data_app.route('/', methods=['GET', 'POST'])
 def index():
     return render_template("data/index.html")
 
 
-@data_app.route('/browse',methods=['GET', 'POST'])
+@data_app.route('/browse', methods=['GET', 'POST'])
 def browse():
     return render_template("data/browse.html")
 
 
-@data_app.route('/create',methods=['GET', 'POST'])
+@data_app.route('/create', methods=['GET', 'POST'])
 def create():
     return render_template("data/create.html")
 
-@data_app.route('/edit',methods=['GET', 'POST'])
+@data_app.route('/edit', methods=['GET', 'POST'])
 def edit():
     return render_template("data/edit.html")
 
 # retrieves an instance object
 @data_app.route('/instance/<key>', methods=['GET', 'POST'])
 def instance(key):
-    response = data_app.active_mdb.retrieve_instance_from_database(key)
-    formatters = data_app.active_mdb.formatter_index()
+    response = data_app.active_mdb.retrieve_instance(key)
+    #formatters = data_app.active_mdb.formatter_index()
 
     # get actual json from json_dumps
     json_data = json_beautifier.loads(response)
@@ -68,7 +68,7 @@ def instance(key):
     out = {}
     
     # get html representation for instance object and add to output
-    out["page"] = render_template("data/instance.html", instance=json_beautifier.dumps(json_data, indent = 4, sort_keys=False), key=key, formatters=formatters)
+    out["page"] = render_template("data/instance.html", instance=json_beautifier.dumps(json_data, indent = 4, sort_keys=False), key=key)
     
     # add actual json to output
     out["data"] = json_data
@@ -79,7 +79,7 @@ def instance(key):
 # function to list all instances
 @data_app.route('/instances', methods=["GET"])
 def instances():
-    response = data_app.active_mdb.instance_index()
+    response = data_app.active_mdb.get_instances()
     return render_template("data/instances.html", instances=response)
 
 # function to retrieve a definition
@@ -111,16 +111,27 @@ def datastructures(action):
 
 @data_app.route('/add_instance', methods=["POST"])
 def add_instance():
+    body = request.form['body']
+    body = body[1:-1]
 
-    content = request.form
-    #print("=========================")
-    #print( request.args)
-    #print( request.form)
-    #print( request.values)
+    message = "Instance created by " + current_user.email
 
-    response = data_app.active_mdb.add_instance_to_database(content)
-    js = json.dumps()
-    return js
+    response = data_app.active_mdb.add_instance(body, message)
+    logger.debug("response: " + str(response))
+
+    return response
+
+@data_app.route('/add_datastructure', methods=["POST"])
+def add_datastructure():
+    body = request.form['body']
+    body = body[1:-1]
+
+    message = "Datastructure created by " + current_user.email
+
+    response = data_app.active_mdb.add_datastructure(body, message)
+    logger.debug("response: " + str(response))
+
+    return response
 
 @data_app.route('/add_instance_data_field', methods=["GET"])
 def add_instance_data_field():
@@ -132,8 +143,18 @@ def add_instance_data_field():
 @data_app.route('/edit_instance', methods=["POST"])
 def edit_instance():
     # TODO: fill this function to actually send edit request to backend
+    body = request.form['body']
+    body = body[1:-1]
     key = request.form['instanceKey']
-    return "we got the key for instance: " + key
+
+    #logger.debug("body: " + body)
+
+    message = "Instance changed by " + current_user.email + " old key: " + str(key)
+    
+    response = data_app.active_mdb.add_instance(body, message)
+    #logger.debug("response: " + str(response))
+    
+    return response
 
 
 # this method is called when the edit button is clicked for definitions
@@ -144,14 +165,12 @@ def edit_datastructure():
     body = body[1:-1]
     datastructureKey = request.form['datastructureKey']
 
-    logger.debug("body: " + body)
-    logger.debug("datastructureKey: " + datastructureKey)
-    logger.debug("user: " + current_user.email)
+    #logger.debug("body: " + body)
 
     message = "Datastructure changed by " + current_user.email + " old key: " + str(datastructureKey)
     
     response = data_app.active_mdb.add_datastructure(body, message)
-    logger.debug("response: " + str(response))
+    #logger.debug("response: " + str(response))
     
     return response
 
@@ -161,26 +180,35 @@ def remove_at(i, s):
 # function to get change list
 @data_app.route('/editor', methods=["GET", "POST"])
 def editor_page():
-    response = data_app.active_mdb.pending_datastructures()
-    return render_template("data/editor.html", changes=response)
+    pending_ds = data_app.active_mdb.pending_datastructures()
+    pending_ins = data_app.active_mdb.pending_instances()
 
+    return render_template("data/editor.html", datastructures=pending_ds, instances=pending_ins)
 
 # method that gets a change's details by id
-@data_app.route('/change/<change_id>', methods=['GET'])
-def get_change(change_id):
-    logger.debug("change_id: " + change_id)
+@data_app.route('/change/<change_id>/<data_type>', methods=['GET'])
+def get_change(change_id, data_type):
     response = data_app.active_mdb.get_diff(change_id)
-    logger.debug("diff: " + str(response))
-    return render_template("data/change.html", change_id=change_id, change=response)
+    #logger.debug("diff: " + str(response))
 
-@data_app.route('/change/accept/<change_id>', methods=['GET'])
-def accept_change(change_id):
-    message = "Datastructure accepted by " + current_user.email # TODO: get a message from ui
-    data_app.active_mdb.approve_datastructure(change_id, message)
+    return render_template("data/change.html", change_id=change_id, change=response, data_type=data_type)
+
+@data_app.route('/change/accept/<change_id>/<data_type>', methods=['GET'])
+def accept_change(change_id, data_type):
+    if data_type == "datastructure":
+        message = "Datastructure accepted by " + current_user.email # TODO: get a message from ui
+        data_app.active_mdb.approve_datastructure(change_id, message)
+    elif data_type == "instance":
+        message = "Instance accepted by " + current_user.email # TODO: get a message from ui
+        data_app.active_mdb.approve_instance(change_id, message)
     return "success"
 
-@data_app.route('/change/reject/<change_id>', methods=['GET'])
-def reject_change(change_id):
-    message = "Datastructure rejected by " + current_user.email # TODO: get a message from ui
-    data_app.active_mdb.reject_datastructure(change_id, message)
+@data_app.route('/change/reject/<change_id>/<data_type>', methods=['GET'])
+def reject_change(change_id, data_type):
+    if data_type == "datastructure":
+        message = "Datastructure rejected by " + current_user.email # TODO: get a message from ui
+        data_app.active_mdb.reject_datastructure(change_id, message)
+    elif data_type == "instance":
+        message = "Instance rejected by " + current_user.email # TODO: get a message from ui
+        data_app.active_mdb.reject_instance(change_id, message)
     return "success"
