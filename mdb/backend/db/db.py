@@ -298,20 +298,20 @@ class MathDataBase:
     ########################################################################
 
 
-    def add_formatter(self, formatter, from, to,  message):
+    def add_formatter(self, formatter, source_format, target_format,  message):
         """Register a formatter in the MathDataBase.
         It is added in the pending list waiting for approval by an editor.
 
         :param formatter: A python script formatting data from one format to another.
-        :param from: The format of the input (given by the commit-hash of the format)
-        :param from: The format of the outut (given by the commit-hash of the format)
+        :param source_format: The format of the input (given by the commit-hash of the format)
+        :param target_format: The format of the outut (given by the commit-hash of the format)
         :returns: The name of the branch in which the formatter was commited"""
         # It stores formatters under the "formatter" path
         os.chdir(os.path.join(mdb_root,self.base_path,"formatter"))
 
         # Get the hash of the file
         process = Popen(["git", "hash-object", "--stdin", "--path", "formatter"], stdout=PIPE, stdin=PIPE, stderr=STDOUT)
-        stdo = process.communicate(input=str.encode(formatter+from+to))[0]
+        stdo = process.communicate(input=str.encode(formatter+source_format+target_format))[0]
         hash = stdo.decode()[:-1]
 
         # Create a new branch in the repo with name the hash of the formatter
@@ -334,7 +334,7 @@ class MathDataBase:
         subprocess.check_output(["git", "checkout", self.definition["default_branch"]]).decode()[:-1]
         # TODO: Check if fail
         with open(os.path.join(mdb_root,self.base_path,'formatter_pending.txt'), 'a') as formatter_pending:
-            formatter_pending.write(from + " " + to + " " +commit_hash.strip("'") +"\n")
+            formatter_pending.write(source_format + " " + targer_format + " " +commit_hash.strip("'") +"\n")
 
         # Return 0 on success
         return 0
