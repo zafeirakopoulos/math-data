@@ -47,7 +47,11 @@
                         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                             <a class="dropdown-item" href={{ url_for('data.datastructures', action='browse_datastructures') }}>Browse</a>
                             <div class="dropdown-divider"></div>
-                            <a class="dropdown-item disabled" href="#">Create</a>
+                            {% if current_user.is_authenticated %}
+                                <a class="dropdown-item" href={{ url_for('data.create')}}> Create</a>
+                            {% else %}
+                                <a class="dropdown-item disabled" href="#"> Create</a>
+                            {% endif %}
                         </div>
                     </li>
                     <a class="nav-item nav-link" href="#">News</a>
