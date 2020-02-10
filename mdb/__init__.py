@@ -53,7 +53,7 @@ def create_app(test_config=None):
     root.addHandler(strm)
 
     # decide whether to create database
-    
+
     if env != "prod":
         db_url = app.config["SQLALCHEMY_DATABASE_URI"]
         if not database_exists(db_url):
@@ -68,7 +68,7 @@ def create_app(test_config=None):
 
     app.register_blueprint(home_app)
     app.register_blueprint(data_app, url_prefix="/data")
-    #app.register_blueprint(formatter_app, url_prefix="/formatter")
+    app.register_blueprint(formatter_app, url_prefix="/formatter")
 
     app.register_error_handler(Exception, all_exception_handler)
 
@@ -79,5 +79,3 @@ def create_app(test_config=None):
 
     # register error Handler
     # TODO: uncomment this on production
-    
-    

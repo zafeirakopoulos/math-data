@@ -344,8 +344,8 @@ class MathDataBase:
         os.chdir(os.path.join(mdb_root,self.base_path))
 
         # Remove from pending list but keep from and to
-        from = ""
-        to = ""
+        source_format = ""
+        targetnk_format = ""
         with open("formatter_pending.txt", "r") as formatter_pending:
             lines = formatter_pending.readlines()
         with open("formatter_pending.txt", "w") as formatter_pending:
@@ -353,15 +353,15 @@ class MathDataBase:
                 if line.strip("\n").split(" ")[2] != commit_hash:
                     formatter_pending.write(line.strip("\n")+"\n")
                 else:
-                    from = line.strip("\n").split(" ")[0]
-                    to = line.strip("\n").split(" ")[1]
+                    source_format = line.strip("\n").split(" ")[0]
+                    target_format = line.strip("\n").split(" ")[1]
 
         # TODO: Not thread safe! Assumes we are in default_branch.
         subprocess.check_output(["git", "merge", "-m", message, commit_hash]).decode()[:-1]
 
         # Add merge in index list
         with open('formatter_index.txt', 'a') as formatter_index:
-                formatter_index.write(from + " " + to + " " + commit_hash+"\n")
+                formatter_index.write(source_format + " " + target_format + " " + commit_hash+"\n")
         # Commit the new index in the default_branch
         subprocess.check_output(["git", "add", os.path.join(mdb_root,self.base_path,'formatter_index.txt') ]).decode()[:-1]
         subprocess.check_output(["git", "commit", "-m", "Merged formatter "+commit_hash]).decode()[:-1]
@@ -392,7 +392,7 @@ class MathDataBase:
         # TODO: \n or other newline feed?
         return "\n".join(lines)
 
-    def retrieve_formatter_for(self, from):
+    def retrieve_formatter_for(self, source_format):
         formatter_lines = []
         with open("formatter_index.txt", "r") as formatter_index:
             lines = formatter_index.readlines()
@@ -400,4 +400,11 @@ class MathDataBase:
             if line.split(" ")[0]==hash:
                 formatter_lines.append(line)
         # return pairs [output format, formatter]
-        return [ [formatter[1], retrieve_formatter(formatter[2])] formatter in formatter_lines ]
+        return [ [formatter[1], retrieve_formatter(formatter[2])] for formatter in formatter_lines ]
+
+
+    ########################################################################
+    ########################################################################
+    ##########################  Batch operations ###########################
+    ########################################################################
+    ########################################################################
