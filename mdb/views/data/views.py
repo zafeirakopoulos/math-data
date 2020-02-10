@@ -18,7 +18,7 @@ def api_instance(key):
 
 @data_app.route('api/instances', methods=["GET"])
 def api_instances():
-    return data_app.active_mdb.instance_index()
+    return "["+",".join(data_app.active_mdb.get_instances())+"]"
 
 @data_app.route('api/definition/<key>',methods=['GET', 'POST'])
 def api_definition(key):
@@ -66,13 +66,13 @@ def instance(key):
     json_data = json_beautifier.loads(response)
 
     out = {}
-    
+
     # get html representation for instance object and add to output
     out["page"] = render_template("data/instance.html", instance=json_beautifier.dumps(json_data, indent = 4, sort_keys=False), key=key)
-    
+
     # add actual json to output
     out["data"] = json_data
-    
+
     # return data with jsonify. otherwise the json object won't go correctly
     return jsonify(out)
 
@@ -92,7 +92,7 @@ def datastructure(key):
 
     # get html representation for defnition object and add to output
     out["page"] = render_template("data/datastructure.html", datastructure=json_beautifier.dumps(json_data, indent = 4, sort_keys=False), key=key)
-    
+
     # add actual json to output
     out["data"] = json_data
 
@@ -150,10 +150,10 @@ def edit_instance():
     #logger.debug("body: " + body)
 
     message = "Instance changed by " + current_user.email + " old key: " + str(key)
-    
+
     response = data_app.active_mdb.add_instance(body, message)
     #logger.debug("response: " + str(response))
-    
+
     return response
 
 
@@ -168,10 +168,10 @@ def edit_datastructure():
     #logger.debug("body: " + body)
 
     message = "Datastructure changed by " + current_user.email + " old key: " + str(datastructureKey)
-    
+
     response = data_app.active_mdb.add_datastructure(body, message)
     #logger.debug("response: " + str(response))
-    
+
     return response
 
 def remove_at(i, s):
