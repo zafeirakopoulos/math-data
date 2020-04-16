@@ -1,1 +1,23 @@
-{{definition}}
+{% extends 'base.html' %}
+{% block content %}
+    <form class="needs-validation">
+        <div class="mb-3">
+            <div class="custom-control custom-radio custom-control-inline">
+                <input type="radio" class="custom-control-input" id="datastructureRadio" value="datastructure" name="radio-stacked" checked>
+                <label class="custom-control-label" for="datastructureRadio">Datastructure</label>
+            </div>
+            <div class="custom-control custom-radio custom-control-inline">
+                <input type="radio" class="custom-control-input" id="instanceRadio" value="instance" name="radio-stacked">
+                <label class="custom-control-label" for="instanceRadio">Instance</label>
+            </div>
+        </div>
+        <div class="mb-3">
+            <p style="display: none; color:red;" id="infoText"></p>
+            <textarea class="form-control" id="createInputTextArea" placeholder="Provide your input" rows="20" required></textarea>
+        </div>
+
+        <button class="btn btn-primary" type="button" onclick="create('createInputTextArea');">Submit</button>
+
+    </form>
+
+{% endblock %}
