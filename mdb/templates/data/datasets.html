@@ -1,0 +1,23 @@
+{% extends 'data/base.html' %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-sm">
+            <div id="list-display-area">
+                <ul class='list-group'>
+                  {% for dataset in datasets %}
+                    <li class='list-group-item'>
+                        <a href='javascript:show_dataset("{{dataset}}");'>
+                        {{datasets[dataset]}}
+                      </a>
+                    </li>
+                  {% endfor %}
+                </ul>
+            </div>
+        </div>
+        <div class="col-sm">
+            <div id="data-display-area"></div>
+        </div>
+    </div>
+
+{% endblock %}

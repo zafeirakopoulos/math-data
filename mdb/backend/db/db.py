@@ -79,6 +79,23 @@ class MathDataBase:
             subprocess.call(["git", "branch", self.definition["default_branch"]])
             subprocess.call(["git", "checkout", self.definition["default_branch"]])
 
+
+########################################################################
+########################################################################
+##########################  Helpers  ###################################
+########################################################################
+########################################################################
+
+    def remove_hash_from_pending(self, commit_hash, pending_file_name):
+        # Remove from pending list
+        with open(pending_file_name, "r") as pending_file:
+            lines = pending_file.readlines()
+        with open(pending_file_name, "w") as pending_file:
+            for line in lines:
+                if line.strip("'").strip("\n") != commit_hash:
+                    pending_file.write(line.strip("'").strip("\n")+"\n")
+
+                    
     ########################################################################
     ########################################################################
     ##########################  Datastructure ##############################
@@ -125,7 +142,6 @@ class MathDataBase:
         with open(os.path.join(self.base_path, 'datastructure_pending.txt'), 'a') as datastructure_pending:
             datastructure_pending.write(commit_hash+"\n")
 
-        print("donnne")
         return "ok"
 
 
@@ -186,14 +202,6 @@ class MathDataBase:
         # TODO: \n or other newline feed?
         return "\n".join(lines)
 
-    def remove_hash_from_pending(self, commit_hash, pending_file_name):
-        # Remove from pending list
-        with open(pending_file_name, "r") as pending_file:
-            lines = pending_file.readlines()
-        with open(pending_file_name, "w") as pending_file:
-            for line in lines:
-                if line.strip("'").strip("\n") != commit_hash:
-                    pending_file.write(line.strip("'").strip("\n")+"\n")
 
     ########################################################################
     ########################################################################
@@ -219,19 +227,30 @@ class MathDataBase:
         stdo = process.communicate(input=str.encode(instance))[0]
         hash = stdo.decode()[:-1]
 
-        # Create a new branch in the repo with name the hash of the datastructure
+        print("The hash ", hash)
+        # Create a new branch in the repo with name the hash of the instance
         subprocess.check_output(["git", "branch", hash]).decode()[:-1]
+
+        print("Branch created")
+
         # TODO: Check if fail
         subprocess.check_output(["git", "checkout", hash]).decode()[:-1]
         # TODO: Check if fail
+        print("Branch checkout")
 
         # Write the file
         with open(hash, 'w') as instance_file:
             instance_file.write(instance)
 
+        print("Instance file written")
+
         # Add and commit in the new branch
         subprocess.call(["git", "add", os.path.join(self.base_path, "instance", hash) ])
+        print("git added")
+
         subprocess.call(["git", "commit", "-m", message])
+        print("git committed")
+
         commit_hash = subprocess.check_output(["git", "log", "-n", "1", "--pretty=format:'%H'"]).decode()[:-1]
 
 
@@ -290,6 +309,110 @@ class MathDataBase:
             lines = instance.readlines()
         # TODO: \n or other newline feed?
         return "\n".join(lines)
+
+
+    ########################################################################
+    ########################################################################
+    ##########################  Dataset ##############################
+    ########################################################################
+    ########################################################################
+
+
+    def add_dataset(self, dataset, message):
+        """Register a dataset in the MathDataBase.
+        It is added in the pending list waiting for approval by an editor.
+
+        :param datastructure: A JSON object as a string
+        :param message: A description of the dataset (the commit message)
+        :returns: The name of the branch in which the dataset was commited"""
+        # It stores datasets under the "datasets" path
+        os.chdir(os.path.join(self.base_path, "datasets"))
+
+        # Get the hash of the file
+        process = Popen(["git", "hash-object", "--stdin", "--path", "dataset"], stdout=PIPE, stdin=PIPE, stderr=STDOUT)
+        stdo = process.communicate(input=str.encode(dataset))[0]
+        hash = stdo.decode()[:-1]
+
+        # Create a new branch in the repo with name the hash of the datastructure
+        subprocess.call(["git", "branch", hash])
+        # TODO: Check if fail
+        subprocess.call(["git", "checkout", hash])
+        # TODO: Check if fail
+
+        # Write the file
+        with open(hash, 'w') as dataset_file:
+            dataset_file.write(dataset)
+
+        # Add and commit in the new branch
+        subprocess.call(["git", "add", os.path.join(self.base_path, "dataset", hash) ])
+        subprocess.call(["git", "commit", "-m", message])
+
+        commit_hash = subprocess.check_output(["git", "log", "-n", "1", "--pretty=format:'%H'"]).decode()[:-1]
+
+
+        # Add the branch name in the pending list at the default_branch.
+        subprocess.call(["git", "checkout", self.definition["default_branch"]])
+
+        # TODO: Check if fail
+        with open(os.path.join(self.base_path, 'dataset_pending.txt'), 'a') as dataset_pending:
+            dataset_pending.write(commit_hash+"\n")
+
+        return "ok"
+
+
+    def approve_dataset(self, commit_hash, message):
+        os.chdir(self.base_path)
+        index_file_name = 'dataset_index.txt'
+
+        self.remove_hash_from_pending(commit_hash, "dataset_pending.txt")
+
+        # TODO: Not thread safe! Assumes we are in default_branch.
+        subprocess.check_output(["git", "merge", "-m", message, commit_hash])
+
+        # Add merge in index list
+        with open(index_file_name, 'a') as dataset_index:
+                dataset_index.write(commit_hash+"\n")
+
+        # Commit the new index in the default_branch
+        subprocess.check_output(["git", "add", os.path.join(self.base_path, index_file_name) ])
+        subprocess.check_output(["git", "commit", "-m", "Merged dataset "+commit_hash])
+
+        return 0
+
+    def reject_dataset(self, commit_hash, message):
+        os.chdir(self.base_path)
+        self.remove_hash_from_pending(commit_hash)
+
+
+    def pending_datasets(self):
+        os.chdir(self.base_path)
+
+        with open("dataset_pending.txt", "r") as dataset_pending:
+            lines = dataset_pending.readlines()
+        return [ line.strip("'").strip("\n") for line in lines ]
+
+    def get_datasets(self):
+        os.chdir(self.base_path)
+
+        with open("dataset_index.txt", "r") as dataset_index:
+            lines = dataset_index.readlines()
+        return [ line.strip("\n") for line in lines ]
+
+    def retrieve_dataset(self, hash):
+        files = subprocess.check_output(["git", "diff-tree", "--no-commit-id", "--name-only", "-r", hash ]).decode()[:-1]
+        files = files.split("\n")
+
+        if len(files) == 0:
+            return "0 files!"
+
+        if len(files)>1:
+            return "More than one files in the commit"
+
+        with open(os.path.join(self.base_path, files[0])) as dataset:
+            lines = dataset.readlines()
+        # TODO: \n or other newline feed?
+        return "\n".join(lines)
+
 
     ########################################################################
     ########################################################################
