@@ -82,7 +82,7 @@ def instances():
     response = data_app.active_mdb.get_instances()
     return render_template("data/instances.html", instances=response)
 
-# function to retrieve a definition
+# function to retrieve a datastructure
 @data_app.route('/datastructure/<key>', methods=['GET', 'POST'])
 def datastructure(key):
     response = data_app.active_mdb.retrieve_datastructure(key)
@@ -106,8 +106,12 @@ def datastructures(action):
     if action=="browse_datastructures":
         action="show"
 
-    response = data_app.active_mdb.get_datastructures()
-    return render_template("data/datastructures.html", datastructures=response, action=action)
+    #  A dictionary of key-name pairs
+    datastructures = {}
+    for key in data_app.active_mdb.get_datastructures():
+        datastructures[key]= json_beautifier.loads(data_app.active_mdb.retrieve_datastructure(key))["name"]
+
+    return render_template("data/datastructures.html", datastructures=datastructures, action=action)
 
 @data_app.route('/add_instance', methods=["POST"])
 def add_instance():
@@ -157,7 +161,7 @@ def edit_instance():
     return response
 
 
-# this method is called when the edit button is clicked for definitions
+# this method is called when the edit button is clicked for datastructures.
 # input is the edited datastructure object
 @data_app.route('/edit_datastructure', methods=["POST"])
 def edit_datastructure():

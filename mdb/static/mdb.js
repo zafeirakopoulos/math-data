@@ -53,12 +53,12 @@ function show_instance(key) {
                             size: Math.random(),
                             color: '#ccc'
                         });
-                        
+
                         c++;
                     }
                 }
             }
-            
+
             // call sigmajs to generate graph visual
             // we are telling sigma to put the generated visual in to 'graph-container' div
             s = new sigma({
@@ -103,20 +103,12 @@ function show_datastructure(key){
     });
 }
 
-
 function register_definition(key){
     current_definition=key;
     document.getElementById("label_for_data_area").innerText = "Input for "+ current_definition;
 
 }
-
-function get_definitions(action) {
-    $.get('/data/definitions/'+action, {}).done(function(response) {
-        document.getElementById("list-display-area").innerHTML = response;
-    }).fail(function() {
-        document.getElementById("list-display-area").innerHTML = "{{ 'Error: Could not contact server.' }}";
-    });
-}
+ 
 
 // activates the edit button (this is called when user logged in)
 
@@ -132,7 +124,7 @@ function enable_edit(btnId, textAreaId, key) {
     var functionName = "edit_instance";
     if (btnId === "editdatastructureBtn")
         functionName = "edit_datastructure";
-        
+
     $("#" + btnId).attr("onClick", functionName + "('" + key + "', '" + textAreaId + "')");
 }
 
