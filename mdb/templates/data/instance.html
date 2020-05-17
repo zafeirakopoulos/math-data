@@ -6,7 +6,9 @@
                     Export as
             </button>
             <div class='dropdown-menu' aria-labelledby='exportDataButton'>
-                <a class='dropdown-item' href='#'>MathData</a>
+                {% for formatter in instance["formatters"] %}
+                  <a class='dropdown-item' href='#'>{{formatter}}</a>
+                {% endfor %}
             </div>
         </div>
     </div>
@@ -19,7 +21,7 @@
 
 <form>
     <div class="form-group mdb-form-group">
-        
+
         <div class="card">
             <div class="card-body">
                 <div id="jsonArea"></div>

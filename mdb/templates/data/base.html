@@ -4,7 +4,7 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-light mdb-navbar">
     <div class="navbar-nav">
       <a class="nav-item nav-link active" href={{ url_for('data.instances') }}>Instance<span class="sr-only">(current)</span></a>
-      <a class="nav-item nav-link active" href="#">Dataset</a>
+      <a class="nav-item nav-link active" href={{ url_for('data.datasets', action='browse_datasets') }}>Dataset</a>
       <a class="nav-item nav-link active" href={{ url_for('data.datastructures', action='browse_datastructures') }}>Datastructure</a>
       <a class="nav-item nav-link active" href={{ url_for('formatter.formatters', action='browse_datastructures') }}>Formatter</a>
 

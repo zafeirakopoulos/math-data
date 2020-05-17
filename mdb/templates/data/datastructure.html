@@ -1,15 +1,6 @@
 
 <div class="row">
-    <div class="col-sm">
-        <div class='dropdown'>
-            <button class='btn btn-secondary dropdown-toggle' type='button' id='exportDataButton' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
-                    Export As
-            </button>
-            <div class='dropdown-menu' aria-labelledby='exportDataButton'>
-                <a class='dropdown-item' href='#'>MathData</a>
-            </div>
-        </div>
-    </div>
+
     <div class="col-sm">
         {% if current_user.is_authenticated %}
             <button class="btn btn-primary" type="button" id="editdatastructureBtn" onclick="enable_edit('editdatastructureBtn', 'datastructureForm', '{{key}}');">Edit</button>
