@@ -95,7 +95,7 @@ class MathDataBase:
                 if line.strip("'").strip("\n") != commit_hash:
                     pending_file.write(line.strip("'").strip("\n")+"\n")
 
-                    
+
     ########################################################################
     ########################################################################
     ##########################  Datastructure ##############################
@@ -294,6 +294,18 @@ class MathDataBase:
         with open("instance_index.txt", "r") as index_file:
             lines = index_file.readlines()
         return [ line.strip("\n") for line in lines ]
+
+    def get_instances_by_datastructure(self,datastructures):
+        os.chdir(os.path.join(mdb_root,self.base_path))
+        response = []
+        with open("instance_index.txt", "r") as index_file:
+            lines = index_file.readlines()
+            for key in lines:
+                # To slow? Dont convert to json
+                if json.loads(retrieve_instance(key))["datastructure"] in datastructures:
+                    response.append(key)
+        return [ line.strip("\n") for line in response ]
+
 
     def retrieve_instance(self, hash):
         files = subprocess.check_output(["git", "diff-tree", "--no-commit-id", "--name-only", "-r", hash ]).decode()[:-1]

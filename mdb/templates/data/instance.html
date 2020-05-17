@@ -6,8 +6,8 @@
                     Export as
             </button>
             <div class='dropdown-menu' aria-labelledby='exportDataButton'>
-                {% for formatter in instance["formatters"] %}
-                  <a class='dropdown-item' href='#'>{{formatter}}</a>
+                {% for formatter in formatters %}
+                  <a class='dropdown-item' href='format({{key}},{{formatter}})'>{{formatter}}</a>
                 {% endfor %}
             </div>
         </div>
@@ -21,15 +21,11 @@
 
 <form>
     <div class="form-group mdb-form-group">
+        <div id="jsonArea">
 
-        <div class="card">
-            <div class="card-body">
-                <div id="jsonArea"></div>
-            </div>
         </div>
-
         <p style="display: none; color:red;" id="infoText"></p>
-        <textarea style="display: none" class="form-control" id="instanceForm" rows="15">{{instance}}</textarea>
-
+        <textarea style="display: none" class="form-control" id="instanceForm" rows="15">{{instance}}
+        </textarea>
     </div>
 </form>

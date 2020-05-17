@@ -5,10 +5,10 @@ function show_instance(key) {
     // perform a get request to the flask
     $.get('/data/instance/'+ key, {}).done(function(response) {
         // put the instance's html to the 'data-display-area' div
-        // document.getElementById("data-display-area").innerHTML = response["page"];
+       document.getElementById("data-display-area").innerHTML = response["page"];
 
         // generate the collapsible json with renderjson and put it to 'jsonArea' div
-        document.getElementById("jsonArea").appendChild(renderjson.set_show_to_level(2)(response["data"]));
+       document.getElementById("jsonArea").appendChild(renderjson.set_show_to_level(2)(response["data"]));
 
 
     }).fail(function() {

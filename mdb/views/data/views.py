@@ -56,6 +56,11 @@ def create():
 def edit():
     return render_template("data/edit.html")
 
+##############################################################################
+########################## Instances  ########################################
+##############################################################################
+
+
 # retrieves an instance object
 @data_app.route('/instance/<key>', methods=['GET', 'POST'])
 def instance(key):
@@ -67,9 +72,9 @@ def instance(key):
     out = {}
 
     # get html representation for instance object and add to output
-    out["page"] = render_template("data/instance.html", instance=json_beautifier.dumps(instance_data, indent = 4, sort_keys=False), key=key)
+    out["page"] = render_template("data/instance.html", instance=json_beautifier.dumps(instance_data, indent = 4, sort_keys=False), formatters = json_beautifier.dumps(data_app.active_mdb.retrieve_formatter_for(instance_data["datastructure"])), key=key)
 
-    instance_data["formatters"]= data_app.active_mdb.retrieve_formatter_for(instance_data["datastructure"])
+
 
     # add actual json to output
     out["data"] = instance_data
@@ -86,6 +91,21 @@ def instances():
         instances[key]= json_beautifier.loads(data_app.active_mdb.retrieve_instance(key))["name"]
 
     return render_template("data/instances.html", instances=instances)
+
+# function to list all instances of specific datastructures
+@data_app.route('/instances_by_datastructures/<datastructures>', methods=["GET"])
+def instances_by_datastructures(datastructures):
+    #  A dictionary of key-name pairs
+    instances = {}
+    for key in data_app.active_mdb.get_instances_by_datastructure(datastructures):
+        instances[key]= json_beautifier.loads(data_app.active_mdb.retrieve_instance(key))["name"]
+
+    return render_template("data/instances.html", instances=instances)
+
+##############################################################################
+########################## Datastructures ####################################
+##############################################################################
+
 
 # function to retrieve a datastructure
 @data_app.route('/datastructure/<key>', methods=['GET', 'POST'])
@@ -104,19 +124,15 @@ def datastructure(key):
     # return data with jsonify. otherwise the json object won't go correctly
     return jsonify(out)
 
-@data_app.route('/datastructures/<action>', methods=["GET"])
-def datastructures(action):
-    if action=="create_instance":
-        action="register"
-    if action=="browse_datastructures":
-        action="show"
+@data_app.route('/datastructures', methods=["GET"])
+def datastructures():
 
     #  A dictionary of key-name pairs
     datastructures = {}
     for key in data_app.active_mdb.get_datastructures():
         datastructures[key]= json_beautifier.loads(data_app.active_mdb.retrieve_datastructure(key))["name"]
 
-    return render_template("data/datastructures.html", datastructures=datastructures, action=action)
+    return render_template("data/datastructures.html", datastructures=datastructures)
 
 ##############################################################################
 ########################## Datasets  #########################################
