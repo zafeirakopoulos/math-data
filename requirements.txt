@@ -14,3 +14,4 @@ GitPython==2.1.11
 Bootstrap-Flask==1.0.10
 flask-security
 flask-admin
+email_validator
