@@ -1,5 +1,5 @@
 {
-   "name":"Graph",
+   "name":"Directed Graph",
    "plural":"Graphs",
    "attributes":{
       "edges":"Boolean",

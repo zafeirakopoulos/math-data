@@ -1,0 +1,17 @@
+{% extends 'data/create.html' %}
+
+{% block content %}
+
+<form class="needs-validation">
+
+    <div class="mb-3">
+        <p style="display: none; color:red;" id="infoText"></p>
+        <textarea class="form-control" id="createDatastructureArea" placeholder='{"name": }' rows="20" required></textarea>
+    </div>
+
+    <button class="btn btn-primary" type="button" onclick="submit_datastructure('createDatastructureArea');">Submit</button>
+
+</form>
+
+
+{% endblock %}
