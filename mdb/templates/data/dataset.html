@@ -3,29 +3,32 @@
     <div class="col-sm">
         <div class='dropdown'>
             <button class='btn btn-secondary dropdown-toggle' type='button' id='exportDataButton' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
-                    Export to
+                    Export as
             </button>
             <div class='dropdown-menu' aria-labelledby='exportDataButton'>
-                {% for formatter in formatters %}
-                  <a class='dropdown-item' href='javascript:format_instance("{{key}}","{{formatter[2]}}")'>{{formatter[1]}}</a>
-                {% endfor %}
+                  <a class='dropdown-item' href='#'>tar.gz</a>
+                  <a class='dropdown-item' href='#'>zip</a>
             </div>
         </div>
     </div>
     <div class="col-sm">
         {% if current_user.is_authenticated %}
-            <button class="btn btn-outline-primary" type="button" id="editInstanceBtn" onclick="enable_edit('editInstanceBtn', 'instanceForm', '{{key}}');">Edit</button>
+            <button class="btn btn-outline-primary" type="button" id="editDatasetBtn" onclick="enable_edit('editDatasetBtn', 'datasetForm', '{{key}}');">Edit</button>
         {% endif %}
     </div>
 </div>
 
 <form>
     <div class="form-group mdb-form-group">
-        <div id="jsonArea">
 
+        <div class="card">
+            <div class="card-body">
+                <div id="jsonArea"></div>
+            </div>
         </div>
+
         <p style="display: none; color:red;" id="infoText"></p>
-        <textarea style="display: none" class="form-control" id="instanceForm" rows="15">{{instance}}
-        </textarea>
+        <textarea style="display: none" class="form-control" id="datasetForm" rows="15">{{dataset}}</textarea>
+
     </div>
 </form>

@@ -1,4 +1,4 @@
-{% extends 'data/base.html' %}
+{% extends 'data/browse.html' %}
 
 {% block content %}
 
@@ -8,7 +8,10 @@
             <ul class='list-group'>
               {% for datastructure in datastructures %}
                 <li class='list-group-item'>
-                  <a class='dropdown-item' href='javascript:{{action}}_datastructure("{{datastructure}}");'> {{datastructure}} </a>
+                  <a class='dropdown-item'
+                   href='javascript:show_datastructure("{{datastructure}}");'>
+                   {{datastructures[datastructure]}}
+                 </a>
                 </li>
               {% endfor %}
             </ul>

@@ -12,15 +12,15 @@
                               </button>
                             </h5>
                           </div>
-                      
+
                           <div id="collapseDatastructure" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
                             <div class="card-body">
                                     <div class="list-group">
                                             {% for change in datastructures %}
-                                                <a class="list-group-item list-group-item-action" 
+                                                <a class="list-group-item list-group-item-action"
                                                     href='javascript:get_change("{{change}}", "datastructure");'>{{ change }}</a>
-                                            {% endfor %}  
-                                            </div>  
+                                            {% endfor %}
+                                            </div>
                             </div>
                           </div>
                         </div>
@@ -36,15 +36,55 @@
                             <div class="card-body">
                                     <div class="list-group">
                                             {% for change in instances %}
-                                                <a class="list-group-item list-group-item-action" 
+                                                <a class="list-group-item list-group-item-action"
                                                     href='javascript:get_change("{{change}}", "instance");'>{{ change }}</a>
-                                            {% endfor %}  
-                                            </div> 
+                                            {% endfor %}
+                                            </div>
                             </div>
                           </div>
                         </div>
-                        
-                      </div>
+
+                        <div class="card">
+                          <div class="card-header" id="headingOne">
+                            <h5 class="mb-0">
+                              <button class="btn btn-link" data-toggle="collapse" data-target="#collapseFormatter" aria-expanded="true" aria-controls="collapseFormatter">
+                                Formatters
+                              </button>
+                            </h5>
+                          </div>
+                          <div id="collapseFormatter" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
+                            <div class="card-body">
+                                    <div class="list-group">
+                                            {% for change in formatters %}
+                                                <a class="list-group-item list-group-item-action"
+                                                    href='javascript:get_change("{{change}}", "formatter");'>{{ change }}</a>
+                                            {% endfor %}
+                                            </div>
+                            </div>
+                          </div>
+                        </div>
+
+
+                        <div class="card">
+                          <div class="card-header" id="headingOne">
+                            <h5 class="mb-0">
+                              <button class="btn btn-link" data-toggle="collapse" data-target="#collapseDataset" aria-expanded="true" aria-controls="collapseDataset">
+                                Datasets
+                              </button>
+                            </h5>
+                          </div>
+                          <div id="collapseDataset" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
+                            <div class="card-body">
+                                    <div class="list-group">
+                                            {% for change in datasets %}
+                                                <a class="list-group-item list-group-item-action"
+                                                    href='javascript:get_change("{{change}}", "dataset");'>{{ change }}</a>
+                                            {% endfor %}
+                                            </div>
+                            </div>
+                          </div>
+                        </div>
+                </div>
         </div>
 
         <div class="col-8">
@@ -54,10 +94,4 @@
         </div>
     </div>
 {% endblock %}
-
-<div class="list-group">
-        {% for change in instances %}
-            <a class="list-group-item list-group-item-action" 
-                href='javascript:get_change("{{change}}, "instance");'>{{ change }}</a>
-        {% endfor %}  
-        </div>   
+ 

@@ -4,13 +4,13 @@
 
     <div class="row">
 
-          <label for ="chooseDatastructure">Choose Datastructure:</label>
+          <label for ="chooseDatastructure">Formatters for </label>
           <div class='dropdown'>
               <button class='btn btn-secondary dropdown-toggle' type='button' id='chooseDatastructure' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
               </button>
               <div class='dropdown-menu' aria-labelledby='chooseDatastructure'>
                   {% for datastructure in datastructures %}
-                    <a class='dropdown-item' href='javascript:show_instances_for_datastructure("{{datastructure}}");'>{{datastructures[datastructure]}}</a>
+                    <a class='dropdown-item' href='javascript:show_formatters_for_datastructure("{{datastructure}}");'>{{datastructures[datastructure]}}</a>
                   {% endfor %}
               </div>
           </div>

@@ -5,70 +5,26 @@ function show_instance(key) {
     // perform a get request to the flask
     $.get('/data/instance/'+ key, {}).done(function(response) {
         // put the instance's html to the 'data-display-area' div
-        document.getElementById("data-display-area").innerHTML = response["page"];
+       document.getElementById("data-display-area").innerHTML = response["page"];
 
         // generate the collapsible json with renderjson and put it to 'jsonArea' div
-        document.getElementById("jsonArea").appendChild(renderjson.set_show_to_level(2)(response["data"]));
+       document.getElementById("jsonArea").appendChild(renderjson.set_show_to_level(2)(response["data"]));
 
-        // initialize the visual part as empty
-        document.getElementById("graph-container").innerHTML = "";
 
-        // TODO: generate graph object with real definition and data
-        // get edges array from graph json
-        const edges = response["data"]["raw"]["dense"]["edges"];
-        if (edges) {
-            let i = 0, j = 0, c = 0;
+    }).fail(function() {
+        document.getElementById("data-display-area").innerHTML = "{{ 'Error: Could not contact server.' }}";
+    });
+}
 
-            // graph data object to use when generating visual
-            let g = {
-                nodes: [],
-                edges: []
-            };
+function show_formatter(key) {
+    // perform a get request to the flask
+    $.get('/data/formatter/'+ key, {}).done(function(response) {
+        // put the instance's html to the 'data-display-area' div
+       document.getElementById("data-display-area").innerHTML = response["page"];
 
-            // generate nodes of graph
-            for (; i < edges.length; ++i) {
-                // we are setting random x,y positions and random size to each node
-                // we are using index as id of node
-                g.nodes.push({
-                    id: i,
-                    label: 'Node ' + i,
-                    x: Math.floor(Math.random() * 300),
-                    y: Math.floor(Math.random() * 300),
-                    size: Math.floor(Math.random() * 10),
-                    color: '#666'
-                });
-            }
+        // generate the collapsible json with renderjson and put it to 'jsonArea' div
+       document.getElementById("jsonArea").appendChild(renderjson.set_show_to_level(2)(response["data"]));
 
-            // generate edges with edges array
-            for (i = 0; i < edges.length; ++i) {
-                let connections = edges[i];
-                j = 0;
-                for (; j < connections.length; ++j) {
-                    if (connections[j] != 0) {
-                        // setting random sizes
-                        g.edges.push({
-                            id: 'e' + c,
-                            source: i,
-                            target: j,
-                            size: Math.random(),
-                            color: '#ccc'
-                        });
-                        
-                        c++;
-                    }
-                }
-            }
-            
-            // call sigmajs to generate graph visual
-            // we are telling sigma to put the generated visual in to 'graph-container' div
-            s = new sigma({
-                graph: g,
-                renderer: {
-                    container: document.getElementById('graph-container'),
-                    type: 'canvas'
-                }
-            });
-        }
 
     }).fail(function() {
         document.getElementById("data-display-area").innerHTML = "{{ 'Error: Could not contact server.' }}";
@@ -82,6 +38,7 @@ function get_instances() {
         document.getElementById("list-display-area").innerHTML = "{{ 'Error: Could not contact server.' }}";
     });
 }
+
 
 
 function view_json(jsObj) {
@@ -103,20 +60,25 @@ function show_datastructure(key){
     });
 }
 
-
-function register_definition(key){
-    current_definition=key;
-    document.getElementById("label_for_data_area").innerText = "Input for "+ current_definition;
-
-}
-
-function get_definitions(action) {
-    $.get('/data/definitions/'+action, {}).done(function(response) {
-        document.getElementById("list-display-area").innerHTML = response;
-    }).fail(function() {
+function show_instances_for_datastructure(datastructure){
+    $.get('/data/instances_by_datastructure/'+ datastructure, {}).done(function(response) {
+      // put the html that generated list of instances in the "data-display-area" div
+      document.getElementById("list-display-area").innerHTML = response;
+        }).fail(function() {
         document.getElementById("list-display-area").innerHTML = "{{ 'Error: Could not contact server.' }}";
     });
 }
+
+
+function show_formatters_for_datastructure(datastructure){
+    $.get('/data/formatters_by_datastructure/'+ datastructure, {}).done(function(response) {
+      // put the html that generated list of instances in the "data-display-area" div
+      document.getElementById("list-display-area").innerHTML = response;
+        }).fail(function() {
+        document.getElementById("list-display-area").innerHTML = "{{ 'Error: Could not contact server.' }}";
+    });
+}
+
 
 // activates the edit button (this is called when user logged in)
 
@@ -132,7 +94,7 @@ function enable_edit(btnId, textAreaId, key) {
     var functionName = "edit_instance";
     if (btnId === "editdatastructureBtn")
         functionName = "edit_datastructure";
-        
+
     $("#" + btnId).attr("onClick", functionName + "('" + key + "', '" + textAreaId + "')");
 }
 
@@ -207,6 +169,88 @@ function create(textAreaId) {
             console.log(err);
         });
     }
+}
+
+function submit_datastructure(textAreaId) {
+    let infoText = get_init_element("infoText");
+
+    let body = $("#" + textAreaId).val();
+
+    if(!isValidJson(body)) {
+        print_input_error(infoText);
+        return;
+    }
+
+    let url = '/data/add_datastructure';
+    let data = {"body": '"' + body + '"'}
+
+    $.post(url, data).done(function(response) {
+        print_input_success(infoText);
+    }).fail(function(err) {
+        console.log("we got error while creating...");
+        console.log(err);
+    });
+}
+
+function submit_instance(textAreaId) {
+    let infoText = get_init_element("infoText");
+
+    let body = $("#" + textAreaId).val();
+    var e = document.getElementById("chooseDatastructure");
+    let datastructure = e.options[e.selectedIndex].value;
+
+    if(!isValidJson(body)) {
+        print_input_error(infoText);
+        return;
+    }
+
+    let url = '/data/add_instance';
+    let instance= JSON.parse(body);
+    instance["datastructure"] = datastructure;
+
+    let data = {"body": '"' + JSON.stringify(instance) + '"'}
+
+    $.post(url, data).done(function(response) {
+        print_input_success(infoText);
+    }).fail(function(err) {
+        console.log("we got error while creating...");
+        console.log(err);
+    });
+}
+
+
+function submit_formatter() {
+    let infoText = get_init_element("infoText");
+
+    var e = document.getElementById("createScriptArea");
+    let formatter = e.value;
+
+    var e = document.getElementById("chooseFrom");
+    let from_datastructure = e.options[e.selectedIndex].value;
+
+    var e = document.getElementById("chooseTo");
+    let to_datastructure = e.options[e.selectedIndex].value;
+
+    if(to_datastructure=="other"){
+      var e = document.getElementById("formatterToName");
+      to_datastructure = e.value;
+    }
+    // Check valid python, not JSON
+    //if(!isValidJson(body)) {
+    //    print_input_error(infoText);
+    //    return;
+    //}
+
+    let url = '/data/add_formatter';
+
+    let data = {"formatter":formatter, "to_datastructure":to_datastructure, "from_datastructure":from_datastructure};
+
+    $.post(url, data).done(function(response) {
+        print_input_success(infoText);
+    }).fail(function(err) {
+        console.log("we got error while creating...");
+        console.log(err);
+    });
 }
 
 function add_definition(key){
@@ -291,4 +335,16 @@ function print_input_success(element) {
     element.style.display = "initial";
     element.style.color = "green";
     element.innerHTML = "Successfull";
+}
+
+
+
+function format_instance(instance,formatter) {
+
+  $.get('/data/format/'+ instance + "/" + formatter, {}).done(function(response) {
+    // put the html that generated list of instances in the "data-display-area" div
+    document.getElementById("jsonArea").innerHTML = response;
+      }).fail(function() {
+      document.getElementById("list-display-area").innerHTML = "{{ 'Error: Could not contact server.' }}";
+  });
 }
