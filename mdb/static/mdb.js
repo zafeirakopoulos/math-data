@@ -16,6 +16,21 @@ function show_instance(key) {
     });
 }
 
+function show_formatter(key) {
+    // perform a get request to the flask
+    $.get('/data/formatter/'+ key, {}).done(function(response) {
+        // put the instance's html to the 'data-display-area' div
+       document.getElementById("data-display-area").innerHTML = response["page"];
+
+        // generate the collapsible json with renderjson and put it to 'jsonArea' div
+       document.getElementById("jsonArea").appendChild(renderjson.set_show_to_level(2)(response["data"]));
+
+
+    }).fail(function() {
+        document.getElementById("data-display-area").innerHTML = "{{ 'Error: Could not contact server.' }}";
+    });
+}
+
 function get_instances() {
     $.get('/data/instances', {}).done(function(response) {
         document.getElementById("list-display-area").innerHTML = response;
@@ -23,6 +38,7 @@ function get_instances() {
         document.getElementById("list-display-area").innerHTML = "{{ 'Error: Could not contact server.' }}";
     });
 }
+
 
 
 function view_json(jsObj) {
@@ -44,10 +60,23 @@ function show_datastructure(key){
     });
 }
 
-function register_definition(key){
-    current_definition=key;
-    document.getElementById("label_for_data_area").innerText = "Input for "+ current_definition;
+function show_instances_for_datastructure(datastructure){
+    $.get('/data/instances_by_datastructure/'+ datastructure, {}).done(function(response) {
+      // put the html that generated list of instances in the "data-display-area" div
+      document.getElementById("list-display-area").innerHTML = response;
+        }).fail(function() {
+        document.getElementById("list-display-area").innerHTML = "{{ 'Error: Could not contact server.' }}";
+    });
+}
 
+
+function show_formatters_for_datastructure(datastructure){
+    $.get('/data/formatters_by_datastructure/'+ datastructure, {}).done(function(response) {
+      // put the html that generated list of instances in the "data-display-area" div
+      document.getElementById("list-display-area").innerHTML = response;
+        }).fail(function() {
+        document.getElementById("list-display-area").innerHTML = "{{ 'Error: Could not contact server.' }}";
+    });
 }
 
 
@@ -142,6 +171,88 @@ function create(textAreaId) {
     }
 }
 
+function submit_datastructure(textAreaId) {
+    let infoText = get_init_element("infoText");
+
+    let body = $("#" + textAreaId).val();
+
+    if(!isValidJson(body)) {
+        print_input_error(infoText);
+        return;
+    }
+
+    let url = '/data/add_datastructure';
+    let data = {"body": '"' + body + '"'}
+
+    $.post(url, data).done(function(response) {
+        print_input_success(infoText);
+    }).fail(function(err) {
+        console.log("we got error while creating...");
+        console.log(err);
+    });
+}
+
+function submit_instance(textAreaId) {
+    let infoText = get_init_element("infoText");
+
+    let body = $("#" + textAreaId).val();
+    var e = document.getElementById("chooseDatastructure");
+    let datastructure = e.options[e.selectedIndex].value;
+
+    if(!isValidJson(body)) {
+        print_input_error(infoText);
+        return;
+    }
+
+    let url = '/data/add_instance';
+    let instance= JSON.parse(body);
+    instance["datastructure"] = datastructure;
+
+    let data = {"body": '"' + JSON.stringify(instance) + '"'}
+
+    $.post(url, data).done(function(response) {
+        print_input_success(infoText);
+    }).fail(function(err) {
+        console.log("we got error while creating...");
+        console.log(err);
+    });
+}
+
+
+function submit_formatter() {
+    let infoText = get_init_element("infoText");
+
+    var e = document.getElementById("createScriptArea");
+    let formatter = e.value;
+
+    var e = document.getElementById("chooseFrom");
+    let from_datastructure = e.options[e.selectedIndex].value;
+
+    var e = document.getElementById("chooseTo");
+    let to_datastructure = e.options[e.selectedIndex].value;
+
+    if(to_datastructure=="other"){
+      var e = document.getElementById("formatterToName");
+      to_datastructure = e.value;
+    }
+    // Check valid python, not JSON
+    //if(!isValidJson(body)) {
+    //    print_input_error(infoText);
+    //    return;
+    //}
+
+    let url = '/data/add_formatter';
+
+    let data = {"formatter":formatter, "to_datastructure":to_datastructure, "from_datastructure":from_datastructure};
+
+    $.post(url, data).done(function(response) {
+        print_input_success(infoText);
+    }).fail(function(err) {
+        console.log("we got error while creating...");
+        console.log(err);
+    });
+}
+
 function add_definition(key){
     $.get('/data/definition/'+ key, {}).done(function(response) {
         document.getElementById("data-display-area").innerHTML =  response;
@@ -224,4 +335,16 @@ function print_input_success(element) {
     element.style.display = "initial";
     element.style.color = "green";
     element.innerHTML = "Successfull";
+}
+
+
+
+function format_instance(instance,formatter) {
+
+  $.get('/data/format/'+ instance + "/" + formatter, {}).done(function(response) {
+    // put the html that generated list of instances in the "data-display-area" div
+    document.getElementById("jsonArea").innerHTML = response;
+      }).fail(function() {
+      document.getElementById("list-display-area").innerHTML = "{{ 'Error: Could not contact server.' }}";
+  });
 }

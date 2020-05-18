@@ -227,29 +227,23 @@ class MathDataBase:
         stdo = process.communicate(input=str.encode(instance))[0]
         hash = stdo.decode()[:-1]
 
-        print("The hash ", hash)
-        # Create a new branch in the repo with name the hash of the instance
+         # Create a new branch in the repo with name the hash of the instance
         subprocess.check_output(["git", "branch", hash]).decode()[:-1]
 
-        print("Branch created")
 
         # TODO: Check if fail
         subprocess.check_output(["git", "checkout", hash]).decode()[:-1]
         # TODO: Check if fail
-        print("Branch checkout")
 
         # Write the file
         with open(hash, 'w') as instance_file:
             instance_file.write(instance)
 
-        print("Instance file written")
 
         # Add and commit in the new branch
         subprocess.call(["git", "add", os.path.join(self.base_path, "instance", hash) ])
-        print("git added")
 
         subprocess.call(["git", "commit", "-m", message])
-        print("git committed")
 
         commit_hash = subprocess.check_output(["git", "log", "-n", "1", "--pretty=format:'%H'"]).decode()[:-1]
 
@@ -295,16 +289,18 @@ class MathDataBase:
             lines = index_file.readlines()
         return [ line.strip("\n") for line in lines ]
 
-    def get_instances_by_datastructure(self,datastructures):
+
+    def get_instances_by_datastructure(self,datastructure):
         os.chdir(os.path.join(mdb_root,self.base_path))
         response = []
         with open("instance_index.txt", "r") as index_file:
-            lines = index_file.readlines()
-            for key in lines:
+            keys = [str(line.strip("\n")) for line in index_file.readlines()]
+            for key in keys:
                 # To slow? Dont convert to json
-                if json.loads(retrieve_instance(key))["datastructure"] in datastructures:
+                if json.loads(self.retrieve_instance(key))["datastructure"] == datastructure:
                     response.append(key)
-        return [ line.strip("\n") for line in response ]
+        return response
+
 
 
     def retrieve_instance(self, hash):
@@ -444,16 +440,20 @@ class MathDataBase:
         # It stores formatters under the "formatter" path
         os.chdir(os.path.join(mdb_root,self.base_path,"formatter"))
 
+
         # Get the hash of the file
         process = Popen(["git", "hash-object", "--stdin", "--path", "formatter"], stdout=PIPE, stdin=PIPE, stderr=STDOUT)
-        stdo = process.communicate(input=str.encode(formatter+source_format+target_format))[0]
+
+        stdo = process.communicate(input=str.encode(formatter))[0]
         hash = stdo.decode()[:-1]
+
 
         # Create a new branch in the repo with name the hash of the formatter
         subprocess.check_output(["git", "branch", hash]).decode()[:-1]
         # TODO: Check if fail
         subprocess.check_output(["git", "checkout", hash]).decode()[:-1]
         # TODO: Check if fail
+
 
         # Write the file
         with open(hash, 'w') as formatter_file:
@@ -468,11 +468,17 @@ class MathDataBase:
         # Add "from to branch name" in the pending list at the default_branch.
         subprocess.check_output(["git", "checkout", self.definition["default_branch"]]).decode()[:-1]
         # TODO: Check if fail
+
         with open(os.path.join(mdb_root,self.base_path,'formatter_pending.txt'), 'a') as formatter_pending:
-            formatter_pending.write(source_format + " " + targer_format + " " +commit_hash.strip("'") +"\n")
+            formatter_line = str(source_format) + " "
+            formatter_line = formatter_line + str(target_format) + " "
+            formatter_line = formatter_line + str(commit_hash.strip("'"))
+            formatter_line = formatter_line + "\n"
+            formatter_pending.write(formatter_line)
+
 
         # Return 0 on success
-        return 0
+        return commit_hash + " added."
 
 
     def approve_formatter(self, commit_hash, message):
@@ -508,7 +514,7 @@ class MathDataBase:
 
         with open("formatter_pending.txt", "r") as formatter_pending:
             lines = formatter_pending.readlines()
-        return [ line.strip("\n") for line in lines ]
+        return [ line.strip("\n").split(" ")[2] for line in lines ]
 
     def get_formatters(self):
         os.chdir(os.path.join(mdb_root,self.base_path))
@@ -527,17 +533,34 @@ class MathDataBase:
         # TODO: \n or other newline feed?
         return "\n".join(lines)
 
-    def retrieve_formatter_for(self, source_format):
-        formatter_lines = []
-        with open("formatter_index.txt", "r") as formatter_index:
-            lines = formatter_index.readlines()
-        for line in lines:
-            if line.split(" ")[0]==hash:
-                formatter_lines.append(line)
-        # return pairs [output format, formatter]
-        return [ [formatter[1], retrieve_formatter(formatter[2])] for formatter in formatter_lines ]
 
+    def get_formatters_by_datastructure(self,datastructure):
+        os.chdir(os.path.join(mdb_root,self.base_path))
+        response = []
+        with open("formatter_index.txt", "r") as index_file:
+            lines = [str(line.strip("\n")) for line in index_file.readlines()]
+            for line in lines:
+                keys= line.split(" ")
+                if keys[0] == datastructure:
+                    response.append(line)
+        return response
 
+    def format(self,instance, formatter):
+        os.chdir(os.path.join(mdb_root,self.base_path))
+
+        tmpfilename =  os.path.join(mdb_root,self.base_path,'scratch',instance+formatter+".py")
+        outfilename =  os.path.join(mdb_root,self.base_path,'scratch',instance+formatter+".txt")
+        with open(tmpfilename, "w") as tmp_file:
+            tmp_file.write("input="+ self.retrieve_instance(instance))
+            tmp_file.write("\n\n")
+            tmp_file.write(self.retrieve_formatter(formatter))
+            tmp_file.write("\n\n")
+            tmp_file.write("with open(\""+ outfilename + "\", \"w\") as out_file:\n")
+            tmp_file.write("    out_file.write(str(format(input)))")
+
+        subprocess.check_output(["python3",tmpfilename])
+        with open(outfilename, "r") as out_file:
+            return out_file.read()
     ########################################################################
     ########################################################################
     ##########################  Batch operations ###########################

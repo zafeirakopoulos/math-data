@@ -1,0 +1,25 @@
+{% extends 'data/create.html' %}
+
+{% block content %}
+
+<form class="needs-validation">
+
+      <div class="row">
+
+        <label for ="chooseDatastructure">Choose Datastructure:</label>
+        <select class="form-control" id="chooseDatastructure">
+            {% for datastructure in datastructures %}
+              <option value="{{datastructure}}">{{datastructures[datastructure]}}</option>
+            {% endfor %}
+        </select>
+      </div>
+    <div class="mb-3">
+         Here we need a list of instance to choose from
+    </div>
+
+    <button class="btn btn-primary" type="button" onclick="submit_instance('createInstanceArea');">Submit</button>
+
+</form>
+
+
+{% endblock %}

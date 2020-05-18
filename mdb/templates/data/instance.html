@@ -3,11 +3,11 @@
     <div class="col-sm">
         <div class='dropdown'>
             <button class='btn btn-secondary dropdown-toggle' type='button' id='exportDataButton' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
-                    Export as
+                    Export to
             </button>
             <div class='dropdown-menu' aria-labelledby='exportDataButton'>
                 {% for formatter in formatters %}
-                  <a class='dropdown-item' href='format({{key}},{{formatter}})'>{{formatter}}</a>
+                  <a class='dropdown-item' href='javascript:format_instance("{{key}}","{{formatter[2]}}")'>{{formatter[1]}}</a>
                 {% endfor %}
             </div>
         </div>

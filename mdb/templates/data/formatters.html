@@ -1,0 +1,29 @@
+{% extends 'data/browse.html' %}
+
+{% block content %}
+
+    <div class="row">
+
+          <label for ="chooseDatastructure">Formatters for </label>
+          <div class='dropdown'>
+              <button class='btn btn-secondary dropdown-toggle' type='button' id='chooseDatastructure' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
+              </button>
+              <div class='dropdown-menu' aria-labelledby='chooseDatastructure'>
+                  {% for datastructure in datastructures %}
+                    <a class='dropdown-item' href='javascript:show_formatters_for_datastructure("{{datastructure}}");'>{{datastructures[datastructure]}}</a>
+                  {% endfor %}
+              </div>
+          </div>
+     </div>
+
+    <div class="row">
+        <div class="col-sm">
+            <div id="list-display-area">
+
+            </div>
+        </div>
+        <div class="col-sm">
+            <div id="data-display-area"></div>
+        </div>
+    </div>
+{% endblock %}
