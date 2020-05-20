@@ -9,4 +9,4 @@ mdb_name = "live"
 
 mdb_definitions_folder = ['mdb', 'local', 'definitions']
 
-mdb_definition = '{"paths": ["raw", "options"],"entities":["datastructure", "instance", "dataset","formatter"],"default_branch":"default"}'
+mdb_definition = '{"paths": ["raw", "options"],"entities":["datastructure", "instance", "dataset","formatter", "format"],"default_branch":"default"}'

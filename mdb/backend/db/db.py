@@ -71,6 +71,22 @@ class MathDataBase:
                 with open(os.path.join(entity,'.gitkeep'), 'w') as tmp:
                     pass
 
+            try:
+                os.mkdir("scratch")
+            except:
+                pass
+            with open(os.path.join("scratch",'.gitkeep'), 'w') as tmp:
+                pass
+
+            try:
+                os.mkdir("import_scratch")
+            except:
+                pass
+            with open(os.path.join("import_scratch",'.gitkeep'), 'w') as tmp:
+                pass
+
+
+
             # Commit the initial state of MDB. This enables also the creation of branches.
             subprocess.call(["git", "add", "*"])
             subprocess.call(["git", "commit", "-m", "Initialization of MDB"])
@@ -166,7 +182,7 @@ class MathDataBase:
 
     def reject_datastructure(self, commit_hash, message):
         os.chdir(self.base_path)
-        self.remove_hash_from_pending(commit_hash)
+        self.remove_hash_from_pending(commit_hash,"datastructure_pending.txt")
 
     def get_diff(self, commit_hash):
         diff = subprocess.check_output(["git", "show", commit_hash]).decode()[:-1]
@@ -334,7 +350,7 @@ class MathDataBase:
         :param message: A description of the dataset (the commit message)
         :returns: The name of the branch in which the dataset was commited"""
         # It stores datasets under the "datasets" path
-        os.chdir(os.path.join(self.base_path, "datasets"))
+        os.chdir(os.path.join(self.base_path, "dataset"))
 
         # Get the hash of the file
         process = Popen(["git", "hash-object", "--stdin", "--path", "dataset"], stdout=PIPE, stdin=PIPE, stderr=STDOUT)
@@ -389,7 +405,7 @@ class MathDataBase:
 
     def reject_dataset(self, commit_hash, message):
         os.chdir(self.base_path)
-        self.remove_hash_from_pending(commit_hash)
+        self.remove_hash_from_pending(commit_hash,"dataset_pending.txt")
 
 
     def pending_datasets(self):
@@ -421,6 +437,122 @@ class MathDataBase:
         # TODO: \n or other newline feed?
         return "\n".join(lines)
 
+
+    ########################################################################
+    ########################################################################
+    ##########################  Format ##############################
+    ########################################################################
+    ########################################################################
+
+
+    def add_format(self, formatjson, message):
+        """Register a format in the MathDataBase.
+        It is added in the pending list waiting for approval by an editor.
+
+        :param format: A JSON object as a string
+        :param message: A description of the dataset (the commit message)
+        :returns: The name of the branch in which the dataset was commited"""
+        os.chdir(os.path.join(self.base_path, "format"))
+
+        # Get the hash of the file
+        process = Popen(["git", "hash-object", "--stdin", "--path", "format"], stdout=PIPE, stdin=PIPE, stderr=STDOUT)
+        stdo = process.communicate(input=str.encode(formatjson))[0]
+
+        hash = stdo.decode()[:-1]
+
+        # Create a new branch in the repo with name the hash of the datastructure
+        subprocess.call(["git", "branch", hash])
+        # TODO: Check if fail
+        subprocess.call(["git", "checkout", hash])
+        # TODO: Check if fail
+
+        # Write the file
+        with open(hash, 'w') as format_file:
+            format_file.write(formatjson)
+
+        # Add and commit in the new branch
+        subprocess.call(["git", "add", os.path.join(self.base_path, "format", hash) ])
+        subprocess.call(["git", "commit", "-m", message])
+
+
+        commit_hash = subprocess.check_output(["git", "log", "-n", "1", "--pretty=format:'%H'"]).decode()[:-1]
+
+
+        # Add the branch name in the pending list at the default_branch.
+        subprocess.call(["git", "checkout", self.definition["default_branch"]])
+
+        # TODO: Check if fail
+        with open(os.path.join(self.base_path, 'format_pending.txt'), 'a') as format_pending:
+            format_pending.write(commit_hash+"\n")
+
+        return commit_hash + " added."
+
+
+    def approve_format(self, commit_hash, message):
+        os.chdir(self.base_path)
+        index_file_name = 'format_index.txt'
+
+        self.remove_hash_from_pending(commit_hash, "format_pending.txt")
+
+        # TODO: Not thread safe! Assumes we are in default_branch.
+        subprocess.check_output(["git", "merge", "-m", message, commit_hash])
+
+        # Add merge in index list
+        with open(index_file_name, 'a') as format_index:
+            format_index.write(commit_hash+"\n")
+
+        # Commit the new index in the default_branch
+        subprocess.check_output(["git", "add", os.path.join(self.base_path, index_file_name) ])
+        subprocess.check_output(["git", "commit", "-m", "Merged dataset "+commit_hash])
+
+        return 0
+
+    def reject_format(self, commit_hash, message):
+        os.chdir(self.base_path)
+        self.remove_hash_from_pending(commit_hash,"format_pending.txt")
+
+
+    def pending_formats(self):
+        os.chdir(self.base_path)
+
+        with open("format_pending.txt", "r") as format_pending:
+            lines = format_pending.readlines()
+        return [ line.strip("'").strip("\n") for line in lines ]
+
+    def get_formats(self):
+        os.chdir(self.base_path)
+
+        with open("format_index.txt", "r") as format_index:
+            lines = format_index.readlines()
+        return [ line.strip("\n") for line in lines ]
+
+    def retrieve_format(self, hash):
+        files = subprocess.check_output(["git", "diff-tree", "--no-commit-id", "--name-only", "-r", hash ]).decode()[:-1]
+        files = files.split("\n")
+
+        if len(files) == 0:
+            return "0 files!"
+
+        if len(files)>1:
+            return "More than one files in the commit"
+
+        with open(os.path.join(self.base_path, files[0])) as format:
+            lines = format.readlines()
+        # TODO: \n or other newline feed?
+
+        return "\n".join(lines)
+
+
+    def get_formats_by_datastructure(self,datastructure):
+        os.chdir(os.path.join(mdb_root,self.base_path))
+        response = []
+        with open("format_index.txt", "r") as index_file:
+            keys = [str(line.strip("\n")) for line in index_file.readlines()]
+            for key in keys:
+                # To slow? Dont convert to json
+                if json.loads(self.retrieve_format(key))["datastructure"] == datastructure:
+                    response.append(key)
+        return response
 
     ########################################################################
     ########################################################################
@@ -545,7 +677,19 @@ class MathDataBase:
                     response.append(line)
         return response
 
-    def format(self,instance, formatter):
+    def get_formatters_by_format(self,format):
+        os.chdir(os.path.join(mdb_root,self.base_path))
+        response = []
+        with open("formatter_index.txt", "r") as index_file:
+            lines = [str(line.strip("\n")) for line in index_file.readlines()]
+            for line in lines:
+                keys= line.split(" ")
+                if keys[0] == format:
+                    response.append(line)
+        return response
+
+
+    def format_instance(self,instance, formatter):
         os.chdir(os.path.join(mdb_root,self.base_path))
 
         tmpfilename =  os.path.join(mdb_root,self.base_path,'scratch',instance+formatter+".py")
@@ -561,8 +705,47 @@ class MathDataBase:
         subprocess.check_output(["python3",tmpfilename])
         with open(outfilename, "r") as out_file:
             return out_file.read()
+
+
     ########################################################################
     ########################################################################
     ##########################  Batch operations ###########################
     ########################################################################
     ########################################################################
+
+
+    def format_file(self,fname, from_format, to_format):
+        os.chdir(os.path.join(mdb_root,self.base_path))
+
+        # Find the correct formatter
+        formatter=0
+        for f in self.get_formatters():
+            keys= f.split(" ")
+            print(keys)
+
+            if keys[0]==from_format and keys[1]==to_format:
+                formatter=keys[2]
+                break
+        print("done with loop")
+
+        if formatter==0:
+            raise Exception("Formatter not found")
+        print("about to create filename")
+
+        tmpfilename =  os.path.join(mdb_root,self.base_path,'import_scratch',fname,fname+formatter+".py")
+        outfilename =  os.path.join(mdb_root,self.base_path,'import_scratch',fname,fname+formatter+".txt")
+        print(tmpfilename)
+        print(outfilename)
+
+        with open(tmpfilename, "w") as tmp_file:
+            with open(os.path.join(mdb_root,self.base_path,'import_scratch',fname,fname), "r") as input_file:
+                tmp_file.write("input="+ input_file.read() )
+                tmp_file.write("\n\n")
+                tmp_file.write(self.retrieve_formatter(formatter))
+                tmp_file.write("\n\n")
+                tmp_file.write("with open(\""+ outfilename + "\", \"w\") as out_file:\n")
+                tmp_file.write("    out_file.write(str(format(input)))")
+
+        subprocess.check_output(["python3",tmpfilename])
+        with open(outfilename, "r") as out_file:
+            self.add_instance(out_file.read(),"Imported")

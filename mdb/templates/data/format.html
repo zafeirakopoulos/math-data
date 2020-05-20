@@ -1,0 +1,23 @@
+
+<div class="row">
+    <div class="col-sm">
+        {% if current_user.is_authenticated %}
+            <button class="btn btn-outline-primary" type="button" id="editFormatBtn" onclick="enable_edit('editFormatBtn', 'formatForm', '{{key}}');">Edit</button>
+        {% endif %}
+    </div>
+</div>
+
+<form>
+    <div class="form-group mdb-form-group">
+
+        <div class="card">
+            <div class="card-body">
+                <div id="jsonArea"></div>
+            </div>
+        </div>
+
+        <p style="display: none; color:red;" id="infoText"></p>
+        <textarea style="display: none" class="form-control" id="formatForm" rows="15">{{format}}</textarea>
+
+    </div>
+</form>

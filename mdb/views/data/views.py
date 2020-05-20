@@ -2,7 +2,8 @@ from flask import Flask, Blueprint, request, json, render_template, jsonify
 from flask_login import current_user
 from mdb.views.data import data_app
 from mdb.core import logger
-
+from werkzeug.utils import secure_filename
+import os
 import sys
 
 import json as json_beautifier
@@ -188,10 +189,10 @@ def create_dataset():
 
 @data_app.route('/create_formatter/', methods=['GET', 'POST'])
 def create_formatter():
-    datastructures = {}
-    for key in data_app.active_mdb.get_datastructures():
-        datastructures[key]= json_beautifier.loads(data_app.active_mdb.retrieve_datastructure(key))["name"]
-    return  render_template("data/create_formatter.html", datastructures=datastructures)
+    formats = {}
+    for key in data_app.active_mdb.get_formats():
+        formats[key]= json_beautifier.loads(data_app.active_mdb.retrieve_format(key))["name"]
+    return  render_template("data/create_formatter.html", formats=formats)
 
 @data_app.route('/add_formatter', methods=["POST"])
 def add_formatter():
@@ -199,27 +200,22 @@ def add_formatter():
     from_datastructure = request.form['from_datastructure']
     to_datastructure = request.form['to_datastructure']
 
-    print("Got data from request")
-    print(formatter)
-    print(from_datastructure)
-    print(to_datastructure)
     message = "Formatter created by " + current_user.email
 
     response = data_app.active_mdb.add_formatter(formatter,from_datastructure , to_datastructure, message)
-    print("Git response")
 
     logger.debug("response: " + str(response))
     return response
 
 
-# function to list all formatters
+#   formatters page
 @data_app.route('/formatters', methods=["GET"])
 def formatters():
     #  A dictionary of key-name pairs
-    datastructures = {}
-    for key in data_app.active_mdb.get_datastructures():
-        datastructures[key]= json_beautifier.loads(data_app.active_mdb.retrieve_datastructure(key))["name"]
-    return render_template("data/formatters.html", datastructures=datastructures)
+    formats = {}
+    for key in data_app.active_mdb.get_formats():
+        formats[key]= json_beautifier.loads(data_app.active_mdb.retrieve_format(key))["name"]
+    return render_template("data/formatters.html", formats=formats)
 
 
 # retrieves an formatter object
@@ -248,6 +244,80 @@ def formatters_by_datastructure(datastructure):
         formatter= data_app.active_mdb.retrieve_formatter(keys[2])
         formatters[keys[2]] = keys[1]
     return render_template("data/formatters_list.html", formatters=formatters)
+
+# function to list all formatters of specific datastructure
+@data_app.route('/formatters_by_format/<format>', methods=["GET"])
+def formatters_by_format(format):
+    #  A dictionary of key-name pairs
+    formatters = {}
+    for key in data_app.active_mdb.get_formatters_by_format(format):
+        key= key.split(" ")
+
+        formatters[key[2]] = json_beautifier.loads(data_app.active_mdb.retrieve_format(key[1]))["name"]
+    return render_template("data/formatters_list.html", formatters=formatters)
+
+
+##############################################################################
+########################## Formats ########################################
+##############################################################################
+
+@data_app.route('/create_format/', methods=['GET', 'POST'])
+def create_format():
+    datastructures = {}
+    for key in data_app.active_mdb.get_datastructures():
+        datastructures[key]= json_beautifier.loads(data_app.active_mdb.retrieve_datastructure(key))["name"]
+    return  render_template("data/create_format.html", datastructures=datastructures)
+
+@data_app.route('/add_format', methods=["POST"])
+def add_format():
+    name = request.form['name']
+    datastructure = request.form['datastructure']
+    description = request.form['description']
+
+    message = "Format created by " + current_user.email
+    data = {"name":name,"datastructure":datastructure,"description":description}
+    data = json_beautifier.dumps(data)
+    print("data:",data)
+    response = data_app.active_mdb.add_format(data, message)
+    print("response:",response)
+
+    logger.debug("response: " + str(response))
+    return response
+
+# function to list all formatters
+@data_app.route('/formats', methods=["GET"])
+def formats():
+    #  A dictionary of key-name pairs
+    datastructures = {}
+    for key in data_app.active_mdb.get_datastructures():
+        datastructures[key]= json_beautifier.loads(data_app.active_mdb.retrieve_datastructure(key))["name"]
+    return render_template("data/formats.html", datastructures=datastructures)
+
+
+# retrieves an format object
+@data_app.route('/format/<key>', methods=['GET', 'POST'])
+def format(key):
+    format = data_app.active_mdb.retrieve_format(key)
+
+    out = {}
+
+    # get html representation for instance object and add to output
+    out["page"] = render_template("data/format.html", format=format, key=key)
+
+    # add actual json to output
+    out["data"] = format
+
+    # return data with jsonify. otherwise the json object won't go correctly
+    return jsonify(out)
+
+# function to list all formatters of specific datastructure
+@data_app.route('/formats_by_datastructure/<datastructure>', methods=["GET"])
+def formats_by_datastructure(datastructure):
+    #  A dictionary of key-name pairs
+    formats = {}
+    for key in data_app.active_mdb.get_formats_by_datastructure(datastructure):
+        formats[key] =json_beautifier.loads(data_app.active_mdb.retrieve_format(key))["name"]
+    return render_template("data/formats_list.html", formats=formats)
 
 
 ##############################################################################
@@ -331,8 +401,9 @@ def editor_page():
     pending_instances = data_app.active_mdb.pending_instances()
     pending_formatters = data_app.active_mdb.pending_formatters()
     pending_datasets = data_app.active_mdb.pending_datasets()
+    pending_formats = data_app.active_mdb.pending_formats()
 
-    return render_template("data/editor.html", datastructures=pending_datastructures, instances=pending_instances, formatters=pending_formatters, datasets=pending_datasets)
+    return render_template("data/editor.html", datastructures=pending_datastructures, instances=pending_instances, formatters=pending_formatters, datasets=pending_datasets, formats=pending_formats)
 
 # method that gets a change's details by id
 @data_app.route('/change/<change_id>/<data_type>', methods=['GET'])
@@ -356,6 +427,9 @@ def accept_change(change_id, data_type):
     if data_type == "dataset":
         message = "Dataset accepted by " + current_user.email # TODO: get a message from ui
         data_app.active_mdb.approve_dataset(change_id, message)
+    if data_type == "format":
+        message = "Format accepted by " + current_user.email # TODO: get a message from ui
+        data_app.active_mdb.approve_format(change_id, message)
     return "success"
 
 @data_app.route('/change/reject/<change_id>/<data_type>', methods=['GET'])
@@ -375,7 +449,33 @@ def reject_change(change_id, data_type):
     return "success"
 
 
-@data_app.route('/format/<instance>/<formatter>', methods=["GET"])
-def format(instance,formatter):
+@data_app.route('/format_instance/<instance>/<formatter>', methods=["GET"])
+def formaformat_instancet(instance,formatter):
 
-    return data_app.active_mdb.format(instance,formatter)
+    return data_app.active_mdb.format_instance(instance,formatter)
+
+
+##############################################################################
+###################### Import ###########################################
+##############################################################################
+
+@data_app.route('/import', methods=["GET"])
+def import_page():
+    formats = {}
+    for key in data_app.active_mdb.get_formats():
+        formats[key]= json_beautifier.loads(data_app.active_mdb.retrieve_format(key))["name"]
+    return render_template("data/import.html", formats=formats)
+
+@data_app.route('/import_file', methods=["POST"])
+def import_file():
+    if request.method == 'POST':
+          f = request.files['file']
+          fname = secure_filename(f.filename)
+          os.chdir("import_scratch")
+          os.mkdir(fname)
+          os.chdir(fname)
+          f.save(fname)
+          print("About to db call")
+          data_app.active_mdb.format_file(fname, request.form['from'], request.form["to"])
+          return 'Imported successfully'
+    return "Import failed"

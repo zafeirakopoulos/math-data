@@ -1,0 +1,32 @@
+{% extends 'data/browse.html' %}
+
+{% block content %}
+
+
+  <form class="needs-validation" action = "import_file" method = "POST"  enctype = "multipart/form-data"  >
+
+        <div class="row">
+          <label for ="chooseFrom">Input format:</label>
+          <select class="form-control" id="chooseFrom" name="from">
+              {% for format in formats %}
+                <option value="{{format}}">{{formats[format]}}</option>
+              {% endfor %}
+            </select>
+        </div>
+
+        <div class="row">
+          <label for ="chooseTo">Storage format:</label>
+          <select class="form-control" id="chooseTo" name="to">
+              {% for format in formats %}
+                <option value="{{format}}">{{formats[format]}}</option>
+              {% endfor %}
+          </select>
+        </div>
+
+        <input type = "file" name = "file" />
+
+      <input type = "submit" class="btn btn-primary" value="Import"/>
+
+  </form>
+
+{% endblock %}

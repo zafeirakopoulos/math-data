@@ -64,11 +64,9 @@ def create_app(test_config=None):
     # import and register blueprints
     from mdb.views.home import home_app
     from mdb.views.data import data_app
-    from mdb.views.formatter import formatter_app
 
     app.register_blueprint(home_app)
     app.register_blueprint(data_app, url_prefix="/data")
-    app.register_blueprint(formatter_app, url_prefix="/formatter")
 
     app.register_error_handler(Exception, all_exception_handler)
 

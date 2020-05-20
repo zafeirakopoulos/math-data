@@ -83,7 +83,29 @@
                                             </div>
                             </div>
                           </div>
-                        </div>
+                        </div
+
+
+
+                        <div class="card">
+                          <div class="card-header" id="headingOne">
+                            <h5 class="mb-0">
+                              <button class="btn btn-link" data-toggle="collapse" data-target="#collapseFormat" aria-expanded="true" aria-controls="collapseFormat">
+                                Formats
+                              </button>
+                            </h5>
+                          </div>
+                          <div id="collapseFormat" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
+                            <div class="card-body">
+                                    <div class="list-group">
+                                            {% for change in formats %}
+                                                <a class="list-group-item list-group-item-action"
+                                                    href='javascript:get_change("{{change}}", "format");'>{{ change }}</a>
+                                            {% endfor %}
+                                            </div>
+                            </div>
+                          </div>
+                    </div>
                 </div>
         </div>
 
@@ -94,4 +116,3 @@
         </div>
     </div>
 {% endblock %}
- 

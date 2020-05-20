@@ -1,0 +1,9 @@
+<ul class='list-group'>
+  {% for format in formats %}
+    <li class='list-group-item'>
+        <a href='javascript:show_format("{{format}}");'>
+        {{formats[format]}}
+      </a>
+    </li>
+  {% endfor %}
+</ul>

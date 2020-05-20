@@ -1,0 +1,30 @@
+{% extends 'data/create.html' %}
+
+{% block content %}
+
+<form class="needs-validation">
+  <div class="mb-3">
+
+    <label for ="chooseDatastructure">New format is related to datastructure:</label>
+    <select class="form-control" id="chooseDatastructure">
+        {% for datastructure in datastructures %}
+          <option value="{{datastructure}}">{{datastructures[datastructure]}}</option>
+        {% endfor %}
+    </select>
+  </div>
+
+  <div class="mb-3">
+      <p style="display: none; color:red;" id="infoText"></p>
+      <textarea class="form-control" id="formatName" placeholder='Name of the format' rows="1" required></textarea>
+  </div>
+    <div class="mb-3">
+        <p style="display: none; color:red;" id="infoText"></p>
+        <textarea class="form-control" id="formatDecription" placeholder='Describe the format' rows="5" required></textarea>
+    </div>
+
+    <button class="btn btn-primary" type="button" onclick="submit_format();">Submit</button>
+
+</form>
+
+
+{% endblock %}

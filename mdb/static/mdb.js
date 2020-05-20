@@ -31,6 +31,23 @@ function show_formatter(key) {
     });
 }
 
+// this function called when a format is clicked
+function show_format(key) {
+    // perform a get request to the flask
+    $.get('/data/format/'+ key, {}).done(function(response) {
+        // put the instance's html to the 'data-display-area' div
+       document.getElementById("data-display-area").innerHTML = response["page"];
+
+        // generate the collapsible json with renderjson and put it to 'jsonArea' div
+       document.getElementById("jsonArea").appendChild(renderjson.set_show_to_level(2)(response["data"]));
+
+
+    }).fail(function() {
+        document.getElementById("data-display-area").innerHTML = "{{ 'Error: Could not contact server.' }}";
+    });
+}
+
+
 function get_instances() {
     $.get('/data/instances', {}).done(function(response) {
         document.getElementById("list-display-area").innerHTML = response;
@@ -69,9 +86,28 @@ function show_instances_for_datastructure(datastructure){
     });
 }
 
+function show_formats_for_datastructure(datastructure){
+    $.get('/data/formats_by_datastructure/'+ datastructure, {}).done(function(response) {
+      // put the html that generated list of instances in the "data-display-area" div
+      document.getElementById("list-display-area").innerHTML = response;
+        }).fail(function() {
+        document.getElementById("list-display-area").innerHTML = "{{ 'Error: Could not contact server.' }}";
+    });
+}
+
+
 
 function show_formatters_for_datastructure(datastructure){
     $.get('/data/formatters_by_datastructure/'+ datastructure, {}).done(function(response) {
+      // put the html that generated list of instances in the "data-display-area" div
+      document.getElementById("list-display-area").innerHTML = response;
+        }).fail(function() {
+        document.getElementById("list-display-area").innerHTML = "{{ 'Error: Could not contact server.' }}";
+    });
+}
+
+function show_formatters_for_format(format){
+    $.get('/data/formatters_by_format/'+ format, {}).done(function(response) {
       // put the html that generated list of instances in the "data-display-area" div
       document.getElementById("list-display-area").innerHTML = response;
         }).fail(function() {
@@ -231,10 +267,7 @@ function submit_formatter() {
     var e = document.getElementById("chooseTo");
     let to_datastructure = e.options[e.selectedIndex].value;
 
-    if(to_datastructure=="other"){
-      var e = document.getElementById("formatterToName");
-      to_datastructure = e.value;
-    }
+
     // Check valid python, not JSON
     //if(!isValidJson(body)) {
     //    print_input_error(infoText);
@@ -252,6 +285,33 @@ function submit_formatter() {
         console.log(err);
     });
 }
+
+
+
+function submit_format() {
+    let infoText = get_init_element("infoText");
+
+    var e = document.getElementById("formatName");
+    let name = e.value;
+
+    var e = document.getElementById("chooseDatastructure");
+    let datastructure = e.options[e.selectedIndex].value;
+
+    var e = document.getElementById("formatDecription");
+    let description = e.value;
+
+    let url = '/data/add_format';
+
+    let data = {"name":name, "datastructure":datastructure, "description":description};
+
+    $.post(url, data).done(function(response) {
+        print_input_success(infoText);
+    }).fail(function(err) {
+        console.log("we got error while creating...");
+        console.log(err);
+    });
+}
+
 
 function add_definition(key){
     $.get('/data/definition/'+ key, {}).done(function(response) {
@@ -341,7 +401,7 @@ function print_input_success(element) {
 
 function format_instance(instance,formatter) {
 
-  $.get('/data/format/'+ instance + "/" + formatter, {}).done(function(response) {
+  $.get('/data/format_instance/'+ instance + "/" + formatter, {}).done(function(response) {
     // put the html that generated list of instances in the "data-display-area" div
     document.getElementById("jsonArea").innerHTML = response;
       }).fail(function() {
