@@ -14,7 +14,7 @@
          "weighted":"Boolean"
       }
    },
-   "raw_types":{
+   "raw types":{
       "dense":"Boolean",
       "sparse":"Boolean"
    },
@@ -27,21 +27,21 @@
          "edges":{
             "structure": ["@size.vertices","@size.vertices"],
             "element":{
-               "type":"Number",
+               "type":"scalar",
                "default":"0"
             }
          },
          "vertices":{
-            "structure": ["@size.vertices"],
+            "structure": ["@size.any"],
             "element":{
-               "type":"Number",
+               "type":"scalar",
                "default":"0"
             }
          }
       },
       "sparse":{
          "edges":{
-            "structure": ["@size.edges"],
+            "structure": ["@size.any"],
             "element":{
                "if":{
                   "@options.edges.weighted":true
@@ -50,27 +50,22 @@
                   "structure": [3],
                   "element":
                      {
-                        "type":["Integer","Integer","Number"]
+                        "type":["Integer","Integer","scalar"]
                      }
                },
                "else":{
-                  "if":{
-                     "@options.edges.weighted":false
-                  },
-                  "then":{
-                     "structure": [2],
-                     "element":
-                        {
-                           "type":["Integer","Integer"]
-                        }
-                  }
+                 "structure": [2],
+                 "element":
+                    {
+                       "type":["Integer","Integer"]
+                    }
                }
             }
          },
          "vertices":{
-            "structure": ["@size.vertices"],
+            "structure": ["@size.any"],
             "element":{
-               "type":"Number",
+               "type":"scalar",
                "default":"0"
             }
          }

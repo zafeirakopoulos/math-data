@@ -1,0 +1,41 @@
+{
+   "name":"Univariate Polynomial",
+   "plural":"Univariate Polynomials",
+   "attributes":{
+      "coefficients":"Number",
+      "degree":"Natural Number",
+      "bitsize":"integer"
+   },
+   "options":{
+   },
+   "raw types":{
+      "dense":"Boolean",
+      "sparse":"Boolean"
+   },
+   "size":{
+      "coefficients":"integer",
+      "bitsize":"integer"
+   },
+   "raw":{
+      "dense":{
+         "coefficients":{
+            "structure": ["@size.coefficients"],
+            "element":{
+               "type":"Number",
+               "default":"0"
+            }
+         }
+      },
+      "sparse":{
+         "coefficients":{
+            "structure": ["@size.coefficients"],
+            "element":{
+              "structure": [2],
+              "element":{
+                "type":["Integer","Number"]
+              }
+            }
+         }
+      }
+   }
+}

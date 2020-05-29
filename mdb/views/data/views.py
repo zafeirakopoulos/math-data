@@ -479,3 +479,5 @@ def import_file():
           data_app.active_mdb.format_file(fname, request.form['from'], request.form["to"])
           return 'Imported successfully'
     return "Import failed"
+
+    

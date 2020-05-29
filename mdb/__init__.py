@@ -60,13 +60,15 @@ def create_app(test_config=None):
             create_database(db_url)
 
     Bootstrap(app)
-
     # import and register blueprints
     from mdb.views.home import home_app
     from mdb.views.data import data_app
 
     app.register_blueprint(home_app)
     app.register_blueprint(data_app, url_prefix="/data")
+
+    from mdb.views.mdl import mdl_app
+    app.register_blueprint(mdl_app, url_prefix="/mdl")
 
     app.register_error_handler(Exception, all_exception_handler)
 

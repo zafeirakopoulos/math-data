@@ -25,16 +25,16 @@ def runserver():
 def runworker():
     app.run(debug=False)
 
-
-@manager.command
-def recreate_db():
-    """
-    Recreates a database. This should only be used once
-    when there's a new database instance. This shouldn't be
-    used when you migrate your database.
-    """
-
-    pass
+# 
+# @manager.command
+# def recreate_db():
+#     """
+#     Recreates a database. This should only be used once
+#     when there's a new database instance. This shouldn't be
+#     used when you migrate your database.
+#     """
+#
+#     pass
 
 
 if __name__ == "__main__":
