@@ -96,8 +96,9 @@ def instances_by_datastructure(datastructure):
     #  A dictionary of key-name pairs
     instances = {}
     for key in data_app.active_mdb.get_instances_by_datastructure(datastructure):
-        instances[key]= json_beautifier.loads(data_app.active_mdb.retrieve_instance(key))["name"]
+        instances[key] =json_beautifier.loads(data_app.active_mdb.retrieve_instance(key))["name"]
     return render_template("data/instances_list.html", instances=instances)
+
 
 @data_app.route('/create_instance/', methods=['GET', 'POST'])
 def create_instance():

@@ -291,6 +291,10 @@ class MathDataBase:
 
         return 0
 
+    def reject_instance(self, commit_hash, message):
+        os.chdir(self.base_path)
+        self.remove_hash_from_pending(commit_hash,"instance_pending.txt")
+
     def pending_instances(self):
         os.chdir(os.path.join(mdb_root,self.base_path))
 

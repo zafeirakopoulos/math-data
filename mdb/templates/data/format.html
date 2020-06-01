@@ -5,6 +5,9 @@
             <button class="btn btn-outline-primary" type="button" id="editFormatBtn" onclick="enable_edit('editFormatBtn', 'formatForm', '{{key}}');">Edit</button>
         {% endif %}
     </div>
+    <div class="col-sm">
+         <p style="display: none; color:red;" id="infoText"></p>
+    </div>
 </div>
 
 <form>
@@ -16,7 +19,7 @@
             </div>
         </div>
 
-        <p style="display: none; color:red;" id="infoText"></p>
+
         <textarea style="display: none" class="form-control" id="formatForm" rows="15">{{format}}</textarea>
 
     </div>

@@ -2,11 +2,11 @@
 
 {% block content %}
 
-<form class="needs-validation">
+<form class="needs-validation" name="format">
   <div class="mb-3">
-
-    <label for ="chooseDatastructure">New format is related to datastructure:</label>
+    <center><p style="display: none; color:red;" id="infoText"></p></center>
     <select class="form-control" id="chooseDatastructure">
+        <option selected>Choose Datastructure</option>
         {% for datastructure in datastructures %}
           <option value="{{datastructure}}">{{datastructures[datastructure]}}</option>
         {% endfor %}
@@ -14,11 +14,11 @@
   </div>
 
   <div class="mb-3">
-      <p style="display: none; color:red;" id="infoText"></p>
+
       <textarea class="form-control" id="formatName" placeholder='Name of the format' rows="1" required></textarea>
   </div>
     <div class="mb-3">
-        <p style="display: none; color:red;" id="infoText"></p>
+
         <textarea class="form-control" id="formatDecription" placeholder='Describe the format' rows="5" required></textarea>
     </div>
 

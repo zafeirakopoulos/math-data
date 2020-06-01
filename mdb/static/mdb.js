@@ -248,6 +248,7 @@ function submit_instance(textAreaId) {
 
     $.post(url, data).done(function(response) {
         print_input_success(infoText);
+        document.instance.reset();
     }).fail(function(err) {
         console.log("we got error while creating...");
         console.log(err);
@@ -280,6 +281,7 @@ function submit_formatter() {
 
     $.post(url, data).done(function(response) {
         print_input_success(infoText);
+        document.formatter.reset();
     }).fail(function(err) {
         console.log("we got error while creating...");
         console.log(err);
@@ -306,6 +308,7 @@ function submit_format() {
 
     $.post(url, data).done(function(response) {
         print_input_success(infoText);
+        document.format.reset();
     }).fail(function(err) {
         console.log("we got error while creating...");
         console.log(err);
@@ -349,7 +352,7 @@ function get_change(change_id, data_type) {
 
 function accept_change(change_id, data_type) {
     $.get('/data/change/accept/'+ change_id + '/' + data_type, {}).done(function(response) {
-        document.getElementById("change-display-area").innerHTML =  "Accepted!";
+        document.getElementById("change-display-area").innerHTML =  alert("Accepted");
     }).fail(function(err) {
         document.getElementById("change-display-area").innerHTML = "{{ 'Error: Could not contact server.' }}";
         console.log(err);

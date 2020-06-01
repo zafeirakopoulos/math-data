@@ -5,13 +5,14 @@
 <form class="needs-validation">
 
       <div class="row">
-
-        <label for ="chooseDatastructure">Choose Datastructure:</label>
+         <div class="col-sm">
         <select class="form-control" id="chooseDatastructure">
+            <option selected>Choose Datastructure</option>
             {% for datastructure in datastructures %}
               <option value="{{datastructure}}">{{datastructures[datastructure]}}</option>
             {% endfor %}
         </select>
+      </div>
       </div>
     <div class="mb-3">
          Here we need a list of instance to choose from

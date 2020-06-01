@@ -2,27 +2,31 @@
 
 {% block content %}
 
-<form class="needs-validation">
+<form class="needs-validation" name="formatter">
+    <center><p style="display: none; color:red;" id="infoText"></p></center>
       <div class="row">
-        <label for ="chooseFrom">From:</label>
+          <div class="col-sm">
         <select class="form-control" id="chooseFrom">
+            <option selected>From</option>
             {% for format in formats %}
               <option value="{{format}}">{{formats[format]}}</option>
             {% endfor %}
           </select>
       </div>
-
+      </div>
+      </br>
       <div class="row">
-        <label for ="chooseTo">To:</label>
+           <div class="col-sm">
         <select class="form-control" id="chooseTo">
+            <option selected>To</option>
             {% for format in formats %}
               <option value="{{format}}">{{formats[format]}}</option>
             {% endfor %}
         </select>
       </div>
-
+      </div>
+      </br>
     <div class="mb-3">
-        <p style="display: none; color:red;" id="infoText"></p>
         <textarea class="form-control" id="createScriptArea" placeholder='The script' rows="15" required></textarea>
     </div>
 
