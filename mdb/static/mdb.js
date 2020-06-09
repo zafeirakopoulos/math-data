@@ -348,20 +348,28 @@ function get_change(change_id, data_type) {
         document.getElementById("change-display-area").innerHTML = "{{ 'Error: Could not contact server.' }}";
         console.log(err);
     });
+    if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+    document.getElementById("change-display-area").style.top = "0";
+    } else {
+    document.getElementById("change-display-area").style.top = "-50px";
+    }
 }
 
 function accept_change(change_id, data_type) {
     $.get('/data/change/accept/'+ change_id + '/' + data_type, {}).done(function(response) {
-        document.getElementById("change-display-area").innerHTML =  alert("Accepted");
+        document.getElementById("change-display-area").innerHTML =  "Accepted";
+        window.location.reload();
     }).fail(function(err) {
         document.getElementById("change-display-area").innerHTML = "{{ 'Error: Could not contact server.' }}";
         console.log(err);
     });
+
 }
 
 function reject_change(change_id, data_type) {
     $.get('/data/change/reject/'+ change_id + '/' + data_type, {}).done(function(response) {
         document.getElementById("change-display-area").innerHTML =  "Rejected!";
+        window.location.reload();
     }).fail(function(err) {
         document.getElementById("change-display-area").innerHTML = "{{ 'Error: Could not contact server.' }}";
         console.log(err);

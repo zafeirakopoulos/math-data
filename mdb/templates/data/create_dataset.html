@@ -14,13 +14,20 @@
         </select>
       </div>
       </div>
+</form>
+    </br>
     <div class="mb-3">
-         Here we need a list of instance to choose from
+         <select class="custom-select" id="chooseIntances" multiple>
+            <option selected>Intances should be appear here</option>
+            {% for instance in instances %}
+              <option value="{{instance}}">{{instances[instance]}}</option>
+            {% endfor %}
+         </select>
     </div>
 
     <button class="btn btn-primary" type="button" onclick="submit_instance('createInstanceArea');">Submit</button>
 
-</form>
+
 
 
 {% endblock %}

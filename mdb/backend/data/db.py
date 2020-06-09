@@ -184,6 +184,7 @@ class MathDataBase:
         os.chdir(self.base_path)
         self.remove_hash_from_pending(commit_hash,"datastructure_pending.txt")
 
+
     def get_diff(self, commit_hash):
         diff = subprocess.check_output(["git", "show", commit_hash]).decode()[:-1]
         return diff
@@ -513,7 +514,7 @@ class MathDataBase:
 
     def reject_format(self, commit_hash, message):
         os.chdir(self.base_path)
-        self.remove_hash_from_pending(commit_hash,"format_pending.txt")
+        self.remove_hash_from_pending(commit_hash, "format_pending.txt")
 
 
     def pending_formats(self):
@@ -615,6 +616,21 @@ class MathDataBase:
 
         # Return 0 on success
         return commit_hash + " added."
+
+
+    def reject_formatter(self, commit_hash, message):
+        os.chdir(self.base_path)
+        source_format = ""
+        targetnk_format = ""
+        with open("formatter_pending.txt", "r") as formatter_pending:
+            lines = formatter_pending.readlines()
+        with open("formatter_pending.txt", "w") as formatter_pending:
+            for line in lines:
+                if line.strip("\n").split(" ")[2] != commit_hash:
+                    formatter_pending.write(line.strip("\n") + "\n")
+                else:
+                    source_format = line.strip("\n").split(" ")[0]
+                    target_format = line.strip("\n").split(" ")[1]
 
 
     def approve_formatter(self, commit_hash, message):
