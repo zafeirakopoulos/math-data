@@ -1,6 +1,6 @@
 
 .mdb-container {
-    margin: 0 auto; 
+    margin: 0 auto;
     text-align: left;
 }
 
@@ -14,12 +14,14 @@
 }
 
 .mdb-navbar {
-    background-color: #e3f2fd; 
+    background-color: #e3f2fd;
     margin-bottom: 10px;
 }
 
 .mdb-card-block {
     text-align: center;
+    overflow-y: auto;
+
 }
 
 .mdb-form-group {

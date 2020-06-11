@@ -6,7 +6,7 @@
 
       <div class="row">
          <div class="col-sm">
-        <select class="form-control" id="chooseDatastructure">
+        <select class="form-control" id="chooseDatastructure" onchange="show_instances_for_creating_dataset(this.value)">
             <option selected>Choose Datastructure</option>
             {% for datastructure in datastructures %}
               <option value="{{datastructure}}">{{datastructures[datastructure]}}</option>
@@ -16,16 +16,12 @@
       </div>
 </form>
     </br>
-    <div class="mb-3">
-         <select class="custom-select" id="chooseIntances" multiple>
-            <option selected>Intances should be appear here</option>
-            {% for instance in instances %}
-              <option value="{{instance}}">{{instances[instance]}}</option>
-            {% endfor %}
-         </select>
-    </div>
+  <div class="col-sm">
+            <div id="list-display-area"></div>
+  </div>
 
-    <button class="btn btn-primary" type="button" onclick="submit_instance('createInstanceArea');">Submit</button>
+</br>
+    <button class="btn btn-primary" type="button" onclick="submit_instance('chooseInstance');">Submit</button>
 
 
 
