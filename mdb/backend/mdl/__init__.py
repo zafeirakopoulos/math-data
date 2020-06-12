@@ -1,1 +1,1 @@
-from mdb.backend.mdl.language import *
+from md.backend.mdl.language import *

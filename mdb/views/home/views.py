@@ -1,7 +1,7 @@
 from flask import Flask, Blueprint, request, json, render_template
-from mdb.views.home import home_app
-from mdb.models import User
-from mdb.core import create_response, serialize_list, logger
+from md.views.home import home_app
+from md.models import User
+from md.core import create_response, serialize_list, logger
 
 @home_app.route('/', methods=['GET'])
 def index():

@@ -1,6 +1,5 @@
 
 import os
-#from mdb.core import get_pg_url
 
 # more configuration options here http://flask.pocoo.org/docs/1.0/config/
 class Config:

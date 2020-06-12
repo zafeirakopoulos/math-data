@@ -1,7 +1,7 @@
 from flask import Flask, Blueprint, request, json, render_template, jsonify
 from flask_login import current_user
-from mdb.views.data import data_app
-from mdb.core import logger
+from md.views.data import data_app
+from md.core import logger
 from werkzeug.utils import secure_filename
 import os
 import sys
@@ -480,5 +480,3 @@ def import_file():
           data_app.active_mdb.format_file(fname, request.form['from'], request.form["to"])
           return 'Imported successfully'
     return "Import failed"
-
-    

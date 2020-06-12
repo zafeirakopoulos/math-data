@@ -2,7 +2,7 @@ import json
 import subprocess
 from subprocess import Popen, PIPE, STDOUT
 import os
-from mdb.md_def import *
+from md.md_def import *
 
 
 class MathDataBase:

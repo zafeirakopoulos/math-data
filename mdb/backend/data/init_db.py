@@ -1,6 +1,6 @@
 import os
 import json
-from mdb.backend.data.db import MathDataBase
+from md.backend.data.db import MathDataBase
 import glob
 
 def init_mdb(mdb_path,mdb_name,mdb_definition):

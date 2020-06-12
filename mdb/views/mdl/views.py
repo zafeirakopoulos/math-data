@@ -1,6 +1,6 @@
 from flask import Flask, Blueprint, request, json, render_template, jsonify
 from flask_login import current_user
-from mdb.views.mdl import mdl_app
+from md.views.mdl import mdl_app
 from werkzeug.utils import secure_filename
 import os
 import sys

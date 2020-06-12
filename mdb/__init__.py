@@ -9,8 +9,8 @@ from flask_security import Security, RoleMixin, UserMixin, Security, SQLAlchemyU
 from flask_security.utils import hash_password
 from flask_security.decorators import roles_accepted
 
-from mdb.config import config
-from mdb.core import all_exception_handler
+from md.config import config
+from md.core import all_exception_handler
 
 
 class RequestFormatter(logging.Formatter):
@@ -61,18 +61,20 @@ def create_app(test_config=None):
 
     Bootstrap(app)
     # import and register blueprints
-    from mdb.views.home import home_app
-    from mdb.views.data import data_app
+    from md.views.home import home_app
+    from md.views.data import data_app
+    from md.views.benchmarks import benchmarks_app
 
     app.register_blueprint(home_app)
     app.register_blueprint(data_app, url_prefix="/data")
+    app.register_blueprint(benchmarks_app, url_prefix="/benchmarks")
 
-    from mdb.views.mdl import mdl_app
+    from md.views.mdl import mdl_app
     app.register_blueprint(mdl_app, url_prefix="/mdl")
 
     app.register_error_handler(Exception, all_exception_handler)
 
-    from mdb.models import construct_app
+    from md.models import construct_app
     with app.app_context():
         db, user_datastore = construct_app()
         return app, db, user_datastore

@@ -1,6 +1,6 @@
 import os
 
-# TODO what do we use this path for?
+# TODO 
 mdb_path = "/app"
 
 mdb_root = os.getcwd()
