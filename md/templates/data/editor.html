@@ -4,7 +4,7 @@
 
 {% block content %}
     <div class="row">
-        <div class="col-sm-4">
+        <div class="col-sm-6">
                 <div id="accordion">
                         <div class="card">
                           <div class="card-header" id="headingOne">
@@ -15,8 +15,8 @@
                             </h5>
                           </div>
 
-                          <div id="collapseDatastructure" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
-                            <div class="card-body">
+                          <div id="collapseDatastructure" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
+                            <div class="card-body" style="height:300px; overflow-y:auto;">
                                     <div class="list-group">
                                             {% for change in datastructures %}
                                                 <a class="list-group-item list-group-item-action"
@@ -35,7 +35,7 @@
                             </h5>
                           </div>
                           <div id="collapseInstance" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
-                            <div class="card-body">
+                            <div class="card-body" style="height:300px; overflow-y:auto;">
                                     <div class="list-group">
                                             {% for change in instances %}
                                                 <a class="list-group-item list-group-item-action"
@@ -49,13 +49,13 @@
                         <div class="card">
                           <div class="card-header" id="headingOne">
                             <h5 class="mb-0">
-                              <button class="btn btn-link" data-toggle="collapse" data-target="#collapseFormatter" aria-expanded="true" aria-controls="collapseFormatter">
+                              <button class="btn btn-link" data-toggle="collapse" data-target="#collapseFormatter" aria-expanded="true" aria-controls="collapseFormatter" style="overflow-y:auto">
                                 Formatters
                               </button>
                             </h5>
                           </div>
-                          <div id="collapseFormatter" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
-                            <div class="card-body">
+                          <div id="collapseFormatter" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
+                            <div class="card-body" style="height:300px; overflow-y:auto;">
                                     <div class="list-group">
                                             {% for change in formatters %}
                                                 <a class="list-group-item list-group-item-action"
@@ -75,8 +75,8 @@
                               </button>
                             </h5>
                           </div>
-                          <div id="collapseDataset" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
-                            <div class="card-body">
+                          <div id="collapseDataset" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
+                            <div class="card-body" style="height:300px; overflow-y:auto;">
                                     <div class="list-group">
                                             {% for change in datasets %}
                                                 <a class="list-group-item list-group-item-action"
@@ -85,9 +85,7 @@
                                             </div>
                             </div>
                           </div>
-                        </div
-
-
+                        </div>
 
                         <div class="card">
                           <div class="card-header" id="headingOne">
@@ -97,8 +95,8 @@
                               </button>
                             </h5>
                           </div>
-                          <div id="collapseFormat" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
-                            <div class="card-body">
+                          <div id="collapseFormat" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
+                            <div class="card-body" style="height:300px; overflow-y:auto;">
                                     <div class="list-group">
                                             {% for change in formats %}
                                                 <a class="list-group-item list-group-item-action"
@@ -109,8 +107,8 @@
                           </div>
                     </div>
                 </div>
-
-                <div class="col-sm-8">
+        </div>
+                <div class="col-sm-6">
                     <div id="change-display-area">
                  </div>
         </div>

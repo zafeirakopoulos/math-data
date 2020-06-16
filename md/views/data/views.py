@@ -72,7 +72,7 @@ def instance(key):
 
     out = {}
 
-    formatters = [ f.split(" ") for f in data_app.active_mdb.get_formatters_by_datastructure(instance_data["datastructure"])]
+    formatters = [ f.split(" ") for f in data_app.active_mdb.get_instances_by_datastructure(instance_data["datastructure"])]
     # get html representation for instance object and add to output
     out["page"] = render_template("data/instance.html", instance=json_beautifier.dumps(instance_data, indent = 4, sort_keys=False), formatters =formatters, key=key)
 
@@ -107,6 +107,15 @@ def create_instance():
     for key in data_app.active_mdb.get_datastructures():
         datastructures[key]= json_beautifier.loads(data_app.active_mdb.retrieve_datastructure(key))["name"]
     return  render_template("data/create_instance.html", datastructures=datastructures)
+
+
+@data_app.route('/instances_by_datastructure_for_dataset/<datastructure>', methods=["GET"])
+def instances_by_datastructure_for_dataset(datastructure):
+    #  A dictionary of key-name pairs
+    instances = {}
+    for key in data_app.active_mdb.get_instances_by_datastructure(datastructure):
+        instances[key] =json_beautifier.loads(data_app.active_mdb.retrieve_instance(key))["name"]
+    return render_template("data/instances_list_for_dataset.html", instances=instances)
 
 ##############################################################################
 ########################## Datastructures ####################################
@@ -320,7 +329,6 @@ def formats_by_datastructure(datastructure):
     for key in data_app.active_mdb.get_formats_by_datastructure(datastructure):
         formats[key] =json_beautifier.loads(data_app.active_mdb.retrieve_format(key))["name"]
     return render_template("data/formats_list.html", formats=formats)
-
 
 ##############################################################################
 ##############################################################################

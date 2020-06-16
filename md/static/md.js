@@ -78,7 +78,7 @@ function show_datastructure(key){
 }
 
 function show_instances_for_datastructure(datastructure){
-    $.get('/data/instances_by_datastructure/'+ datastructure, {}).done(function(response) {
+      $.get('/data/instances_by_datastructure/'+ datastructure, {}).done(function(response) {
       // put the html that generated list of instances in the "data-display-area" div
       document.getElementById("list-display-area").innerHTML = response;
         }).fail(function() {
@@ -95,6 +95,15 @@ function show_formats_for_datastructure(datastructure){
     });
 }
 
+
+function show_instances_for_creating_dataset(datastructure){
+    $.get('/data/instances_by_datastructure_for_dataset/'+ datastructure, {}).done(function(response) {
+      // put the html that generated list of instances in the "data-display-area" div
+      document.getElementById("list-display-area").innerHTML = response;
+      }).fail(function() {
+        document.getElementById("list-display-area").innerHTML = "{{ 'Error: Could not contact server.' }}";
+    });
+}
 
 
 function show_formatters_for_datastructure(datastructure){

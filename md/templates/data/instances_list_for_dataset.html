@@ -1,0 +1,8 @@
+<select class='form-control' multiple>
+  {% for instance in instances %}
+        <option value="{{instance}}">
+        {{instances[instance]}}
+      </option>
+  {% endfor %}
+</select>
+</br>
