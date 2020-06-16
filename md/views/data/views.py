@@ -5,6 +5,7 @@ from md.core import logger
 from werkzeug.utils import secure_filename
 import os
 import sys
+import tarfile
 
 import json as json_beautifier
 
@@ -337,6 +338,7 @@ def add_instance():
 
     return response
 
+
 @data_app.route('/add_datastructure', methods=["POST"])
 def add_datastructure():
     body = request.form['body']
@@ -476,7 +478,23 @@ def import_file():
           os.mkdir(fname)
           os.chdir(fname)
           f.save(fname)
+
           print("About to db call")
           data_app.active_mdb.format_file(fname, request.form['from'], request.form["to"])
+          return 'Imported successfully'
+    return "Import failed"
+
+
+@data_app.route('/import_dataset', methods=["POST"])
+def import_dataset():
+    if request.method == 'POST':
+          f = request.files['file']
+          fname = secure_filename(f.filename)
+          os.chdir("import_scratch")
+          os.mkdir(fname)
+          os.chdir(fname)
+          f.save(fname)
+
+          data_app.active_mdb.import_dataset(fname,  request.form['script'], request.form['from'], request.form["to"])
           return 'Imported successfully'
     return "Import failed"

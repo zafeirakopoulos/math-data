@@ -1,4 +1,4 @@
-from md.mdl_def import *
+from md.md_def import *
 from functools import reduce
 import json
 

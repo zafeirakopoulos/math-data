@@ -4,10 +4,10 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>MathDataBase</title>
+    <title>MathData</title>
     <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='styles/default.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles/mdb.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/md.css') }}">
 
     {{ bootstrap.load_css() }}
 
@@ -16,7 +16,7 @@
     <script src="{{ url_for('static', filename='highlight.js') }}"></script>
     <script src="{{ url_for('static', filename='jquery.js') }}"></script>
     <script src="{{ url_for('static', filename='jquery.form.js') }}"></script>
-    <script src="{{ url_for('static', filename='mdb.js') }}"></script>
+    <script src="{{ url_for('static', filename='md.js') }}"></script>
     <script src="{{ url_for('static', filename='renderjson.js') }}"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/sigma.js/1.2.1/sigma.min.js"></script>
 
@@ -31,25 +31,39 @@
 </head>
 
 <body>
+  {% if app == "data" %}
+    {% set browsepage = app + ".datastructures" %}
+  {% endif %}
+  {% if app == "benchmarks" %}
+    {% set browsepage = app + ".benchmarks" %}
+  {% endif %}
+
+  {% set createpage = app + ".create" %}
+  {% set editorpage = app + ".editor_page" %}
+
     <main class="container mdb-container">
         <nav class="navbar navbar-dark navbar-expand-lg bg-dark navbar-inverse bg-inverse mdb-navbar">
-            <a class="navbar-brand" href="{{ url_for('home.index') }}">MathData <span class="sr-only">(current)</span></a>
+            <a class="navbar-brand" href="{{ url_for('data.index') }}">Data <span class="sr-only">(current)</span></a>
+            <a class="navbar-brand" href="{{ url_for('benchmarks.index') }}">Bench <span class="sr-only"></span></a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
 
             <div class="collapse navbar-collapse justify-content-between" id="navbarNavAltMarkup">
                 <div class="navbar-nav">
-                    <a class="nav-item nav-link" href="{{ url_for('data.datastructures') }}">Browse</a>
+                    <a class="nav-item nav-link"
+                    href= {{ url_for(browsepage) }} >Browse</a>
                     {% if current_user.is_authenticated %}
-                        <a class="nav-item nav-link" href={{ url_for('data.create')}}> Create</a>
+                        <a class="nav-item nav-link"
+                        href= {{ url_for(createpage) }} > Create</a>
                     {% else %}
                         <a class="nav-item nav-link disabled" href="#"> Create</a>
                     {% endif %}
                     {% if current_user.is_authenticated
                         and (current_user.has_role('editor')
                         or current_user.has_role('admin')) %}
-                        <a class="nav-item nav-link" href="{{ url_for('data.editor_page') }}">Editor</a>
+                        <a class="nav-item nav-link"
+                        href= {{ url_for(editorpage) }} >Editor</a>
                     {% endif %}
 
                     {% if current_user.is_authenticated

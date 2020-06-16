@@ -2,8 +2,8 @@
 
 from flask_script import Manager
 from flask_migrate import Migrate, MigrateCommand
-from mdb import create_app
-from mdb.models import db, user_datastore
+from md import create_app
+from md.models import db, user_datastore
 from flask_security.utils import hash_password
 
 # sets up the app
@@ -25,7 +25,7 @@ def runserver():
 def runworker():
     app.run(debug=False)
 
-# 
+#
 # @manager.command
 # def recreate_db():
 #     """

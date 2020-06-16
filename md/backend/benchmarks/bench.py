@@ -3,10 +3,10 @@ import subprocess
 from subprocess import Popen, PIPE, STDOUT
 import os
 from md.md_def import *
-import tarfile
 
-class MathDataBase:
-    """A MathData database."""
+
+class Bench:
+    """A Bench."""
     base_path = None
     name = None
     definition = None
@@ -20,81 +20,6 @@ class MathDataBase:
         :param name: Name of the MathDataBase (it will be the folder name)
         :param definition: A valid MathDataBase definiton as json string
         :returns: A MathDataBase instance"""
-
-        self.name = name
-        # The base path is the path and the name
-        self.base_path = os.path.join(path, self.name)+".git"
-
-        if os.path.exists(self.base_path):
-            os.chdir(self.base_path)
-            with open('mdb_def.txt', 'r') as mdb_definition:
-                self.definition = json.loads(mdb_definition.read())
-
-            subprocess.call(["git", "checkout", self.definition["default_branch"]])
-            self.already_exists = True
-
-        else:
-            if mdb_def!=None:
-                self.definition = json.loads(mdb_def)
-                # Create a bare repository in base_path
-                #subprocess.call(["git", "init", "--bare", self.base_path])
-                subprocess.call(["git", "init", self.base_path])
-
-            # Change to the directory of the repository,
-            # so that following commands will be executed in the repo
-            os.chdir(self.base_path)
-
-            if mdb_def!=None:
-                # Write the definition so that it can be read later
-                with open('mdb_def.txt', 'w') as mdb_definition:
-                    mdb_definition.write(json.dumps(self.definition)+'\n')
-            else:
-                with open('mdb_def.txt', 'r') as mdb_definition:
-                    self.definition = mdb_definition.read()
-
-            for entity in self.definition["entities"]:
-
-                # Create entity_index file
-                with open(entity+'_index.txt', 'w') as tmp:
-                    pass
-
-                # Create entity_pending file
-                with open(entity+'_pending.txt', 'w') as tmp:
-                    pass
-
-                #os.mkdir(entity)
-                try:
-                    os.mkdir(entity)
-                except:
-                    pass
-
-                with open(os.path.join(entity,'.gitkeep'), 'w') as tmp:
-                    pass
-
-            try:
-                os.mkdir("scratch")
-            except:
-                pass
-            with open(os.path.join("scratch",'.gitkeep'), 'w') as tmp:
-                pass
-
-            try:
-                os.mkdir("import_scratch")
-            except:
-                pass
-            with open(os.path.join("import_scratch",'.gitkeep'), 'w') as tmp:
-                pass
-
-
-
-            # Commit the initial state of MDB. This enables also the creation of branches.
-            subprocess.call(["git", "add", "*"])
-            subprocess.call(["git", "commit", "-m", "Initialization of MDB"])
-
-            # Create the default branch, so that we do not commit in master
-            subprocess.call(["git", "branch", self.definition["default_branch"]])
-            subprocess.call(["git", "checkout", self.definition["default_branch"]])
-
 
 ########################################################################
 ########################################################################
@@ -234,7 +159,7 @@ class MathDataBase:
         :param instance: A JSON object as a string
         :param message: A description of the instance (the commit message)
         :returns: The name of the branch in which the instance was commited"""
-        print("In add instance")
+
 
         # Split the raw data in the instance to be stored
         # Raw data are stored as git object to remove redundancy
@@ -751,51 +676,6 @@ class MathDataBase:
         if formatter==0:
             raise Exception("Formatter not found")
         print("about to create filename")
-
-        tmpfilename =  os.path.join(md_root,self.base_path,'import_scratch',fname,fname+formatter+".py")
-        outfilename =  os.path.join(md_root,self.base_path,'import_scratch',fname,fname+formatter+".txt")
-        print(tmpfilename)
-        print(outfilename)
-
-        with open(tmpfilename, "w") as tmp_file:
-            with open(os.path.join(md_root,self.base_path,'import_scratch',fname,fname), "r") as input_file:
-                tmp_file.write("input="+ input_file.read() )
-                tmp_file.write("\n\n")
-                tmp_file.write(self.retrieve_formatter(formatter))
-                tmp_file.write("\n\n")
-                tmp_file.write("with open(\""+ outfilename + "\", \"w\") as out_file:\n")
-                tmp_file.write("    out_file.write(str(format(input)))")
-
-        subprocess.check_output(["python3",tmpfilename])
-        with open(outfilename, "r") as out_file:
-            self.add_instance(out_file.read(),"Imported")
-
-
-
-    def import_dataset(self,fname, split_script, from_format, to_format):
-        os.chdir(os.path.join(md_root,self.base_path))
-
-        # Find the correct formatter
-        formatter=0
-        for f in self.get_formatters():
-            keys= f.split(" ")
-            print(keys)
-
-            if keys[0]==from_format and keys[1]==to_format:
-                formatter=keys[2]
-                break
-        print("done with loop")
-
-        if formatter==0:
-            raise Exception("Formatter not found")
-        print("about to create filename")
-
-
-        tarfilename=os.path.join(md_root,self.base_path,'import_scratch',fname,fname)
-        tar = tarfile.open(name=tarfilename, mode='r')
-        tarfolder =         tarfilename=os.path.join(md_root,self.base_path,'import_scratch',fname,"extract")
-        tar.extractall(path=tarfolder)
-
 
         tmpfilename =  os.path.join(md_root,self.base_path,'import_scratch',fname,fname+formatter+".py")
         outfilename =  os.path.join(md_root,self.base_path,'import_scratch',fname,fname+formatter+".txt")

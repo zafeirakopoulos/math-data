@@ -1,0 +1,38 @@
+{% extends 'data/browse.html' %}
+
+{% block content %}
+
+
+  <form class="needs-validation" action = "import_batch" method = "POST"  enctype = "multipart/form-data"  >
+
+        <div class="row">
+            <div class="col-sm">
+          <select class="form-control" id="chooseFrom" name="from">
+              <option selected>Input Format</option>
+              {% for format in formats %}
+                <option value="{{format}}">{{formats[format]}}</option>
+              {% endfor %}
+            </select>
+        </div>
+        </div>
+        </br>
+        <div class="row">
+            <div class="col-sm">
+          <select class="form-control" id="chooseTo" name="to">
+              <option selected>Storage Format</option>
+              {% for format in formats %}
+                <option value="{{format}}">{{formats[format]}}</option>
+              {% endfor %}
+          </select>
+        </div>
+        </div>
+        </br>
+      <input type = "file" name = "file" />
+      <div class="mb-3">
+          <textarea class="form-control" id="ScriptArea" placeholder='The script' rows="15" name='script' required></textarea>
+      </div>
+      <input type = "submit" class="btn btn-primary" value="Import"/>
+
+  </form>
+
+{% endblock %}

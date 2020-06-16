@@ -1,0 +1,23 @@
+{% extends 'benchmarks/browse.html' %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-sm">
+            <div id="list-display-area">
+                <ul class='list-group'>
+                  {% for benchmark in benchmarks %}
+                    <li class='list-group-item'>
+                        <a href='javascript:show_benchmark("{{benchmark}}");'>
+                        {{benchmarks[benchmark]}}
+                      </a>
+                    </li>
+                  {% endfor %}
+                </ul>
+            </div>
+        </div>
+        <div class="col-sm">
+            <div id="data-display-area"></div>
+        </div>
+    </div>
+
+{% endblock %}
