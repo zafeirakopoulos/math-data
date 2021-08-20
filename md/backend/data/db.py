@@ -312,6 +312,7 @@ class MathDataBase:
 
 
     def get_instances_by_datastructure(self,datastructure):
+
         os.chdir(os.path.join(md_root,self.base_path))
         response = []
         with open("instance_index.txt", "r") as index_file:
@@ -688,14 +689,16 @@ class MathDataBase:
 
     def get_formatters_by_datastructure(self,datastructure):
         os.chdir(os.path.join(md_root,self.base_path))
+        formats = self.get_formats_by_datastructure(datastructure)
+
         response = []
         with open("formatter_index.txt", "r") as index_file:
             lines = [str(line.strip("\n")) for line in index_file.readlines()]
             for line in lines:
                 keys= line.split(" ")
-                if keys[0] == datastructure:
-                    response.append(line)
-        return response
+                if keys[0] in formats:
+                    response.append(keys)
+        return formats #response
 
     def get_formatters_by_format(self,format):
         os.chdir(os.path.join(md_root,self.base_path))

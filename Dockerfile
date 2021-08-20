@@ -6,6 +6,7 @@ RUN apt-get update && apt-get install -yq --no-install-recommends \
     apt-utils gcc wget bash bzip2 ca-certificates \
     sudo m4 yasm cmake git postgresql postgresql-contrib
 
+RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 
 COPY . /app

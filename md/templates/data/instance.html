@@ -7,7 +7,7 @@
             </button>
             <div class='dropdown-menu' aria-labelledby='exportDataButton'>
                 {% for formatter in formatters %}
-                  <a class='dropdown-item' href='javascript:format_instance("{{key}}","{{formatter[2]}}")'>{{formatter[1]}}</a>
+                  <a class='dropdown-item' href='javascript:format_instance("{{key}}","{{formatter[2]}}")'>{{formatter}}</a>
                 {% endfor %}
             </div>
         </div>

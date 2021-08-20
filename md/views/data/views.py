@@ -72,7 +72,11 @@ def instance(key):
 
     out = {}
 
-    formatters = [ f.split(" ") for f in data_app.active_mdb.get_instances_by_datastructure(instance_data["datastructure"])]
+    #formatters = [ f.split(" ") for f in data_app.active_mdb.get_instances_by_datastructure(instance_data["datastructure"])]
+
+
+    formatters = data_app.active_mdb.get_formats_by_datastructure(instance_data["datastructure"])
+    #formatters = [ f.split(" ") for f in data_app.active_mdb.get_formats_by_datastructure(instance_data["datastructure"])]
     # get html representation for instance object and add to output
     out["page"] = render_template("data/instance.html", instance=json_beautifier.dumps(instance_data, indent = 4, sort_keys=False), formatters =formatters, key=key)
 
@@ -92,9 +96,10 @@ def instances():
     return render_template("data/instances.html", datastructures=datastructures)
 
 # function to list all instances of specific datastructure
-@data_app.route('/instances_by_datastructure/<datastructure>', methods=["GET"])
+@data_app.route('/instances_by_datastructure/<datastructure>', methods=["GET", 'POST'])
 def instances_by_datastructure(datastructure):
     #  A dictionary of key-name pairs
+
     instances = {}
     for key in data_app.active_mdb.get_instances_by_datastructure(datastructure):
         instances[key] =json_beautifier.loads(data_app.active_mdb.retrieve_instance(key))["name"]
