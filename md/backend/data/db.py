@@ -567,7 +567,7 @@ class MathDataBase:
     ########################################################################
 
 
-    def add_formatter(self, formatter, source_format, target_format,  message):
+    def add_formatter(self, formatter_name, formatter, source_format, target_format,  message):
         """Register a formatter in the MathDataBase.
         It is added in the pending list waiting for approval by an editor.
 
@@ -610,7 +610,8 @@ class MathDataBase:
         with open(os.path.join(md_root,self.base_path,'formatter_pending.txt'), 'a') as formatter_pending:
             formatter_line = str(source_format) + " "
             formatter_line = formatter_line + str(target_format) + " "
-            formatter_line = formatter_line + str(commit_hash.strip("'"))
+            formatter_line = formatter_line + str(commit_hash.strip("'")) + " "
+            formatter_line = formatter_line + str(formatter_name)
             formatter_line = formatter_line + "\n"
             formatter_pending.write(formatter_line)
 
@@ -649,13 +650,14 @@ class MathDataBase:
                 else:
                     source_format = line.strip("\n").split(" ")[0]
                     target_format = line.strip("\n").split(" ")[1]
+                    formatter_name = line.strip("\n").split(" ")[3]
 
         # TODO: Not thread safe! Assumes we are in default_branch.
         subprocess.check_output(["git", "merge", "-m", message, commit_hash]).decode()[:-1]
 
         # Add merge in index list
         with open('formatter_index.txt', 'a') as formatter_index:
-                formatter_index.write(source_format + " " + target_format + " " + commit_hash+"\n")
+                formatter_index.write(source_format + " " + target_format + " " + commit_hash+ " " + formatter_name + "\n")
         # Commit the new index in the default_branch
         subprocess.check_output(["git", "add", os.path.join(md_root,self.base_path,'formatter_index.txt') ]).decode()[:-1]
         subprocess.check_output(["git", "commit", "-m", "Merged formatter "+commit_hash]).decode()[:-1]
@@ -698,7 +700,7 @@ class MathDataBase:
                 keys= line.split(" ")
                 if keys[0] in formats:
                     response.append(keys)
-        return formats #response
+        return response
 
     def get_formatters_by_format(self,format):
         os.chdir(os.path.join(md_root,self.base_path))
@@ -723,7 +725,7 @@ class MathDataBase:
             tmp_file.write(self.retrieve_formatter(formatter))
             tmp_file.write("\n\n")
             tmp_file.write("with open(\""+ outfilename + "\", \"w\") as out_file:\n")
-            tmp_file.write("    out_file.write(str(format(input)))")
+            tmp_file.write("    out_file.write(str(do_format(input)))")
 
         subprocess.check_output(["python3",tmpfilename])
         with open(outfilename, "r") as out_file:

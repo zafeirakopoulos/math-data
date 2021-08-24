@@ -75,9 +75,10 @@ def instance(key):
     #formatters = [ f.split(" ") for f in data_app.active_mdb.get_instances_by_datastructure(instance_data["datastructure"])]
 
 
-    formatters = data_app.active_mdb.get_formats_by_datastructure(instance_data["datastructure"])
+    formatters = data_app.active_mdb.get_formatters_by_datastructure(instance_data["datastructure"])
     #formatters = [ f.split(" ") for f in data_app.active_mdb.get_formats_by_datastructure(instance_data["datastructure"])]
     # get html representation for instance object and add to output
+    print("formatters: %s" % formatters, flush=True)
     out["page"] = render_template("data/instance.html", instance=json_beautifier.dumps(instance_data, indent = 4, sort_keys=False), formatters =formatters, key=key)
 
     # add actual json to output
@@ -213,12 +214,13 @@ def create_formatter():
 @data_app.route('/add_formatter', methods=["POST"])
 def add_formatter():
     formatter = request.form['formatter']
+    formatter_name = request.form['name']
     from_datastructure = request.form['from_datastructure']
     to_datastructure = request.form['to_datastructure']
 
     message = "Formatter created by " + current_user.email
 
-    response = data_app.active_mdb.add_formatter(formatter,from_datastructure , to_datastructure, message)
+    response = data_app.active_mdb.add_formatter(formatter_name, formatter,from_datastructure, to_datastructure, message)
 
     logger.debug("response: " + str(response))
     return response
