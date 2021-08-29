@@ -78,7 +78,6 @@ def instance(key):
     formatters = data_app.active_mdb.get_formatters_by_datastructure(instance_data["datastructure"])
     #formatters = [ f.split(" ") for f in data_app.active_mdb.get_formats_by_datastructure(instance_data["datastructure"])]
     # get html representation for instance object and add to output
-    print("formatters: %s" % formatters, flush=True)
     out["page"] = render_template("data/instance.html", instance=json_beautifier.dumps(instance_data, indent = 4, sort_keys=False), formatters =formatters, key=key)
 
     # add actual json to output

@@ -5,6 +5,7 @@ from typing import Tuple, List
 from werkzeug.local import LocalProxy
 from flask import current_app, jsonify
 from flask.wrappers import Response
+import traceback
 
 # logger object for all views to use
 logger = LocalProxy(lambda: current_app.logger)
@@ -53,8 +54,9 @@ def all_exception_handler(error: Exception) -> Tuple[Response, int]:
     :param Exception
     :returns Tuple of a Flask Response and int
     """
-    return create_response(message=str(error), status=500)
-
+    #return create_response(message=str(error), status=500)
+    # TODO: change to hide stack for security? but we need this while debugging
+    return create_response(message=traceback.format_exc(), status=500)
 
 def get_pg_url(file: str = "creds.ini") -> str:
     """Gets Postgres URL including credentials from specified file.
