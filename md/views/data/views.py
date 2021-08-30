@@ -6,6 +6,8 @@ from werkzeug.utils import secure_filename
 import os
 import sys
 import tarfile
+import shutil # for removing directories recursive
+import traceback # for error stack printing
 
 import json as json_beautifier
 
@@ -485,17 +487,25 @@ def import_page():
 
 @data_app.route('/import_file', methods=["POST"])
 def import_file():
+    initial_directory = os.getcwd()
     if request.method == 'POST':
-          f = request.files['file']
-          fname = secure_filename(f.filename)
+          files = request.files.getlist('file')
           os.chdir("import_scratch")
-          os.mkdir(fname)
-          os.chdir(fname)
-          f.save(fname)
+          try:
+              for f in files:
+                fname = secure_filename(f.filename)
+                os.mkdir(fname)
+                os.chdir(fname)
+                f.save(fname)
 
-          print("About to db call")
-          data_app.active_mdb.format_file(fname, request.form['from'], request.form["to"])
+                print("About to db call")
+                if request.form['from'] != request.form["to"]:
+                  data_app.active_mdb.format_file(fname, request.form['from'], request.form["to"])
+          except Exception as e:
+              os.chdir(initial_directory)
+              return 'Import failed: ' + traceback.format_exc()
           return 'Imported successfully'
+    os.chdir(initial_directory)
     return "Import failed"
 
 

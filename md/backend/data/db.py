@@ -781,7 +781,7 @@ class MathDataBase:
             repo_count = self.index_db.sql_get_last_repository_id()
         if step < repo_count:
             result += self.get_formatters(step+1, repo_count)
-        return 
+        return result
 
     def retrieve_formatter(self, hash):
         self.cd_to_commit_repository(hash)
@@ -875,22 +875,24 @@ class MathDataBase:
             raise Exception("Formatter not found")
         print("about to create filename")
 
-        tmpfilename =  os.path.join(self.path,self.base_path,'import_scratch',fname,fname+formatter+".py")
-        outfilename =  os.path.join(self.path,self.base_path,'import_scratch',fname,fname+formatter+".txt")
+        tmpfilename =  os.path.join(self.base_path,'import_scratch',fname,fname+formatter+".py")
+        outfilename =  os.path.join(self.base_path,'import_scratch',fname,fname+formatter+".txt")
         print(tmpfilename)
         print(outfilename)
+        print("CURRENT DIR: %s" % os.getcwd(), flush=True)
 
-        with open(tmpfilename, "w") as tmp_file:
-            with open(os.path.join(self.path,self.base_path,'import_scratch',fname,fname), "r") as input_file:
+        with open(tmpfilename, "w+") as tmp_file:
+            with open(os.path.join(self.base_path,'import_scratch',fname,fname), "r") as input_file:
                 tmp_file.write("input="+ input_file.read() )
                 tmp_file.write("\n\n")
                 tmp_file.write(self.retrieve_formatter(formatter))
                 tmp_file.write("\n\n")
                 tmp_file.write("with open(\""+ outfilename + "\", \"w\") as out_file:\n")
-                tmp_file.write("    out_file.write(str(format(input)))")
+                tmp_file.write("    out_file.write(str(do_format(input)))")
 
         subprocess.check_output(["python3",tmpfilename])
         with open(outfilename, "r") as out_file:
+            print("ADDING INSTANCE %s" % fname, flush=True)
             self.add_instance(out_file.read(),"Imported")
 
 
