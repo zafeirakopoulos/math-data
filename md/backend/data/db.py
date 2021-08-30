@@ -959,7 +959,6 @@ class MathDataBase:
             size = int(du_result[0:-1].split('.')[0])
             if size >= self.MAX_REPOSITORY_SIZE_MB:
                 do_create_new_repository = True
-            print("DUUUUUUUUUUUU command in %s resulted in: %s, size was %s MB, will create new repository" % (lastCreatedRepositoryPath, du_result, size), flush=True)
         elif byte_unit == 'G':
             do_create_new_repository = True
         if do_create_new_repository:
