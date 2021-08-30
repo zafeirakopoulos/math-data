@@ -201,6 +201,7 @@ class MathDataBase:
 
 
     def get_diff(self, commit_hash):
+        self.cd_to_commit_repository(commit_hash)
         diff = subprocess.check_output(["git", "show", commit_hash]).decode()[:-1]
         return diff
 
@@ -806,7 +807,6 @@ class MathDataBase:
                 keys= line.split(" ")
                 if keys[0] in formats:
                     response.append(keys)
-                else:
         if repo_count == 0:
             repo_count = self.index_db.sql_get_last_repository_id()
         if step < repo_count:
@@ -949,7 +949,9 @@ class MathDataBase:
         """
         If repository is bloated, creates a new repository and returns its path, otherwise returns current repository.
         """
-        du_result = subprocess.check_output(['du','-sh', self.base_path]).split()[0].decode('utf-8')
+        lastCreatedRepositoryPath = self.index_db.sql_get_repository_address(self.index_db.sql_get_last_repository_id())
+        lastCreatedRepositoryPath = os.path.join(self.path, lastCreatedRepositoryPath)
+        du_result = subprocess.check_output(['du','-sh', lastCreatedRepositoryPath]).split()[0].decode('utf-8')
         byte_unit = du_result[-1]
         do_create_new_repository = False
         if byte_unit == 'M':
@@ -957,6 +959,7 @@ class MathDataBase:
             size = int(du_result[0:-1].split('.')[0])
             if size >= self.MAX_REPOSITORY_SIZE_MB:
                 do_create_new_repository = True
+            print("DUUUUUUUUUUUU command in %s resulted in: %s, size was %s MB, will create new repository" % (lastCreatedRepositoryPath, du_result, size), flush=True)
         elif byte_unit == 'G':
             do_create_new_repository = True
         if do_create_new_repository:
