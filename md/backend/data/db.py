@@ -875,13 +875,14 @@ class MathDataBase:
             raise Exception("Formatter not found")
         print("about to create filename")
 
-        tmpfilename =  os.path.join(self.base_path,'import_scratch',fname,fname+formatter+".py")
+        # .tpy is to prevent flask from tracking change and resetting while debug mode is on
+        tmpfilename =  os.path.join(self.base_path,'import_scratch',fname,fname+formatter+".tpy")
         outfilename =  os.path.join(self.base_path,'import_scratch',fname,fname+formatter+".txt")
         print(tmpfilename)
         print(outfilename)
         print("CURRENT DIR: %s" % os.getcwd(), flush=True)
 
-        with open(tmpfilename, "w+") as tmp_file:
+        with open(tmpfilename, "w") as tmp_file:
             with open(os.path.join(self.base_path,'import_scratch',fname,fname), "r") as input_file:
                 tmp_file.write("input="+ input_file.read() )
                 tmp_file.write("\n\n")

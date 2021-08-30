@@ -501,6 +501,8 @@ def import_file():
                 print("About to db call")
                 if request.form['from'] != request.form["to"]:
                   data_app.active_mdb.format_file(fname, request.form['from'], request.form["to"])
+                # format_file changes directory
+                os.chdir( os.path.join(initial_directory, "import_scratch") )
           except Exception as e:
               os.chdir(initial_directory)
               return 'Import failed: ' + traceback.format_exc()
