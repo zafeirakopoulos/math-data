@@ -803,14 +803,10 @@ class MathDataBase:
         with open("formatter_index.txt", "r") as index_file:
             lines = [str(line.strip("\n")) for line in index_file.readlines()]
             for line in lines:
-                print("OOKOKOKOKOKOKK", flush=True)
                 keys= line.split(" ")
                 if keys[0] in formats:
                     response.append(keys)
                 else:
-                    print("ds %s but keys[0] %s" % (datastructure, keys[0]), flush=True)
-        print("inside get_formatters_by_datastructure, cwd %s repo %d, path %s, base %s, response %s" \
-            % (os.getcwd(),step, self.index_db.sql_get_repository_address(step), self.base_path, response), flush=True)
         if repo_count == 0:
             repo_count = self.index_db.sql_get_last_repository_id()
         if step < repo_count:
