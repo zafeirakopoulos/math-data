@@ -205,13 +205,19 @@ class MathDataBase:
         return diff
 
 
-    def pending_datastructures(self):
-        (self.base_path, available_repo_id) = self.get_available_repository()
-        os.chdir(self.base_path)
+    def pending_datastructures(self, step=0, repo_count=0):
+        self.base_path = os.path.join(self.path, self.index_db.sql_get_repository_address(step))
+        os.chdir( self.base_path )
 
         with open("datastructure_pending.txt", "r") as datastructure_pending:
             lines = datastructure_pending.readlines()
-        return [ line.strip("'").strip("\n") for line in lines ]
+
+        result = [ line.strip("'").strip("\n") for line in lines ]
+        if repo_count == 0:
+            repo_count = self.index_db.sql_get_last_repository_id()
+        if step < repo_count:
+            result += self.pending_datastructures(step+1, repo_count)
+        return result
 
     def get_datastructures(self, step=0, repo_count=0):
         self.base_path = os.path.join(self.path, self.index_db.sql_get_repository_address(step))
@@ -263,7 +269,7 @@ class MathDataBase:
         # Split the raw data in the instance to be stored
         # Raw data are stored as git object to remove redundancy
         # It stores raw data under the "instance" path
-        (self.base_path, available_repo_id) = self.get_available_repository2()
+        (self.base_path, available_repo_id) = self.get_available_repository()
         os.chdir(os.path.join(self.base_path, "instance"))
         process = Popen(["git", "hash-object", "-w", "--stdin", "--path", "instance"], stdout=PIPE, stdin=PIPE, stderr=STDOUT)
         stdo = process.communicate(input=str.encode(instance))[0]
@@ -323,8 +329,8 @@ class MathDataBase:
         self.remove_hash_from_pending(commit_hash,"instance_pending.txt")
 
     def pending_instances(self, step=0, repo_count=0):
-        (self.base_path, available_repo_id) = self.get_available_repository()
-        os.chdir(os.path.join(self.path,self.base_path))
+        self.base_path = os.path.join(self.path, self.index_db.sql_get_repository_address(step))
+        os.chdir(self.base_path)
 
         with open("instance_pending.txt", "r") as pending_file:
             lines = pending_file.readlines()
@@ -332,7 +338,7 @@ class MathDataBase:
         if repo_count == 0:
             repo_count = self.index_db.sql_get_last_repository_id()
         if step < repo_count:
-            result += self.get_instances(step+1, repo_count)
+            result += self.pending_instances(step+1, repo_count)
         return result
 
     def get_instances(self, step=0, repo_count=0):
@@ -432,12 +438,12 @@ class MathDataBase:
         with open(os.path.join(self.base_path, 'dataset_pending.txt'), 'a') as dataset_pending:
             dataset_pending.write(commit_hash+"\n")
 
+        self.index_db.sql_add_commit(commit_hash, available_repo_id)
         return "ok"
 
 
     def approve_dataset(self, commit_hash, message):
-        (self.base_path, available_repo_id) = self.get_available_repository()
-        os.chdir(self.base_path)
+        self.cd_to_commit_repository(commit_hash)
         index_file_name = 'dataset_index.txt'
 
         self.remove_hash_from_pending(commit_hash, "dataset_pending.txt")
@@ -456,28 +462,41 @@ class MathDataBase:
         return 0
 
     def reject_dataset(self, commit_hash, message):
-        (self.base_path, available_repo_id) = self.get_available_repository()
-        os.chdir(self.base_path)
+        self.cd_to_commit_repository(commit_hash)
         self.remove_hash_from_pending(commit_hash,"dataset_pending.txt")
 
 
-    def pending_datasets(self):
-        (self.base_path, available_repo_id) = self.get_available_repository()
+    def pending_datasets(self, step=0, repo_count=0):
+        self.base_path = os.path.join(self.path, self.index_db.sql_get_repository_address(step))
         os.chdir(self.base_path)
 
         with open("dataset_pending.txt", "r") as dataset_pending:
             lines = dataset_pending.readlines()
-        return [ line.strip("'").strip("\n") for line in lines ]
+        result = [ line.strip("'").strip("\n") for line in lines ]
 
-    def get_datasets(self):
-        (self.base_path, available_repo_id) = self.get_available_repository()
+        if repo_count == 0:
+            repo_count = self.index_db.sql_get_last_repository_id()
+        if step < repo_count:
+            result += self.pending_datasets(step+1, repo_count)
+
+        return result
+
+    def get_datasets(self, step=0, repo_count=0):
+        self.base_path = os.path.join(self.path, self.index_db.sql_get_repository_address(step))
         os.chdir(self.base_path)
 
         with open("dataset_index.txt", "r") as dataset_index:
             lines = dataset_index.readlines()
-        return [ line.strip("\n") for line in lines ]
+        result = [ line.strip("\n") for line in lines ]
+
+        if repo_count == 0:
+            repo_count = self.index_db.sql_get_last_repository_id()
+        if step < repo_count:
+            result += self.get_datasets(step+1, repo_count)
+        return result
 
     def retrieve_dataset(self, hash):
+        self.cd_to_commit_repository(hash)
         files = subprocess.check_output(["git", "diff-tree", "--no-commit-id", "--name-only", "-r", hash ]).decode()[:-1]
         files = files.split("\n")
 
@@ -541,12 +560,12 @@ class MathDataBase:
         with open(os.path.join(self.base_path, 'format_pending.txt'), 'a') as format_pending:
             format_pending.write(commit_hash+"\n")
 
+        self.index_db.sql_add_commit(commit_hash, available_repo_id)
         return commit_hash + " added."
 
 
     def approve_format(self, commit_hash, message):
-        (self.base_path, available_repo_id) = self.get_available_repository()
-        os.chdir(self.base_path)
+        self.cd_to_commit_repository(commit_hash)
         index_file_name = 'format_index.txt'
 
         self.remove_hash_from_pending(commit_hash, "format_pending.txt")
@@ -565,28 +584,40 @@ class MathDataBase:
         return 0
 
     def reject_format(self, commit_hash, message):
-        (self.base_path, available_repo_id) = self.get_available_repository()
-        os.chdir(self.base_path)
+        self.cd_to_commit_repository(commit_hash)
         self.remove_hash_from_pending(commit_hash, "format_pending.txt")
 
 
-    def pending_formats(self):
-        (self.base_path, available_repo_id) = self.get_available_repository()
+    def pending_formats(self, step=0, repo_count=0):
+        self.base_path = os.path.join(self.path, self.index_db.sql_get_repository_address(step))
         os.chdir(self.base_path)
 
         with open("format_pending.txt", "r") as format_pending:
             lines = format_pending.readlines()
-        return [ line.strip("'").strip("\n") for line in lines ]
+        result = [ line.strip("'").strip("\n") for line in lines ]
 
-    def get_formats(self):
-        (self.base_path, available_repo_id) = self.get_available_repository()
-        os.chdir(self.base_path)
+        if repo_count == 0:
+            repo_count = self.index_db.sql_get_last_repository_id()
+        if step < repo_count:
+            result += self.pending_formats(step+1, repo_count)
+        return result
+
+    def get_formats(self, step=0, repo_count=0):
+        self.base_path = os.path.join(self.path, self.index_db.sql_get_repository_address(step))
+        os.chdir( self.base_path )
 
         with open("format_index.txt", "r") as format_index:
             lines = format_index.readlines()
-        return [ line.strip("\n") for line in lines ]
+        result = [ line.strip("\n") for line in lines ]
+
+        if repo_count == 0:
+            repo_count = self.index_db.sql_get_last_repository_id()
+        if step < repo_count:
+            result += self.get_formats(step+1, repo_count)
+        return result
 
     def retrieve_format(self, hash):
+        self.cd_to_commit_repository(hash)
         files = subprocess.check_output(["git", "diff-tree", "--no-commit-id", "--name-only", "-r", hash ]).decode()[:-1]
         files = files.split("\n")
 
@@ -603,9 +634,9 @@ class MathDataBase:
         return "\n".join(lines)
 
 
-    def get_formats_by_datastructure(self,datastructure):
-        (self.base_path, available_repo_id) = self.get_available_repository()
-        os.chdir(os.path.join(self.path,self.base_path))
+    def get_formats_by_datastructure(self,datastructure, step=0, repo_count=0):
+        self.base_path = os.path.join(self.path, self.index_db.sql_get_repository_address(step))
+        os.chdir( self.base_path )
         response = []
         with open("format_index.txt", "r") as index_file:
             keys = [str(line.strip("\n")) for line in index_file.readlines()]
@@ -613,6 +644,10 @@ class MathDataBase:
                 # To slow? Dont convert to json
                 if json.loads(self.retrieve_format(key))["datastructure"] == datastructure:
                     response.append(key)
+        if repo_count == 0:
+            repo_count = self.index_db.sql_get_last_repository_id()
+        if step < repo_count:
+            response += self.get_formats_by_datastructure(datastructure, step+1, repo_count)
         return response
 
     ########################################################################
@@ -672,13 +707,13 @@ class MathDataBase:
             formatter_pending.write(formatter_line)
 
 
+        self.index_db.sql_add_commit(commit_hash, available_repo_id)
         # Return 0 on success
         return commit_hash + " added."
 
 
     def reject_formatter(self, commit_hash, message):
-        (self.base_path, available_repo_id) = self.get_available_repository()
-        os.chdir(self.base_path)
+        self.cd_to_commit_repository(commit_hash)
         source_format = ""
         targetnk_format = ""
         with open("formatter_pending.txt", "r") as formatter_pending:
@@ -693,8 +728,7 @@ class MathDataBase:
 
 
     def approve_formatter(self, commit_hash, message):
-        (self.base_path, available_repo_id) = self.get_available_repository()
-        os.chdir(os.path.join(self.path,self.base_path))
+        self.cd_to_commit_repository(commit_hash)
 
         # Remove from pending list but keep from and to
         source_format = ""
@@ -722,23 +756,34 @@ class MathDataBase:
 
         return 0
 
-    def pending_formatters(self):
-        (self.base_path, available_repo_id) = self.get_available_repository()
-        os.chdir(os.path.join(self.path,self.base_path))
+    def pending_formatters(self, step=0, repo_count=0):
+        self.base_path = os.path.join(self.path, self.index_db.sql_get_repository_address(step))
+        os.chdir(self.base_path)
 
         with open("formatter_pending.txt", "r") as formatter_pending:
             lines = formatter_pending.readlines()
-        return [ line.strip("\n").split(" ")[2] for line in lines ]
+        result = [ line.strip("\n").split(" ")[2] for line in lines ]
+        if repo_count == 0:
+            repo_count = self.index_db.sql_get_last_repository_id()
+        if step < repo_count:
+            result += self.pending_formatters(step+1, repo_count)
+        return result
 
-    def get_formatters(self):
-        (self.base_path, available_repo_id) = self.get_available_repository()
-        os.chdir(os.path.join(self.path,self.base_path))
+    def get_formatters(self, step=0, repo_count=0):
+        self.base_path = os.path.join(self.path, self.index_db.sql_get_repository_address(step))
+        os.chdir( self.base_path )
 
         with open("formatter_index.txt", "r") as formatter_index:
             lines = formatter_index.readlines()
-        return [ line.strip("\n") for line in lines ]
+        result = [ line.strip("\n") for line in lines ]
+        if repo_count == 0:
+            repo_count = self.index_db.sql_get_last_repository_id()
+        if step < repo_count:
+            result += self.get_formatters(step+1, repo_count)
+        return 
 
     def retrieve_formatter(self, hash):
+        self.cd_to_commit_repository(hash)
         files = subprocess.check_output(["git", "diff-tree", "--no-commit-id", "--name-only", "-r", hash ]).decode()[:-1]
         files = files.split("\n")
         if len(files)>1:
@@ -749,23 +794,32 @@ class MathDataBase:
         return "\n".join(lines)
 
 
-    def get_formatters_by_datastructure(self,datastructure):
-        (self.base_path, available_repo_id) = self.get_available_repository()
-        os.chdir(os.path.join(self.path,self.base_path))
+    def get_formatters_by_datastructure(self,datastructure, step=0, repo_count=0):
         formats = self.get_formats_by_datastructure(datastructure)
+        self.base_path = os.path.join(self.path, self.index_db.sql_get_repository_address(step))
+        os.chdir( self.base_path )
 
         response = []
         with open("formatter_index.txt", "r") as index_file:
             lines = [str(line.strip("\n")) for line in index_file.readlines()]
             for line in lines:
+                print("OOKOKOKOKOKOKK", flush=True)
                 keys= line.split(" ")
                 if keys[0] in formats:
                     response.append(keys)
+                else:
+                    print("ds %s but keys[0] %s" % (datastructure, keys[0]), flush=True)
+        print("inside get_formatters_by_datastructure, cwd %s repo %d, path %s, base %s, response %s" \
+            % (os.getcwd(),step, self.index_db.sql_get_repository_address(step), self.base_path, response), flush=True)
+        if repo_count == 0:
+            repo_count = self.index_db.sql_get_last_repository_id()
+        if step < repo_count:
+            response += self.get_formatters_by_datastructure(datastructure, step+1, repo_count)
         return response
 
-    def get_formatters_by_format(self,format):
-        (self.base_path, available_repo_id) = self.get_available_repository()
-        os.chdir(os.path.join(self.path,self.base_path))
+    def get_formatters_by_format(self,format, step=0, repo_count=0):
+        self.base_path = os.path.join(self.path, self.index_db.sql_get_repository_address(step))
+        os.chdir( self.base_path )
         response = []
         with open("formatter_index.txt", "r") as index_file:
             lines = [str(line.strip("\n")) for line in index_file.readlines()]
@@ -773,12 +827,17 @@ class MathDataBase:
                 keys= line.split(" ")
                 if keys[0] == format:
                     response.append(line)
+        if repo_count == 0:
+            repo_count = self.index_db.sql_get_last_repository_id()
+        if step < repo_count:
+            response += self.get_formatters_by_format(format, step+1, repo_count)
         return response
 
 
     def format_instance(self,instance, formatter):
-        (self.base_path, available_repo_id) = self.get_available_repository()
-        os.chdir(os.path.join(self.path,self.base_path))
+        # Instance and formatter can be in different repositories, but retriever functions handle that case
+        # By choice we commit result to instance's repository
+        self.cd_to_commit_repository(instance)
 
         tmpfilename =  os.path.join(self.path,self.base_path,'scratch',instance+formatter+".py")
         outfilename =  os.path.join(self.path,self.base_path,'scratch',instance+formatter+".txt")
@@ -803,8 +862,7 @@ class MathDataBase:
 
 
     def format_file(self,fname, from_format, to_format):
-        (self.base_path, available_repo_id) = self.get_available_repository()
-        os.chdir(os.path.join(self.path,self.base_path))
+        os.chdir(self.base_path)
 
         # Find the correct formatter
         formatter=0
@@ -842,8 +900,7 @@ class MathDataBase:
 
 
     def import_dataset(self,fname, split_script, from_format, to_format):
-        (self.base_path, available_repo_id) = self.get_available_repository()
-        os.chdir(os.path.join(self.path,self.base_path))
+        os.chdir(self.base_path)
 
         # Find the correct formatter
         formatter=0
@@ -892,36 +949,7 @@ class MathDataBase:
     ########################################################################
     ########################################################################
 
-
     def get_available_repository(self):
-        """
-        If repository is bloated, creates a new repository and returns its path, otherwise returns current repository.
-        """
-        return (self.base_path,0) # TODO, to be replaced with get_available_repository2
-        du_result = subprocess.check_output(['du','-sh', self.base_path]).split()[0].decode('utf-8')
-        byte_unit = du_result[-1]
-        do_create_new_repository = False
-        if byte_unit == 'M':
-            # throw the size letter at the end
-            size = int(du_result[0:-1].split('.')[0])
-            if size >= self.MAX_REPOSITORY_SIZE_MB:
-                do_create_new_repository = True
-        elif byte_unit == 'G':
-            do_create_new_repository = True
-        if do_create_new_repository:
-            current_repository_id = self.index_db.sql_get_last_repository_id()
-            # Create repository directory
-            repository_address = self.create_new_repository(current_repository_id+1)
-            # Store directory of this repository in database
-            self.index_db.sql_add_repository(repository_address)
-        # if a new repository is created, sql_get_last_repository_id will return its id
-        # otherwise it will return the already used repository
-        available_repo_id = self.index_db.sql_get_last_repository_id()
-        repository_folder = self.index_db.sql_get_repository_address(available_repo_id)
-        result = os.path.join(self.path, repository_folder)
-        return result
-
-    def get_available_repository2(self):
         """
         If repository is bloated, creates a new repository and returns its path, otherwise returns current repository.
         """
@@ -956,7 +984,6 @@ class MathDataBase:
 
     def get_commit_path(self,commit_hash):
         result = os.path.join(self.path, self.index_db.sql_get_address_from_commit(commit_hash))
-        print("Commit path of %s: %s" % (commit_hash, result))
         return result
 
     def cd_to_commit_repository(self,commit_hash):
@@ -965,9 +992,3 @@ class MathDataBase:
         """
         self.base_path = os.path.join(self.path,self.get_commit_path(commit_hash))
         os.chdir(self.base_path)
-
-    def cd_to_available_repository(self):
-        available_repo_path, available_repo_id = self.get_available_repository()
-        self.base_path = available_repo_path
-        os.chdir( os.path.join(self.path, self.available_repo_path))
-        return (available_repo_id, available_repo_path)
