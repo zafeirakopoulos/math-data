@@ -201,7 +201,7 @@ class MathDataBase:
 
 
     def get_diff(self, commit_hash):
-        self.cd_to_commit_repository(commit_hash)
+        self.cd_to_commit_repository(commit_hash) #
         diff = subprocess.check_output(["git", "show", commit_hash]).decode()[:-1]
         return diff
 
