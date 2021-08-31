@@ -403,16 +403,18 @@ class MathDataBase:
         """Register a dataset in the MathDataBase.
         It is added in the pending list waiting for approval by an editor.
 
-        :param datastructure: A JSON object as a string
+        :param dataset: A list of hashes of instances
         :param message: A description of the dataset (the commit message)
         :returns: The name of the branch in which the dataset was commited"""
         # It stores datasets under the "datasets" path
         (self.base_path, available_repo_id) = self.get_available_repository()
         os.chdir(os.path.join(self.base_path, "dataset"))
 
+        # Join hashes into a string seperated with newlines
+        dataset_as_string = '\n'.join(dataset)
         # Get the hash of the file
         process = Popen(["git", "hash-object", "--stdin", "--path", "dataset"], stdout=PIPE, stdin=PIPE, stderr=STDOUT)
-        stdo = process.communicate(input=str.encode(dataset))[0]
+        stdo = process.communicate(input=str.encode(dataset_as_string))[0]
         hash = stdo.decode()[:-1]
 
         # Create a new branch in the repo with name the hash of the datastructure
@@ -423,7 +425,7 @@ class MathDataBase:
 
         # Write the file
         with open(hash, 'w') as dataset_file:
-            dataset_file.write(dataset)
+            dataset_file.write(dataset_as_string)
 
         # Add and commit in the new branch
         subprocess.call(["git", "add", os.path.join(self.base_path, "dataset", hash) ])
@@ -510,7 +512,8 @@ class MathDataBase:
         with open(os.path.join(self.base_path, files[0])) as dataset:
             lines = dataset.readlines()
         # TODO: \n or other newline feed?
-        return "\n".join(lines)
+        #return "\n".join(lines)
+        return ",".join(lines).replace('\n','')
 
 
     ########################################################################
@@ -880,8 +883,6 @@ class MathDataBase:
         outfilename =  os.path.join(self.base_path,'import_scratch',fname,fname+formatter+".txt")
         print(tmpfilename)
         print(outfilename)
-        print("CURRENT DIR: %s" % os.getcwd(), flush=True)
-
         with open(tmpfilename, "w") as tmp_file:
             with open(os.path.join(self.base_path,'import_scratch',fname,fname), "r") as input_file:
                 tmp_file.write("input="+ input_file.read() )
@@ -893,7 +894,6 @@ class MathDataBase:
 
         subprocess.check_output(["python3",tmpfilename])
         with open(outfilename, "r") as out_file:
-            print("ADDING INSTANCE %s" % fname, flush=True)
             self.add_instance(out_file.read(),"Imported")
 
 

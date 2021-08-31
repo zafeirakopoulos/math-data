@@ -169,18 +169,21 @@ def create_datastructure():
 @data_app.route('/dataset/<key>', methods=['GET', 'POST'])
 def dataset(key):
     response = data_app.active_mdb.retrieve_dataset(key)
-    json_data = json_beautifier.loads(response)
+    #json_data = json_beautifier.loads(response)
+    json_data = '{"%s":"%s"}' % (key, response)
 
     out = {}
 
-    # get html representation for defnition object and add to output
+    """# get html representation for defnition object and add to output
     out["page"] = render_template("data/dataset.html", dataset=json_beautifier.dumps(json_data, indent = 4, sort_keys=False), key=key)
 
     # add actual json to output
     out["data"] = json_data
 
     # return data with jsonify. otherwise the json object won't go correctly
-    return jsonify(out)
+    return jsonify(out)"""
+    #return render_template("data/dataset.html", dataset=json_beautifier.dumps(json_data, indent = 4, sort_keys=False), key=key)
+    return render_template("data/dataset.html", dataset=response.split(','), key=key)
 
 @data_app.route('/datasets/', methods=["GET"])
 def datasets():
@@ -189,9 +192,11 @@ def datasets():
     #  A dictionary of key-name pairs
     datasets = {}
     for key in data_app.active_mdb.get_datasets():
-        datasets[key]= json_beautifier.loads(data_app.active_mdb.retrieve_dataset(key))["name"]
+        retrieved_dataset = data_app.active_mdb.retrieve_dataset(key)
+        datasets[key]= retrieved_dataset
+        #datasets[key]= json_beautifier.loads(data_app.active_mdb.retrieve_dataset(key))["name"]
 
-    return render_template("data/datasets.html", datastructures=datasets)
+    return render_template("data/datasets.html", datasets=datasets)
 
 @data_app.route('/create_dataset/', methods=['GET', 'POST'])
 def create_dataset():
@@ -200,6 +205,11 @@ def create_dataset():
         datastructures[key]= json_beautifier.loads(data_app.active_mdb.retrieve_datastructure(key))["name"]
     return  render_template("data/create_dataset.html", datastructures=datastructures)
 
+@data_app.route('/add_dataset', methods=['POST'])
+def add_dataset():
+    instances_in_dataset = request.form.getlist("instanceList")
+    data_app.active_mdb.add_dataset(instances_in_dataset, "Formatter created by " + current_user.email)
+    return "ok"
 
 ##############################################################################
 ########################## Formatters ########################################

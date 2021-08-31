@@ -7,9 +7,8 @@
                 <ul class='list-group'>
                   {% for dataset in datasets %}
                     <li class='list-group-item'>
-                        <a href='javascript:show_dataset("{{dataset}}");'>
-                        {{datasets[dataset]}}
-                      </a>
+                        <!--<a href='javascript:show_dataset("{{dataset}}");'>{{dataset}}</a>-->
+                        <a href='/data/dataset/{{dataset}}'>{{dataset}}</a>
                     </li>
                   {% endfor %}
                 </ul>

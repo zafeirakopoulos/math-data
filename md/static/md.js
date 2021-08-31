@@ -335,7 +335,17 @@ function submit_format() {
         console.log(err);
     });
 }
-
+//unused
+function submit_dataset(instanceListId) {
+    //let body = $("#" + instanceListId).val();
+    var e = document.getElementById(instanceListId);
+    //let instance = e.options[e.selectedIndex].value;
+    let firstChild = e.firstChild
+    console.log( firstChild )
+    for (const itItem of firstChild.options) {
+        console.log(itItem);
+    }
+}
 
 function add_definition(key){
     $.get('/data/definition/'+ key, {}).done(function(response) {

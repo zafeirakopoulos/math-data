@@ -6,7 +6,7 @@
 
       <div class="row">
          <div class="col-sm">
-        <select class="form-control" id="chooseDatastructure" onchange="show_instances_for_creating_dataset(this.value)">
+        <select class="form-control" id="chooseInstance" onchange="show_instances_for_creating_dataset(this.value)">
             <option selected>Choose Datastructure</option>
             {% for datastructure in datastructures %}
               <option value="{{datastructure}}">{{datastructures[datastructure]}}</option>
@@ -17,12 +17,14 @@
 </form>
     </br>
   <div class="col-sm">
-            <div id="list-display-area"></div>
+            <form action="/data/add_dataset" name="dataset" method="POST">
+                  <div id="list-display-area" name="list-display-area"></div>
+                  <input type="submit" class="btn btn-primary">
+            </form>
   </div>
 
 </br>
-    <button class="btn btn-primary" type="button" onclick="submit_instance('chooseInstance');">Submit</button>
-
+    <!--<button class="btn btn-primary" type="button" onclick="submit_dataset('list-display-area');">Submit</button>-->
 
 
 
