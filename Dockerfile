@@ -1,10 +1,13 @@
-FROM python:3.7
+FROM python:3.9
 LABEL description = "MDB Container"
 
 COPY requirements.txt requirements.txt
 RUN apt-get update && apt-get install -yq --no-install-recommends \
     apt-utils gcc wget bash bzip2 ca-certificates \
     sudo m4 yasm cmake git postgresql postgresql-contrib
+
+RUN pip install psycopg2
+RUN pip install PyProxyFS
 
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
