@@ -52,8 +52,17 @@ class ExtendedRegisterForm(RegisterForm):
     first_name = StringField('First Name', [Required()])
     last_name = StringField('Last Name', [Required()])
 
+    def validate(self, *args, extra_validators=None, **kwargs):
+        # Handle extra_validators manually, if necessary.
+        return super().validate(*args, **kwargs)
+
+
 class ExtendedLoginForm(LoginForm):
     email = StringField('Username or Email', [Required()])
+
+    def validate(self, *args, extra_validators=None, **kwargs):
+        # Handle extra_validators manually, if necessary.
+        return super().validate(*args, **kwargs)
 
 class MyAdminIndexView(AdminIndexView):
     def is_accessible(self):
