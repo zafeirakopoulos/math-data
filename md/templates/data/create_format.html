@@ -2,29 +2,63 @@
 
 {% block content %}
 
-<form class="needs-validation" name="format">
+<form class="needs-validation" name="format" id="formatForm">
   <div class="mb-3">
-    <center><p style="display: none; color:red;" id="infoText"></p></center>
-    <select class="form-control" id="chooseDatastructure">
-        <option selected>Choose Datastructure</option>
+    <center><p style="display: none; color:red;" id="infoText">Please select a valid datastructure.</p></center>
+    <select class="form-control" id="chooseDatastructure" name="datastructure" required>
+        <option value="" disabled selected>Choose Datastructure</option>
         {% for datastructure in datastructures %}
-          <option value="{{datastructure}}">{{datastructures[datastructure]}}</option>
+          <option value="{{ datastructure }}">{{ datastructures[datastructure] }}</option>
         {% endfor %}
     </select>
   </div>
 
   <div class="mb-3">
-
-      <textarea class="form-control" id="formatName" placeholder='Name of the format' rows="1" required></textarea>
+      <textarea class="form-control" id="formatName" name="name" placeholder="Name of the format" rows="1" required></textarea>
   </div>
-    <div class="mb-3">
+  <div class="mb-3">
+      <textarea class="form-control" id="formatDescription" name="description" placeholder="Describe the format" rows="5" required></textarea>
+  </div>
 
-        <textarea class="form-control" id="formatDecription" placeholder='Describe the format' rows="5" required></textarea>
-    </div>
-
-    <button class="btn btn-primary" type="button" onclick="submit_format();">Submit</button>
-
+  <button class="btn btn-primary" type="button" id="submitButton">Submit</button>
 </form>
 
+<script>
+    document.getElementById('submitButton').addEventListener('click', function (event) {
+        const datastructure = document.getElementById('chooseDatastructure').value;
+        const formatName = document.getElementById('formatName').value.trim();
+        const formatDescription = document.getElementById('formatDescription').value.trim();
+        const infoText = document.getElementById('infoText');
+
+        // Clear previous error messages
+        infoText.style.display = "none";
+
+        // Validate datastructure
+        if (!datastructure) {
+            infoText.textContent = "Please select a valid datastructure.";
+            infoText.style.display = "block";
+            return; // Stop form submission
+        }
+
+        // Validate format name
+        if (!formatName) {
+            infoText.textContent = "Please provide a name for the format.";
+            infoText.style.display = "block";
+            return; // Stop form submission
+        }
+
+        // Validate format description
+        if (!formatDescription) {
+            infoText.textContent = "Please describe the format.";
+            infoText.style.display = "block";
+            return; // Stop form submission
+        }
+
+        // If all fields are valid
+        alert('Form is valid and ready for submission.');
+      
+        document.getElementById('formatForm').reset();
+    });
+</script>
 
 {% endblock %}
