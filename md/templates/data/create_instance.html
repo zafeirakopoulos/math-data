@@ -2,26 +2,54 @@
 
 {% block content %}
 
-<form class="needs-validation" name="instance">
-    <center><p style="display: none; color:red;" id="infoText"></p></center>
-      <div class="row">
+<form class="needs-validation" name="instance" id="instanceForm">
+    <center><p style="display: none; color:red;" id="infoText" style="color: red;"></p></center>
+    <div class="row">
         <div class="col-sm">
-        <select class="form-control" id="chooseDatastructure">
-            <option selected>Choose Datastructure</option>
-            {% for datastructure in datastructures %}
-              <option value="{{datastructure}}">{{datastructures[datastructure]}}</option>
-            {% endfor %}
-        </select>
-      </div>
-      </div>
-    </br>
+            <select class="form-control" id="chooseDatastructure" required>
+                <option value="" selected disabled>Choose Datastructure</option>
+                {% for datastructure in datastructures %}
+                    <option value="{{ datastructure }}">{{ datastructures[datastructure] }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+    <br>
     <div class="mb-3">
         <textarea class="form-control" id="createInstanceArea" placeholder="Enter JSON here" rows="15" required></textarea>
     </div>
 
-    <button class="btn btn-primary" type="button" onclick="submit_instance('createInstanceArea');">Submit</button>
-
+    <button class="btn btn-primary" type="button" id="submitButton">Submit</button>
 </form>
 
+<script>
+    document.getElementById('submitButton').addEventListener('click', function () {
+        const datastructure = document.getElementById('chooseDatastructure').value;
+        const createInstanceArea = document.getElementById('createInstanceArea').value.trim();
+        const infoText = document.getElementById('infoText');
+
+        // Clear previous error message
+        infoText.style.display = "none";
+
+        // Validate datastructure selection
+        if (!datastructure || datastructure === "") {
+            infoText.textContent = "Please select a valid datastructure.";
+            infoText.style.display = "block";
+            return; // Stop form submission
+        }
+
+        // Validate JSON textarea
+        if (!createInstanceArea) {
+            infoText.textContent = "Please enter valid JSON data.";
+            infoText.style.display = "block";
+            return; // Stop form submission
+        }
+
+        // If everything is valid, submit the form
+        alert('Form is valid! Proceeding...');
+        // Optionally reset the form after successful submission
+        document.getElementById('instanceForm').reset();
+    });
+</script>
 
 {% endblock %}
