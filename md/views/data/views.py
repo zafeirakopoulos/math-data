@@ -22,6 +22,22 @@ def api_instance(key):
 def api_instances():
     return "["+",".join(data_app.active_mdb.get_instances())+"]"
 
+@data_app.route('api/datastructures', methods=["GET"])
+def api_datastructures():
+    return "["+",".join(data_app.active_mdb.get_datastructures)+"]"
+
+# function to get change list
+@data_app.route('api/pendings', methods=["GET", "POST"])
+def api_pendings():
+    response = {
+        "Datastructures": data_app.active_mdb.pending_datastructures(),
+        "Instances": data_app.active_mdb.pending_instances(),
+        "Formatters": data_app.active_mdb.pending_formatters(),
+        "Datasets": data_app.active_mdb.pending_datasets(),
+        "Formats": data_app.active_mdb.pending_formats()
+    }
+    return jsonify(response)
+
 @data_app.route('api/definition/<key>',methods=['GET', 'POST'])
 def api_definition(key):
     return data_app.active_mdb.retrieve_definition(key)
