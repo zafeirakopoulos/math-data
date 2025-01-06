@@ -1,5 +1,6 @@
 from flask import Flask, Blueprint, request, json, render_template, jsonify
 from flask_login import current_user
+from flask_login import login_required
 from md.views.data import data_app
 from md.core import logger
 from werkzeug.utils import secure_filename
@@ -15,19 +16,23 @@ import json as json_beautifier
 ##########################
 ##########################
 @data_app.route('api/instance/<key>',methods=['GET', 'POST'])
+@login_required
 def api_instance(key):
     return data_app.active_mdb.retrieve_instance_from_database(key)
 
 @data_app.route('api/instances', methods=["GET"])
+@login_required
 def api_instances():
     return "["+",".join(data_app.active_mdb.get_instances())+"]"
 
 @data_app.route('api/datastructures', methods=["GET"])
+@login_required
 def api_datastructures():
     return "["+",".join(data_app.active_mdb.get_datastructures)+"]"
 
 # function to get change list
 @data_app.route('api/pendings', methods=["GET", "POST"])
+@login_required
 def api_pendings():
     response = {
         "Datastructures": data_app.active_mdb.pending_datastructures(),
@@ -38,11 +43,14 @@ def api_pendings():
     }
     return jsonify(response)
 
+
 @data_app.route('api/definition/<key>',methods=['GET', 'POST'])
+@login_required
 def api_definition(key):
     return data_app.active_mdb.retrieve_definition(key)
 
 @data_app.route('api/definitions', methods=["GET"])
+@login_required
 def api_definitions():
     return data_app.active_mdb.definition_index()
 
@@ -294,6 +302,7 @@ def formatters_by_format(format):
 ##############################################################################
 
 @data_app.route('/create_format/', methods=['GET', 'POST'])
+@login_required
 def create_format():
     datastructures = {}
     for key in data_app.active_mdb.get_datastructures():
@@ -301,6 +310,7 @@ def create_format():
     return  render_template("data/create_format.html", datastructures=datastructures)
 
 @data_app.route('/add_format', methods=["POST"])
+@login_required
 def add_format():
     name = request.form['name']
     datastructure = request.form['datastructure']
@@ -428,7 +438,10 @@ def remove_at(i, s):
 
 # function to get change list
 @data_app.route('/editor', methods=["GET", "POST"])
+@login_required
 def editor_page():
+    if not current_user.is_admin: 
+        return jsonify({"error": "Access denied, you are not an admin."}), 403
     pending_datastructures = data_app.active_mdb.pending_datastructures()
     pending_instances = data_app.active_mdb.pending_instances()
     pending_formatters = data_app.active_mdb.pending_formatters()
@@ -439,14 +452,20 @@ def editor_page():
 
 # method that gets a change's details by id
 @data_app.route('/change/<change_id>/<data_type>', methods=['GET'])
+@login_required
 def get_change(change_id, data_type):
+    if not current_user.is_admin: 
+        return jsonify({"error": "Access denied, you are not an admin."}), 403
     response = data_app.active_mdb.get_diff(change_id)
     #logger.debug("diff: " + str(response))
 
     return render_template("data/change.html", change_id=change_id, change=response, data_type=data_type)
 
 @data_app.route('/change/accept/<change_id>/<data_type>', methods=['GET'])
+@login_required
 def accept_change(change_id, data_type):
+    if not current_user.is_admin: 
+        return jsonify({"error": "Access denied, you are not an admin."}), 403
     if data_type == "datastructure":
         message = "Datastructure accepted by " + current_user.email # TODO: get a message from ui
         data_app.active_mdb.approve_datastructure(change_id, message)
@@ -465,7 +484,10 @@ def accept_change(change_id, data_type):
     return "success"
 
 @data_app.route('/change/reject/<change_id>/<data_type>', methods=['GET'])
+@login_required
 def reject_change(change_id, data_type):
+    if not current_user.is_admin: 
+        return jsonify({"error": "Access denied, you are not an admin."}), 403
     if data_type == "datastructure":
         message = "Datastructure rejected by " + current_user.email # TODO: get a message from ui
         data_app.active_mdb.reject_datastructure(change_id, message)
