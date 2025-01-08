@@ -270,6 +270,11 @@ function submit_formatter() {
 
     var e = document.getElementById("createScriptArea");
     let formatter = e.value;
+    if(formatter.length == 0 ){
+        alert("Script can't be empty");
+        console.log("Script can't be empty");
+        return;
+    }
 
     var e = document.getElementById("chooseFrom");
     let from_datastructure = e.options[e.selectedIndex].value;
@@ -277,6 +282,13 @@ function submit_formatter() {
     var e = document.getElementById("chooseTo");
     let to_datastructure = e.options[e.selectedIndex].value;
 
+    var e = document.getElementById("formatterName");
+    let formatterName = e.value;
+    if(formatterName.length == 0 ){
+        alert("Formatter name can't be empty");
+        console.log("Formatter name can't be empty");
+        return;
+    }
 
     // Check valid python, not JSON
     //if(!isValidJson(body)) {
@@ -286,7 +298,7 @@ function submit_formatter() {
 
     let url = '/data/add_formatter';
 
-    let data = {"formatter":formatter, "to_datastructure":to_datastructure, "from_datastructure":from_datastructure};
+    let data = {"formatter":formatter, "name":formatterName, "to_datastructure":to_datastructure, "from_datastructure":from_datastructure};
 
     $.post(url, data).done(function(response) {
         print_input_success(infoText);
@@ -323,7 +335,17 @@ function submit_format() {
         console.log(err);
     });
 }
-
+//unused
+function submit_dataset(instanceListId) {
+    //let body = $("#" + instanceListId).val();
+    var e = document.getElementById(instanceListId);
+    //let instance = e.options[e.selectedIndex].value;
+    let firstChild = e.firstChild
+    console.log( firstChild )
+    for (const itItem of firstChild.options) {
+        console.log(itItem);
+    }
+}
 
 function add_definition(key){
     $.get('/data/definition/'+ key, {}).done(function(response) {

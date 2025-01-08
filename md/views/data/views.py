@@ -7,6 +7,8 @@ from werkzeug.utils import secure_filename
 import os
 import sys
 import tarfile
+import shutil # for removing directories recursive
+import traceback # for error stack printing
 
 import json as json_beautifier
 
@@ -99,7 +101,7 @@ def instance(key):
     #formatters = [ f.split(" ") for f in data_app.active_mdb.get_instances_by_datastructure(instance_data["datastructure"])]
 
 
-    formatters = data_app.active_mdb.get_formats_by_datastructure(instance_data["datastructure"])
+    formatters = data_app.active_mdb.get_formatters_by_datastructure(instance_data["datastructure"])
     #formatters = [ f.split(" ") for f in data_app.active_mdb.get_formats_by_datastructure(instance_data["datastructure"])]
     # get html representation for instance object and add to output
     out["page"] = render_template("data/instance.html", instance=json_beautifier.dumps(instance_data, indent = 4, sort_keys=False), formatters =formatters, key=key)
@@ -191,18 +193,21 @@ def create_datastructure():
 @data_app.route('/dataset/<key>', methods=['GET', 'POST'])
 def dataset(key):
     response = data_app.active_mdb.retrieve_dataset(key)
-    json_data = json_beautifier.loads(response)
+    #json_data = json_beautifier.loads(response)
+    json_data = '{"%s":"%s"}' % (key, response)
 
     out = {}
 
-    # get html representation for defnition object and add to output
+    """# get html representation for defnition object and add to output
     out["page"] = render_template("data/dataset.html", dataset=json_beautifier.dumps(json_data, indent = 4, sort_keys=False), key=key)
 
     # add actual json to output
     out["data"] = json_data
 
     # return data with jsonify. otherwise the json object won't go correctly
-    return jsonify(out)
+    return jsonify(out)"""
+    #return render_template("data/dataset.html", dataset=json_beautifier.dumps(json_data, indent = 4, sort_keys=False), key=key)
+    return render_template("data/dataset.html", dataset=response.split(','), key=key)
 
 @data_app.route('/datasets/', methods=["GET"])
 def datasets():
@@ -211,9 +216,11 @@ def datasets():
     #  A dictionary of key-name pairs
     datasets = {}
     for key in data_app.active_mdb.get_datasets():
-        datasets[key]= json_beautifier.loads(data_app.active_mdb.retrieve_dataset(key))["name"]
+        retrieved_dataset = data_app.active_mdb.retrieve_dataset(key)
+        datasets[key]= retrieved_dataset
+        #datasets[key]= json_beautifier.loads(data_app.active_mdb.retrieve_dataset(key))["name"]
 
-    return render_template("data/datasets.html", datastructures=datasets)
+    return render_template("data/datasets.html", datasets=datasets)
 
 @data_app.route('/create_dataset/', methods=['GET', 'POST'])
 def create_dataset():
@@ -222,6 +229,11 @@ def create_dataset():
         datastructures[key]= json_beautifier.loads(data_app.active_mdb.retrieve_datastructure(key))["name"]
     return  render_template("data/create_dataset.html", datastructures=datastructures)
 
+@data_app.route('/add_dataset', methods=['POST'])
+def add_dataset():
+    instances_in_dataset = request.form.getlist("instanceList")
+    data_app.active_mdb.add_dataset(instances_in_dataset, "Formatter created by " + current_user.email)
+    return "ok"
 
 ##############################################################################
 ########################## Formatters ########################################
@@ -237,12 +249,13 @@ def create_formatter():
 @data_app.route('/add_formatter', methods=["POST"])
 def add_formatter():
     formatter = request.form['formatter']
+    formatter_name = request.form['name']
     from_datastructure = request.form['from_datastructure']
     to_datastructure = request.form['to_datastructure']
 
     message = "Formatter created by " + current_user.email
 
-    response = data_app.active_mdb.add_formatter(formatter,from_datastructure , to_datastructure, message)
+    response = data_app.active_mdb.add_formatter(formatter_name, formatter,from_datastructure, to_datastructure, message)
 
     logger.debug("response: " + str(response))
     return response
@@ -522,17 +535,27 @@ def import_page():
 
 @data_app.route('/import_file', methods=["POST"])
 def import_file():
+    initial_directory = os.getcwd()
     if request.method == 'POST':
-          f = request.files['file']
-          fname = secure_filename(f.filename)
+          files = request.files.getlist('file')
           os.chdir("import_scratch")
-          os.mkdir(fname)
-          os.chdir(fname)
-          f.save(fname)
+          try:
+              for f in files:
+                fname = secure_filename(f.filename)
+                os.mkdir(fname)
+                os.chdir(fname)
+                f.save(fname)
 
-          print("About to db call")
-          data_app.active_mdb.format_file(fname, request.form['from'], request.form["to"])
+                print("About to db call")
+                if request.form['from'] != request.form["to"]:
+                  data_app.active_mdb.format_file(fname, request.form['from'], request.form["to"])
+                # format_file changes directory
+                os.chdir( os.path.join(initial_directory, "import_scratch") )
+          except Exception as e:
+              os.chdir(initial_directory)
+              return 'Import failed: ' + traceback.format_exc()
           return 'Imported successfully'
+    os.chdir(initial_directory)
     return "Import failed"
 
 
