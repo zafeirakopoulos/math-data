@@ -2,12 +2,433 @@
 {% set app = 'data' %}
 
 {% block content %}
-    <div class="row">
-        <div class="col-12 col-md-8">
-            <div class="card border-dark mb-3">
-                The documentation is available in the git repository of the project.
+    <style>
+
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+
+    body {
+        font-family: Arial, sans-serif;
+        line-height: 1.6;
+        color: #333;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+
+    .nav-container {
+        position: static;
+        top: 0;
+        background: #fff;
+        padding: 20px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        margin-bottom: 40px;
+        z-index: 1000;
+    }
+
+    .nav-title {
+        font-size: 24px;
+        margin-bottom: 20px;
+        color: #2c3e50;
+    }
+
+    .nav-links {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+
+    .nav-section {
+        flex: 1;
+        min-width: 250px;
+    }
+
+    .nav-section h3 {
+        color: #2c3e50;
+        margin-bottom: 10px;
+    }
+
+    .nav-section ul {
+        list-style: none;
+    }
+
+    .nav-section li {
+        margin-bottom: 8px;
+    }
+
+    .nav-section a {
+        text-decoration: none;
+        color: #3498db;
+        transition: color 0.3s;
+    }
+
+    .nav-section a:hover {
+        color: #2980b9;
+    }
+
+    .active-link {
+        font-weight: bold;
+        color: #421a70 !important;
+    }
+
+    .content-section {
+        margin-bottom: 40px;
+        padding: 20px;
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .content-section h2 {
+        color: #2c3e50;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #3498db;
+    }
+
+    .content-section h3 {
+        color: #2c3e50;
+        margin: 20px 0 10px;
+    }
+
+    .card {
+        margin-bottom: 20px;
+        padding: 15px;
+        background: #f8f9fa;
+        border-radius: 4px;
+    }
+
+    .method {
+        font-weight: bold;
+        color: #e74c3c;
+    }
+
+    .method-name {
+        font-family: monospace;
+        font-size: 1.1em;
+        color: #2c3e50;
+        margin-bottom: 10px;
+        font-weight: bold;
+    }
+
+    .method-description {
+        margin-bottom: 15px;
+    }
+
+    .params-section, .returns-section {
+        margin-top: 10px;
+        padding-left: 20px;
+    }
+
+    .param-name, .return-type {
+        font-family: monospace;
+        color: #2980b9;
+    }
+
+    .section-title {
+        font-weight: bold;
+        color: #2c3e50;
+        margin: 10px 0;
+    }
+
+    pre {
+        background: #f8f9fa;
+        padding: 15px;
+        border-radius: 4px;
+        overflow-x: auto;
+    }
+
+    .endpoint {
+        margin-bottom: 15px;
+    }
+
+    #backToTop {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 50%; 
+        padding: 10px; 
+        font-size: 18px;
+        cursor: pointer;
+        display: none; 
+        transition: opacity 0.3s ease;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
+    }
+
+    #backToTop:hover {
+        background-color: #0056b3;
+    }
+    </style>
+
+    <nav class="nav-container">
+        <h2 class="nav-title">Documentation Contents</h2>
+        <div class="nav-links">
+            <div class="nav-section">
+                <h3>Document Overview</h3>
+                <ul>
+                    <li><a href="#overview">Project Overview</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <h3>API Endpoints</h3>
+                <ul>
+                    <li><a href="#instance-endpoints">Instance Management</a></li>
+                    <li><a href="#data-structure-endpoints">Data Structure Management</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <h3>MathDataLanguage Class</h3>
+                <ul>
+                    <li><a href="#class-overview">Class Overview</a></li>
+                    <li><a href="#methods">Methods</a></li>
+                    <li><a href="#dataset-management">Dataset Management</a></li>
+                    <li><a href="#format-management">Format Management</a></li>
+                    <li><a href="#formatter-management">Formatter Management</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <button id="backToTop"><i class="fa fa-arrow-up"></i></button>
+
+    <main>
+        <section id="overview" class="content-section">
+            <h2>Document Overview</h2>
+            <p>The project develops a standardized system for storing, sharing, and analyzing mathematical data, called MathDataLanguage. It aims to provide a unified platform for mathematicians and computer scientists to collaborate, store mathematical data, and run benchmarks. By utilizing version control tools like Git, the platform ensures efficient data management and reduces redundancy. The goal is to advance mathematical research by making data more accessible and reusable, supporting reproducible research, and fostering collaboration between academia and industry. The long-term aim is to create a community around MathDataLanguage to enhance the impact of mathematical research.</p>
+        </section>
+
+        <section id="instance-endpoints" class="content-section">
+            <h2>API Endpoints</h2>
+            <h3>Instance Management</h3>
+            <div class="card">
+                <div class="endpoint-header">
+                    <span class="method method-post">POST</span>
+                    <span class="endpoint-url">/add_instance</span>
+                </div>
+                <p class="description">Adds a new instance to the system.</p>
+                <div class="parameters">
+                    <h4>Parameters:</h4>
+                    <ul>
+                        <li><strong>name</strong> (string) - The name of the instance</li>
+                        <li><strong>type</strong> (string) - The type of the instance</li>
+                    </ul>
+                </div>
+                <div class="response">
+                    <h4>Response:</h4>
+                    <pre>
+            {
+                "status": "success",
+                "message": "Instance added successfully"
+            }
+                    </pre>
+                </div>
+            </div>
+            <div class="card">
+                <p><span class="method">GET</span> /get_instance/&lt;instance_id&gt;</p>
+                <p>Retrieves the details of a specific instance.</p>
+            </div>
+            <div class="card">
+                <p><span class="method">PUT</span> /update_instance/&lt;instance_id&gt;</p>
+                <p>Updates the details of an existing instance.</p>
+            </div>
+            <div class="card">
+                <p><span class="method">DELETE</span> /delete_instance/&lt;instance_id&gt;</p>
+                <p>Deletes an existing instance.</p>
+            </div>
+        </section>
+
+        <section id="data-structure-endpoints" class="content-section">
+            <h3>Data Structure Management</h3>
+            <div class="card">
+                <p><span class="method">GET</span> /get_data_structure/&lt;datastructure_id&gt;</p>
+                <p>Retrieves a specific data structure.</p>
+            </div>
+            <div class="card">
+                <p><span class="method">POST</span> /add_data_structure</p>
+                <p>Adds a new data structure to the system.</p>
+            </div>
+        </section>
+
+
+        <section id="class-overview" class="content-section">
+            <h2>MathDataLanguage Class</h2>
+            <p>The MathDataLanguage class is designed for managing and validating instances within a defined MathData Language. It interacts with a database to fetch instances and datastructures, performs various checks, and ensures that the data structure adheres to the specifications.</p>
+        </section>
+
+        <section id="methods" class="content-section">
+            <h3>Methods</h3>
+            
+            <div class="card">
+                <div class="method-name">__init__(self, active_db)</div>
+                <div class="method-description">Initializes the MathDataLanguage instance with an active database connection.</div>
+                <div class="params-section">
+                    <div class="section-title">Parameters:</div>
+                    <ul>
+                        <li><span class="param-name">active_db</span>: An active database connection used to retrieve instances and datastructures.</li>
+                    </ul>
+                </div>
+                <div class="returns-section">
+                    <div class="section-title">Returns:</div>
+                    <ul>
+                        <li>A MathDataLanguage object with the provided database.</li>
+                    </ul>
+                </div>
             </div>
 
-        </div>
-    </div>
+            <div class="card">
+                <div class="method-name">valid_name(self, name)</div>
+                <div class="method-description">Validates whether the provided name is a valid string according to the MathData Language specifications.</div>
+                <div class="params-section">
+                    <div class="section-title">Parameters:</div>
+                    <ul>
+                        <li><span class="param-name">name</span> (str): The name to be validated.</li>
+                    </ul>
+                </div>
+                <div class="returns-section">
+                    <div class="section-title">Returns:</div>
+                    <ul>
+                        <li>True if the name is valid, otherwise False.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="method-name">get_size(self, string, instance)</div>
+                <div class="method-description">Returns the size specified in the given string for a specific instance. The string must contain an "@" symbol, and the size is determined by the part after the "@" symbol.</div>
+                <div class="params-section">
+                    <div class="section-title">Parameters:</div>
+                    <ul>
+                        <li><span class="param-name">string</span> (str): The size string to be parsed.</li>
+                        <li><span class="param-name">instance</span> (dict): The instance data to retrieve size information from.</li>
+                    </ul>
+                </div>
+                <div class="returns-section">
+                    <div class="section-title">Returns:</div>
+                    <ul>
+                        <li>If "any" is specified in the size string, it returns -1.</li>
+                        <li>Otherwise, it returns the size based on the path in the string.</li>
+                    </ul>
+                </div>
+                <div class="section-title">Raises:</div>
+                <ul>
+                    <li>Raises an exception if the string does not contain "@".</li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <div class="method-name">check_element_type(self, item, element_type)</div>
+                <div class="method-description">Checks whether the type of a given item matches the expected element type.</div>
+                <div class="params-section">
+                    <div class="section-title">Parameters:</div>
+                    <ul>
+                        <li><span class="param-name">item</span>: The item whose type is being validated.</li>
+                        <li><span class="param-name">element_type</span>: The type against which the item is checked.</li>
+                    </ul>
+                </div>
+                <div class="returns-section">
+                    <div class="section-title">Returns:</div>
+                    <ul>
+                        <li>True if the types match (currently a placeholder for more detailed validation).</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="method-name">validate_instance(self, instance_key, datastructure_key)</div>
+                <div class="method-description">Validates an instance against a datastructure. The method checks if the instance contains all mandatory keys, verifies the name, and ensures that raw types are valid and consistent with the datastructure.</div>
+                <div class="params-section">
+                    <div class="section-title">Parameters:</div>
+                    <ul>
+                        <li><span class="param-name">instance_key</span> (str): The key identifying the instance.</li>
+                        <li><span class="param-name">datastructure_key</span> (str): The key identifying the datastructure to validate against.</li>
+                    </ul>
+                </div>
+                <div class="returns-section">
+                    <div class="section-title">Returns:</div>
+                    <ul>
+                        <li>A string result, currently returns "False" if the validation fails (this can be expanded with more details).</li>
+                    </ul>
+                </div>
+                <div class="section-title">Raises:</div>
+                <ul>
+                    <li>Raises an exception if any required keys are missing or if there are discrepancies between the instance and the datastructure, such as missing attributes or incorrect raw types.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="dataset-management" class="content-section">
+            <h3>Dataset Management</h3>
+            <div class="api-endpoint">
+                <h4>add_dataset</h4>
+                <p>Adds a dataset to a Git repository under the "dataset" directory.</p>
+            </div>
+        </section>
+
+        <section id="format-management" class="content-section">
+            <h3>Format Management</h3>
+            <div class="api-endpoint">
+                <h4>add_format</h4>
+                <p>Adds a format to the repository similarly to how datasets are added.</p>
+            </div>
+        </section>
+
+        <section id="formatter-management" class="content-section">
+            <h3>Formatter Management</h3>
+            <div class="api-endpoint">
+                <h4>add_formatter</h4>
+                <p>Adds a Python script for formatting data from one format to another.</p>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        function highlightLink(clickedLink) {
+            document.querySelectorAll('.active-link').forEach(link => {
+                link.classList.remove('active-link');
+            });
+            clickedLink.classList.add("active-link");
+        }
+
+        document.querySelectorAll("a[href^='#']").forEach((link) => {
+            link.addEventListener("click", (e) => {
+                e.preventDefault(); 
+                
+                const targetId = link.getAttribute("href");  
+                const targetElement = document.querySelector(targetId);
+                
+                if (targetElement) {
+                    targetElement.scrollIntoView({
+                        behavior: "smooth",
+                        block: "start",
+                    });
+
+                    history.pushState(null, null, targetId);
+                    highlightLink(link);
+                }
+            });
+        });
+
+        const backToTopButton = document.getElementById('backToTop');
+
+        window.onscroll = function () {
+        if (document.body.scrollTop > 50 || document.documentElement.scrollTop > 50) {
+            backToTopButton.style.display = 'block';
+        } else {
+            backToTopButton.style.display = 'none';
+        }
+        };
+
+        backToTopButton.onclick = function () {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        };
+    </script>
 {% endblock %}
