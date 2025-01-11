@@ -20,22 +20,35 @@ import json as json_beautifier
 @data_app.route('api/instance/<key>',methods=['GET', 'POST'])
 @login_required
 def api_instance(key):
+    """ API endpoint to retrieve an instance from the database by its key.
+
+    :param key: The key for the instance to retrieve.
+    :returns: The instance retrieved from the database."""
     return data_app.active_mdb.retrieve_instance_from_database(key)
 
 @data_app.route('api/instances', methods=["GET"])
 @login_required
 def api_instances():
+    """ API endpoint to retrieve all instances from the database.
+
+    :returns: A JSON array of all instances."""
     return "["+",".join(data_app.active_mdb.get_instances())+"]"
 
 @data_app.route('api/datastructures', methods=["GET"])
 @login_required
 def api_datastructures():
+    """ API endpoint to retrieve all datastructures from the database.
+
+    :returns: A JSON array of all datastructures."""
     return "["+",".join(data_app.active_mdb.get_datastructures)+"]"
 
 # function to get change list
 @data_app.route('api/pendings', methods=["GET", "POST"])
 @login_required
 def api_pendings():
+    """ API endpoint to retrieve a list of pending items (Datastructures, Instances, etc.).
+
+    :returns: A JSON object with pending datastructures, instances, formatters, datasets, and formats."""
     response = {
         "Datastructures": data_app.active_mdb.pending_datastructures(),
         "Instances": data_app.active_mdb.pending_instances(),
@@ -49,14 +62,27 @@ def api_pendings():
 @data_app.route('api/definition/<key>',methods=['GET', 'POST'])
 @login_required
 def api_definition(key):
+    """ API endpoint to retrieve a definition from the database by its key.
+
+    :param key: The key for the definition to retrieve.
+    :returns: The definition retrieved from the database."""
     return data_app.active_mdb.retrieve_definition(key)
 
 @data_app.route('api/definitions', methods=["GET"])
 @login_required
 def api_definitions():
+    """ API endpoint to retrieve all definitions from the database.
+
+    :returns: A list of all definitions."""
     return data_app.active_mdb.definition_index()
 
 def pp_json(json_thing, sort=False, indents=4):
+    """ Helper function to pretty-print JSON with custom indentation and sorting.
+
+    :param json_thing: The JSON object to pretty-print.
+    :param sort: Whether to sort keys in the output.
+    :param indents: Number of spaces to use for indentation.
+    :returns: The formatted JSON string."""
     parsed_json = json_beautifier.loads(json_thing)
     return json_beautifier.dumps(parsed_json, indent = indents, sort_keys=sort)
 
@@ -115,6 +141,9 @@ def instance(key):
 # function to list all instances
 @data_app.route('/instances', methods=["GET"])
 def instances():
+    """API endpoint to retrieve an instance by its key and return both HTML and JSON representations.
+    :param key: The key of the instance to retrieve.
+    :returns: A JSON object containing the instance data and its HTML representation."""
     #  A dictionary of key-name pairs
     datastructures = {}
     for key in data_app.active_mdb.get_datastructures():
@@ -124,6 +153,11 @@ def instances():
 # function to list all instances of specific datastructure
 @data_app.route('/instances_by_datastructure/<datastructure>', methods=["GET", 'POST'])
 def instances_by_datastructure(datastructure):
+    """Retrieves instances associated with a specific datastructure and renders an HTML list of those instances.
+    Route: /instances_by_datastructure/<datastructure>
+    Methods: GET, POST
+    :param datastructure: The datastructure to filter instances by.
+    :returns: An HTML page displaying a list of instances with their names."""
     #  A dictionary of key-name pairs
 
     instances = {}
@@ -134,6 +168,10 @@ def instances_by_datastructure(datastructure):
 
 @data_app.route('/create_instance/', methods=['GET', 'POST'])
 def create_instance():
+    """Displays a form to create a new instance, including a list of available datastructures.
+    Route: /create_instance/
+    Methods: GET, POST
+    :returns: An HTML form for creating an instance, with available datastructures."""
     datastructures = {}
     for key in data_app.active_mdb.get_datastructures():
         datastructures[key]= json_beautifier.loads(data_app.active_mdb.retrieve_datastructure(key))["name"]
@@ -142,6 +180,11 @@ def create_instance():
 
 @data_app.route('/instances_by_datastructure_for_dataset/<datastructure>', methods=["GET"])
 def instances_by_datastructure_for_dataset(datastructure):
+    """Displays a list of instances for a specific datastructure, for use with datasets.
+    Route: /instances_by_datastructure_for_dataset/<datastructure>
+    Methods: GET
+    :param datastructure: The datastructure to filter instances by.
+    :returns: An HTML page displaying a list of instances for the specified datastructure."""
     #  A dictionary of key-name pairs
     instances = {}
     for key in data_app.active_mdb.get_instances_by_datastructure(datastructure):
@@ -155,6 +198,11 @@ def instances_by_datastructure_for_dataset(datastructure):
 # function to retrieve a datastructure
 @data_app.route('/datastructure/<key>', methods=['GET', 'POST'])
 def datastructure(key):
+    """Retrieves and displays a datastructure based on the provided key.
+    Route: /datastructure/<key>
+    Methods: GET, POST
+    :param key: The key of the datastructure to retrieve.
+    :returns: A JSON object and an HTML page displaying the datastructure."""
     response = data_app.active_mdb.retrieve_datastructure(key)
     json_data = json_beautifier.loads(response)
 
@@ -171,7 +219,10 @@ def datastructure(key):
 
 @data_app.route('/datastructures', methods=["GET"])
 def datastructures():
-
+    """Retrieves and displays all datastructures.
+    Route: /datastructures
+    Methods: GET
+    :returns: A rendered HTML page displaying all datastructures."""
     #  A dictionary of key-name pairs
     datastructures = {}
     for key in data_app.active_mdb.get_datastructures():
@@ -181,6 +232,10 @@ def datastructures():
 
 @data_app.route('/create_datastructure/', methods=['GET', 'POST'])
 def create_datastructure():
+    """Displays the page for creating a new datastructure.
+    Route: /create_datastructure/
+    Methods: GET, POST
+    :returns: A rendered HTML page for creating a new datastructure."""
     return  render_template("data/create_datastructure.html")
 
 
@@ -192,6 +247,11 @@ def create_datastructure():
 # function to retrieve a datastructure
 @data_app.route('/dataset/<key>', methods=['GET', 'POST'])
 def dataset(key):
+    """Retrieves and displays a dataset by its key.
+    Route: /dataset/<key>
+    Methods: GET, POST
+    :param key: The key of the dataset to retrieve.
+    :returns: A rendered HTML page displaying the dataset."""
     response = data_app.active_mdb.retrieve_dataset(key)
     #json_data = json_beautifier.loads(response)
     json_data = '{"%s":"%s"}' % (key, response)
@@ -211,7 +271,10 @@ def dataset(key):
 
 @data_app.route('/datasets/', methods=["GET"])
 def datasets():
-
+    """Displays all datasets available.
+    Route: /datasets/
+    Methods: GET
+    :returns: A rendered HTML page displaying all datasets."""
 
     #  A dictionary of key-name pairs
     datasets = {}
@@ -224,6 +287,10 @@ def datasets():
 
 @data_app.route('/create_dataset/', methods=['GET', 'POST'])
 def create_dataset():
+    """Displays a page to create a new dataset with available datastructures.
+    Route: /create_dataset/
+    Methods: GET, POST
+    :returns: A rendered HTML page to create a new dataset."""
     datastructures = {}
     for key in data_app.active_mdb.get_datastructures():
         datastructures[key]= json_beautifier.loads(data_app.active_mdb.retrieve_datastructure(key))["name"]
@@ -231,6 +298,10 @@ def create_dataset():
 
 @data_app.route('/add_dataset', methods=['POST'])
 def add_dataset():
+    """Adds a new dataset with selected instances.
+    Route: /add_dataset
+    Methods: POST
+    :returns: A confirmation response."""
     instances_in_dataset = request.form.getlist("instanceList")
     data_app.active_mdb.add_dataset(instances_in_dataset, "Formatter created by " + current_user.email)
     return "ok"
@@ -241,6 +312,10 @@ def add_dataset():
 
 @data_app.route('/create_formatter/', methods=['GET', 'POST'])
 def create_formatter():
+    """Displays a page to create a new formatter with available formats.
+    Route: /create_formatter/
+    Methods: GET, POST
+    :returns: A rendered HTML page to create a new formatter."""
     formats = {}
     for key in data_app.active_mdb.get_formats():
         formats[key]= json_beautifier.loads(data_app.active_mdb.retrieve_format(key))["name"]
@@ -248,6 +323,10 @@ def create_formatter():
 
 @data_app.route('/add_formatter', methods=["POST"])
 def add_formatter():
+    """Adds a new formatter with selected details.
+    Route: /add_formatter
+    Methods: POST
+    :returns: A response with the result of adding the formatter."""
     formatter = request.form['formatter']
     formatter_name = request.form['name']
     from_datastructure = request.form['from_datastructure']
@@ -264,6 +343,10 @@ def add_formatter():
 #   formatters page
 @data_app.route('/formatters', methods=["GET"])
 def formatters():
+    """Displays a list of available formatters.
+    Route: /formatters
+    Methods: GET
+    :returns: A rendered HTML page with a list of available formatters."""
     #  A dictionary of key-name pairs
     formats = {}
     for key in data_app.active_mdb.get_formats():
@@ -274,6 +357,11 @@ def formatters():
 # retrieves an formatter object
 @data_app.route('/formatter/<key>', methods=['GET', 'POST'])
 def formatter(key):
+    """Retrieves a formatter object by its key.
+    Route: /formatter/<key>
+    Methods: GET, POST
+    :param key: The key of the formatter to retrieve
+    :returns: A JSON response containing the formatter object and its HTML representation"""
     formatter = data_app.active_mdb.retrieve_formatter(key)
 
     out = {}
@@ -290,6 +378,11 @@ def formatter(key):
 # function to list all formatters of specific datastructure
 @data_app.route('/formatters_by_datastructure/<datastructure>', methods=["GET"])
 def formatters_by_datastructure(datastructure):
+    """Lists all formatters of a specific datastructure.
+    Route: /formatters_by_datastructure/<datastructure>
+    Method: GET
+    :param datastructure: The datastructure to list formatters for
+    :returns: An HTML page displaying all formatters for the given datastructure"""
     #  A dictionary of key-name pairs
     formatters = {}
     for key in data_app.active_mdb.get_formatters_by_datastructure(datastructure):
@@ -301,6 +394,11 @@ def formatters_by_datastructure(datastructure):
 # function to list all formatters of specific datastructure
 @data_app.route('/formatters_by_format/<format>', methods=["GET"])
 def formatters_by_format(format):
+    """Lists all formatters for a specific format.
+    Route: /formatters_by_format/<format>
+    Method: GET
+    :param format: The format to list formatters for
+    :returns: An HTML page displaying all formatters for the given format"""
     #  A dictionary of key-name pairs
     formatters = {}
     for key in data_app.active_mdb.get_formatters_by_format(format):
@@ -317,6 +415,10 @@ def formatters_by_format(format):
 @data_app.route('/create_format/', methods=['GET', 'POST'])
 @login_required
 def create_format():
+    """Handles the creation of a new format.
+    Route: /create_format/
+    Method: GET, POST
+    :returns: Renders the template for creating a format with a list of datastructures"""
     datastructures = {}
     for key in data_app.active_mdb.get_datastructures():
         datastructures[key]= json_beautifier.loads(data_app.active_mdb.retrieve_datastructure(key))["name"]
@@ -325,6 +427,11 @@ def create_format():
 @data_app.route('/add_format', methods=["POST"])
 @login_required
 def add_format():
+    """Adds a new format.
+    Route: /add_format
+    Method: POST
+    :returns: The response after attempting to add the format"""
+    
     name = request.form['name']
     datastructure = request.form['datastructure']
     description = request.form['description']
@@ -342,6 +449,10 @@ def add_format():
 # function to list all formatters
 @data_app.route('/formats', methods=["GET"])
 def formats():
+    """Lists all the datastructures for formatters.
+    Route: /formats
+    Method: GET
+    :returns: Renders the formats page with a dictionary of datastructures"""
     #  A dictionary of key-name pairs
     datastructures = {}
     for key in data_app.active_mdb.get_datastructures():
@@ -352,6 +463,11 @@ def formats():
 # retrieves an format object
 @data_app.route('/format/<key>', methods=['GET', 'POST'])
 def format(key):
+    """Retrieves a specific format object.
+    Route: /format/<key>
+    Method: GET, POST
+    :param key: The key of the format to retrieve
+    :returns: A JSON representation of the format with HTML page"""
     format = data_app.active_mdb.retrieve_format(key)
 
     out = {}
@@ -368,6 +484,12 @@ def format(key):
 # function to list all formatters of specific datastructure
 @data_app.route('/formats_by_datastructure/<datastructure>', methods=["GET"])
 def formats_by_datastructure(datastructure):
+    """Lists all formats of a specific datastructure.
+    Route: /formats_by_datastructure/<datastructure>
+    Method: GET
+    :param datastructure: The datastructure to list formats for
+    :returns: Renders the formats list page with a dictionary of formats"""
+
     #  A dictionary of key-name pairs
     formats = {}
     for key in data_app.active_mdb.get_formats_by_datastructure(datastructure):
@@ -380,6 +502,11 @@ def formats_by_datastructure(datastructure):
 
 @data_app.route('/add_instance', methods=["POST"])
 def add_instance():
+    """Adds a new instance to the database.
+    Route: /add_instance
+    Method: POST
+    :returns: Response indicating success or failure"""
+    
     body = request.form['body']
     body = body[1:-1]
 
@@ -393,6 +520,10 @@ def add_instance():
 
 @data_app.route('/add_datastructure', methods=["POST"])
 def add_datastructure():
+    """Adds a new datastructure to the database.
+    Route: /add_datastructure
+    Method: POST
+    :returns: Response indicating success or failure"""
     body = request.form['body']
     body = body[1:-1]
 
@@ -407,6 +538,10 @@ def add_datastructure():
 
 @data_app.route('/add_instance_data_field', methods=["GET"])
 def add_instance_data_field():
+    """Renders the page to add a data field to an instance.
+    Route: /add_instance_data_field
+    Method: GET
+    :returns: Renders the data field add instance page"""
     return render_template("data/data_field_add_instance.html")
 
 
@@ -414,6 +549,10 @@ def add_instance_data_field():
 # input is the edited instance object
 @data_app.route('/edit_instance', methods=["POST"])
 def edit_instance():
+    """Edits an existing instance in the database.
+    Route: /edit_instance
+    Method: POST
+    :returns: Response indicating success or failure"""
     # TODO: fill this function to actually send edit request to backend
     body = request.form['body']
     body = body[1:-1]
@@ -433,6 +572,10 @@ def edit_instance():
 # input is the edited datastructure object
 @data_app.route('/edit_datastructure', methods=["POST"])
 def edit_datastructure():
+    """Edits an existing datastructure in the database.
+    Route: /edit_datastructure
+    Method: POST
+    :returns: Response indicating success or failure"""
     body = request.form['body']
     body = body[1:-1]
     datastructureKey = request.form['datastructureKey']
@@ -453,7 +596,11 @@ def remove_at(i, s):
 @data_app.route('/editor', methods=["GET", "POST"])
 @login_required
 def editor_page():
-    if not current_user.is_admin: 
+    """Displays the editor page with all the pending changes in different categories.
+    Route: /editor
+    Method: GET, POST
+    :returns: Rendered editor page with pending changes"""
+    if not current_user.has_role('admin'): 
         return jsonify({"error": "Access denied, you are not an admin."}), 403
     pending_datastructures = data_app.active_mdb.pending_datastructures()
     pending_instances = data_app.active_mdb.pending_instances()
@@ -467,8 +614,12 @@ def editor_page():
 @data_app.route('/change/<change_id>/<data_type>', methods=['GET'])
 @login_required
 def get_change(change_id, data_type):
-    if not current_user.is_admin: 
-        return jsonify({"error": "Access denied, you are not an admin."}), 403
+    """Displays the details of a specific change based on its change_id and data_type.
+    Route: /change/<change_id>/<data_type>
+    Method: GET
+    :param change_id: ID of the change to fetch
+    :param data_type: Type of the data being changed
+    :returns: Rendered change page with details of the change"""
     response = data_app.active_mdb.get_diff(change_id)
     #logger.debug("diff: " + str(response))
 
@@ -477,8 +628,12 @@ def get_change(change_id, data_type):
 @data_app.route('/change/accept/<change_id>/<data_type>', methods=['GET'])
 @login_required
 def accept_change(change_id, data_type):
-    if not current_user.is_admin: 
-        return jsonify({"error": "Access denied, you are not an admin."}), 403
+    """Handles the acceptance of a change.
+    Route: /change/accept/<change_id>/<data_type>
+    Method: GET
+    :param change_id: ID of the change to accept
+    :param data_type: Type of the data being changed (datastructure, instance, formatter, dataset, format)
+    :returns: Success message indicating change acceptance"""
     if data_type == "datastructure":
         message = "Datastructure accepted by " + current_user.email # TODO: get a message from ui
         data_app.active_mdb.approve_datastructure(change_id, message)
@@ -499,8 +654,12 @@ def accept_change(change_id, data_type):
 @data_app.route('/change/reject/<change_id>/<data_type>', methods=['GET'])
 @login_required
 def reject_change(change_id, data_type):
-    if not current_user.is_admin: 
-        return jsonify({"error": "Access denied, you are not an admin."}), 403
+    """Handles the rejection of a change.
+    Route: /change/reject/<change_id>/<data_type>
+    Method: GET
+    :param change_id: ID of the change to reject
+    :param data_type: Type of the data being changed (datastructure, instance, formatter, dataset)
+    :returns: Success message indicating change rejection"""
     if data_type == "datastructure":
         message = "Datastructure rejected by " + current_user.email # TODO: get a message from ui
         data_app.active_mdb.reject_datastructure(change_id, message)
@@ -518,7 +677,12 @@ def reject_change(change_id, data_type):
 
 @data_app.route('/format_instance/<instance>/<formatter>', methods=["GET"])
 def formaformat_instancet(instance,formatter):
-
+    """Applies a formatter to the specified instance.
+    Route: /format_instance/<instance>/<formatter>
+    Method: GET
+    :param instance: ID of the instance to format
+    :param formatter: ID of the formatter to apply
+    :returns: Formatted instance based on the provided formatter"""
     return data_app.active_mdb.format_instance(instance,formatter)
 
 
@@ -528,6 +692,12 @@ def formaformat_instancet(instance,formatter):
 
 @data_app.route('/import', methods=["GET"])
 def import_page():
+    """Renders the import page with a list of available formats.
+    Route: /import
+    Method: GET
+    Retrieves a list of formats from the database and displays them on the import page.
+    Returns: Rendered HTML page with the list of formats."""
+
     formats = {}
     for key in data_app.active_mdb.get_formats():
         formats[key]= json_beautifier.loads(data_app.active_mdb.retrieve_format(key))["name"]
@@ -535,6 +705,13 @@ def import_page():
 
 @data_app.route('/import_file', methods=["POST"])
 def import_file():
+    """Handles the uploading and formatting of files based on user selections.
+    Route: /import_file
+    Method: POST
+    :param files: Files uploaded by the user to be imported and formatted.
+    :param from: The original format of the file.
+    :param to: The target format to which the file should be converted.
+    Returns: Success message if the import and formatting are successful, error message if any issue occurs."""
     initial_directory = os.getcwd()
     if request.method == 'POST':
           files = request.files.getlist('file')
@@ -561,6 +738,14 @@ def import_file():
 
 @data_app.route('/import_dataset', methods=["POST"])
 def import_dataset():
+    """Handles the uploading and importing of a dataset.
+    Route: /import_dataset
+    Method: POST
+    :param file: The dataset file uploaded by the user.
+    :param script: The script associated with the dataset import.
+    :param from: The original format of the dataset.
+    :param to: The target format for the dataset.
+    Returns: Success message if the import is successful, failure message if an issue occurs."""
     if request.method == 'POST':
           f = request.files['file']
           fname = secure_filename(f.filename)

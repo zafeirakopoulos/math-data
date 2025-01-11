@@ -12,6 +12,11 @@ class MathDataLanguage:
         self.db = active_db
 
     def valid_name(self,name):
+        """ Validates the provided name.
+
+        :param name: The name to be validated.
+        :returns: True if the name is valid, otherwise False.
+        """
         if isinstance(name,str):
             # TODO check if safe
             # TODO check if valif accirding to MDL specs
@@ -19,6 +24,12 @@ class MathDataLanguage:
         return false
 
     def get_size(self, string, instance):
+        """ Retrieves the size from a given string, assuming it's in the format "key1.key2.@size".
+
+        :param string: The input string containing the size information.
+        :param instance: The instance to retrieve size values from.
+        :raises Exception: If the string does not contain an "@" symbol.
+        :returns: The size value if found, or -1 if the size is "any"."""
         if "@" not in string:
             raise Exception("Not a size string, @ missing.")
         if string.split("@")[1]=="any":
@@ -27,12 +38,14 @@ class MathDataLanguage:
         return reduce(lambda c, k: c.get(k, {}), keys, instance)
 
     def check_element_type(self, item, element_type  ):
+        
         print("\nChecking")
         print(item)
         print(element_type)
         return True
 
     def validate_instance(self, instance_key,datastructure_key):
+        
         instance = json.loads(self.db.retrieve_instance(instance_key))
         datastructure = json.loads(self.db.retrieve_datastructure(datastructure_key))
 
