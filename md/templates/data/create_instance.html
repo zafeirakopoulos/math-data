@@ -25,7 +25,7 @@
 <script>
     document.getElementById('submitButton').addEventListener('click', function () {
         const datastructure = document.getElementById('chooseDatastructure').value;
-        const createInstanceArea = document.getElementById('createInstanceArea').value.trim();
+        const createInstanceArea = document.getElementById('createInstanceArea').value;
         const infoText = document.getElementById('infoText');
 
         // Clear previous error message
@@ -45,10 +45,7 @@
             return; // Stop form submission
         }
 
-        // If everything is valid, submit the form
-        alert('Form is valid! Proceeding...');
-        // Optionally reset the form after successful submission
-        document.getElementById('instanceForm').reset();
+        submit_instance('createInstanceArea');
     });
 </script>
 

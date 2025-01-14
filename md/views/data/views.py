@@ -20,35 +20,39 @@ import json as json_beautifier
 @data_app.route('api/instance/<key>',methods=['GET', 'POST'])
 @login_required
 def api_instance(key):
-    """ API endpoint to retrieve an instance from the database by its key.
-
+    """Retrieves an instance from the database by its key.
+    Route: /api/instance/<key>
+    Methods: GET, POST
     :param key: The key for the instance to retrieve.
-    :returns: The instance retrieved from the database."""
+    :returns: The instance retrieved from the database as a JSON object."""
     return data_app.active_mdb.retrieve_instance_from_database(key)
 
 @data_app.route('api/instances', methods=["GET"])
 @login_required
 def api_instances():
-    """ API endpoint to retrieve all instances from the database.
-
-    :returns: A JSON array of all instances."""
+    """Retrieves all instances from the database.
+    Route: /api/instances
+    Methods: GET
+    :returns: A JSON array containing all instances."""
     return "["+",".join(data_app.active_mdb.get_instances())+"]"
 
 @data_app.route('api/datastructures', methods=["GET"])
 @login_required
 def api_datastructures():
-    """ API endpoint to retrieve all datastructures from the database.
-
-    :returns: A JSON array of all datastructures."""
+    """Retrieves all datastructures from the database.
+    Route: /api/datastructures
+    Methods: GET
+    :returns: A JSON array containing all datastructures."""
     return "["+",".join(data_app.active_mdb.get_datastructures)+"]"
 
 # function to get change list
 @data_app.route('api/pendings', methods=["GET", "POST"])
 @login_required
 def api_pendings():
-    """ API endpoint to retrieve a list of pending items (Datastructures, Instances, etc.).
-
-    :returns: A JSON object with pending datastructures, instances, formatters, datasets, and formats."""
+    """Retrieves a list of pending items, including datastructures, instances, formatters, datasets, and formats.
+    Route: /api/pendings
+    Methods: GET, POST
+    :returns: A JSON object with pending items grouped by type."""
     response = {
         "Datastructures": data_app.active_mdb.pending_datastructures(),
         "Instances": data_app.active_mdb.pending_instances(),
@@ -62,27 +66,29 @@ def api_pendings():
 @data_app.route('api/definition/<key>',methods=['GET', 'POST'])
 @login_required
 def api_definition(key):
-    """ API endpoint to retrieve a definition from the database by its key.
-
+    """Retrieves a definition from the database by its key.
+    Route: /api/definition/<key>
+    Methods: GET, POST
     :param key: The key for the definition to retrieve.
-    :returns: The definition retrieved from the database."""
+    :returns: The definition retrieved from the database as a JSON object."""
+
     return data_app.active_mdb.retrieve_definition(key)
 
 @data_app.route('api/definitions', methods=["GET"])
 @login_required
 def api_definitions():
-    """ API endpoint to retrieve all definitions from the database.
-
+    """Retrieves all definitions from the database.
+    Route: /api/definitions
+    Methods: GET
     :returns: A list of all definitions."""
     return data_app.active_mdb.definition_index()
 
 def pp_json(json_thing, sort=False, indents=4):
-    """ Helper function to pretty-print JSON with custom indentation and sorting.
-
-    :param json_thing: The JSON object to pretty-print.
-    :param sort: Whether to sort keys in the output.
+    """Pretty-prints a JSON object with custom indentation and sorting options.
+    :param json_thing: The JSON object to format.
+    :param sort: Boolean indicating whether to sort keys in the output.
     :param indents: Number of spaces to use for indentation.
-    :returns: The formatted JSON string."""
+    :returns: A formatted JSON string."""
     parsed_json = json_beautifier.loads(json_thing)
     return json_beautifier.dumps(parsed_json, indent = indents, sort_keys=sort)
 
@@ -118,6 +124,11 @@ def edit():
 # retrieves an instance object
 @data_app.route('/instance/<key>', methods=['GET', 'POST'])
 def instance(key):
+    """Retrieves an instance object by its key and returns both its HTML representation and JSON data.
+    Route: /instance/<key>
+    Methods: GET, POST
+    :param key: The key of the instance to retrieve.
+    :returns: A JSON object containing the instance data and its HTML representation."""
     response = data_app.active_mdb.retrieve_instance(key)
     # get actual json from json_dumps
     instance_data = json_beautifier.loads(response)
@@ -141,9 +152,10 @@ def instance(key):
 # function to list all instances
 @data_app.route('/instances', methods=["GET"])
 def instances():
-    """API endpoint to retrieve an instance by its key and return both HTML and JSON representations.
-    :param key: The key of the instance to retrieve.
-    :returns: A JSON object containing the instance data and its HTML representation."""
+    """Lists all instances and renders an HTML page displaying the instances and their associated datastructures.
+    Route: /instances
+    Methods: GET
+    :returns: An HTML page displaying a dictionary of datastructure key-name pairs."""
     #  A dictionary of key-name pairs
     datastructures = {}
     for key in data_app.active_mdb.get_datastructures():

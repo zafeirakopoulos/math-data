@@ -121,7 +121,10 @@
         margin: 20px 0;
     }
     </style>
-
+    <section id="mathdata" class="content-section">
+        <h3>What is MathData?</h3>
+        <p>MathData is a unified framework designed to describe and manage structured mathematical data. Its goal is to streamline the integration of various mathematical software applications, offering a standardized approach for exchanging and manipulating mathematical information across different platforms.</p>
+    </section>
     <nav class="nav-container">
         <h2 class="nav-title">User Manual Contents</h2>
         <div class="nav-links">
@@ -129,6 +132,11 @@
                 <h3>Introduction</h3>
                 <ul>
                     <li><a href="#overview">Overview</a></li>
+                    <li><a href="#overview-datastructure">Datastructure</a></li>
+                    <li><a href="#overview-instance">Instance</a></li>
+                    <li><a href="#overview-dataset">Dataset</a></li>
+                    <li><a href="#overview-format">Format</a></li>
+                    <li><a href="#overview-formatter">Formatter</a></li>
                 </ul>
             </div>
             <div class="nav-section">
@@ -169,11 +177,13 @@
     <button id="backToTop"><i class="fa fa-arrow-up"></i></button>
 
     <main>
+        
         <section id="overview" class="content-section">
             <h2>Overview</h2>
             <p>This user manual provides comprehensive guidance on how to use the MathDataLanguage system. The system allows you to manage mathematical data through various components including datastructures, instances, datasets, formats, and formatters.</p>
             
-            <h3>Data Structure Format</h3>
+            <h3 id="overview-datastructure">Data Structure</h3>
+            <p>Datastructures define how data is organized within the system. They provide a framework for creating and managing data relationships, attributes, and types. Each datastructure has a defined format that dictates its usage and interaction within the system. </p>
             <p>Below is the standard JSON structure used in the system:</p>
             <div class="json-structure">
                 {
@@ -210,6 +220,18 @@
                     }
                 }
             </div>
+            <h3 id="overview-instance">Instance</h3>
+            <p>An instance represents a specific occurrence of a datastructure. It is an actual data entity that embodies the attributes and relationships defined by the datastructure, allowing users to assign real values to the data.</p>
+
+            <h3 id="overview-dataset">Dataset</h3>
+            <p>A dataset is a collection of instances that are grouped together. Datasets are often used to store related data, making it easier to manipulate and analyze multiple instances at once.</p>
+
+            <h3 id="overview-format">Format</h3>
+            <p>A format specifies how data is structured and represented. Formats determine how data is organized, stored, and accessed, allowing for consistency in the way data is handled across different datasets and instances.</p>
+
+            <h3 id="overview-formatter">Formatter</h3>
+            <p>A formatter is a tool or script that transforms data from one format to another. For example, a Python script can be used to convert a dataset in one format into a compatible format for processing or export. This allows for flexible data transformation and compatibility between different systems.</p>
+
         </section>
 
         <section id="browse" class="content-section">
