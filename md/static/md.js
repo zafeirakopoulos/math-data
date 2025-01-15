@@ -95,6 +95,14 @@ function show_formats_for_datastructure(datastructure){
     });
 }
 
+function show_dataset(dataset){
+    $.get('/data/dataset/'+ dataset, {}).done(function(response) {
+      // put the html that generated list of instances in the "data-display-area" div
+      document.getElementById("list-display-area").innerHTML = response;
+        }).fail(function() {
+        document.getElementById("list-display-area").innerHTML = "{{ 'Error: Could not contact server.' }}";
+    });
+}
 
 function show_instances_for_creating_dataset(datastructure){
     $.get('/data/instances_by_datastructure_for_dataset/'+ datastructure, {}).done(function(response) {
@@ -220,7 +228,8 @@ function submit_datastructure(textAreaId) {
     let infoText = get_init_element("infoText");
 
     let body = $("#" + textAreaId).val();
-
+    console.log("");
+    console.log(body);
     if(!isValidJson(body)) {
         print_input_error(infoText);
         return;
@@ -299,7 +308,7 @@ function submit_formatter() {
     let url = '/data/add_formatter';
 
     let data = {"formatter":formatter, "name":formatterName, "to_datastructure":to_datastructure, "from_datastructure":from_datastructure};
-
+    console.log(data);
     $.post(url, data).done(function(response) {
         print_input_success(infoText);
         document.formatter.reset();
@@ -320,12 +329,14 @@ function submit_format() {
     var e = document.getElementById("chooseDatastructure");
     let datastructure = e.options[e.selectedIndex].value;
 
-    var e = document.getElementById("formatDecription");
+    var e = document.getElementById("formatDescription");
     let description = e.value;
 
     let url = '/data/add_format';
 
     let data = {"name":name, "datastructure":datastructure, "description":description};
+
+    console.log(data);
 
     $.post(url, data).done(function(response) {
         print_input_success(infoText);
@@ -408,7 +419,11 @@ function reject_change(change_id, data_type) {
 }
 
 function isValidJson(text){
+    console.log(text);
+    console.log("TYPE ---->"+ typeof text);
     if (typeof text !== "string"){
+        
+
         return false;
     }
 
@@ -417,6 +432,7 @@ function isValidJson(text){
         return true;
     }
     catch (error){
+        console.log(text);
         return false;
     }
 }

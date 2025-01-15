@@ -1139,13 +1139,14 @@ class MathDataBase:
         print("about to create filename")
 
         # .tpy is to prevent flask from tracking change and resetting while debug mode is on
-        tmpfilename =  os.path.join(self.base_path,'import_scratch',fname,fname+formatter+".tpy")
+        tmpfilename =  os.path.join(self.base_path,'import_scratch',fname,fname+formatter+".py")
         outfilename =  os.path.join(self.base_path,'import_scratch',fname,fname+formatter+".txt")
-        print(tmpfilename)
-        print(outfilename)
+        print("Formatter: "+formatter)
+        print("tmpfilename: "+tmpfilename)
+        print("outfilename: "+outfilename)
         with open(tmpfilename, "w") as tmp_file:
             with open(os.path.join(self.base_path,'import_scratch',fname,fname), "r") as input_file:
-                tmp_file.write("input="+ input_file.read() )
+                tmp_file.write("input=" + "\"" +input_file.read()+ "\"")
                 tmp_file.write("\n\n")
                 tmp_file.write(self.retrieve_formatter(formatter))
                 tmp_file.write("\n\n")

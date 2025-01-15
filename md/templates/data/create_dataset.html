@@ -2,41 +2,30 @@
 
 {% block content %}
 
-<form class="needs-validation" id="datasetForm">
-    <div class="row">
-        <div class="col-sm">
-            <select class="form-control" id="chooseDatastructure" onchange="show_instances_for_creating_dataset(this.value)" required>
-                <option value="" selected disabled>Choose Datastructure</option>
-                {% for datastructure in datastructures %}
-                    <option value="{{datastructure}}">{{datastructures[datastructure]}}</option>
-                {% endfor %}
-            </select>
-        </div>
-    </div>
-    <br>
-    <div class="col-sm">
-        <div id="list-display-area"></div>
-    </div>
-    <br>
-    <button class="btn btn-primary" type="button" id="submitButton">Submit</button>
+<form class="needs-validation">
+
+      <div class="row">
+         <div class="col-sm">
+        <select class="form-control" id="chooseInstance" onchange="show_instances_for_creating_dataset(this.value)">
+            <option selected>Choose Datastructure</option>
+            {% for datastructure in datastructures %}
+              <option value="{{datastructure}}">{{datastructures[datastructure]}}</option>
+            {% endfor %}
+        </select>
+      </div>
+      </div>
 </form>
+    </br>
+  <div class="col-sm">
+            <form action="/data/add_dataset" name="dataset" method="POST">
+                  <div id="list-display-area" name="list-display-area"></div>
+                  <input type="submit" class="btn btn-primary">
+            </form>
+  </div>
 
-<script>
-    document.getElementById('submitButton').addEventListener('click', function () {
-        const datastructure = document.getElementById('chooseDatastructure').value;
-        const infoText = document.getElementById('list-display-area');
+</br>
+    <!--<button class="btn btn-primary" type="button" onclick="submit_dataset('list-display-area');">Submit</button>-->
 
-     
-        infoText.innerHTML = "";
 
- 
-        if (!datastructure || datastructure === "") {
-            infoText.innerHTML = "<p style='color:red;'>Please select a valid datastructure.</p>";
-            return; 
-        }
-
-        submit_instance('chooseInstance');
-    });
-</script>
 
 {% endblock %}
