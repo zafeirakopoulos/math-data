@@ -20,7 +20,19 @@
     <script src="{{ url_for('static', filename='renderjson.js') }}"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/sigma.js/1.2.1/sigma.min.js"></script>
 
-
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            document.querySelectorAll('textarea').forEach(function (textarea) {
+                textarea.addEventListener('keydown', function (e) {
+                    if (e.key === 'Tab') {
+                        e.preventDefault();  
+                        document.execCommand('insertText', false, '\t');
+                    }
+                });
+            });
+        });
+    </script>
+    
     <!-- <script>hljs.initHighlightingOnLoad();</script> -->
 
     <script type=text/javascript>
@@ -111,5 +123,12 @@
     </main>
 
     {{ bootstrap.load_js() }}
+
+
+
+
+
+
+    
 </body>
 </html>
