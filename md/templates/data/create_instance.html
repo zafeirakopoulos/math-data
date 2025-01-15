@@ -2,8 +2,36 @@
 
 {% block content %}
 
+<style>
+    .button-right {
+        text-align: right;
+        margin-bottom: 10px;
+    }
+
+    .btn-beautify {
+        background-color: #28a745; 
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        font-size: 16px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+
+    .btn-beautify:hover {
+        background-color: #1b692c;
+
+    }
+    .btn-beautify:focus {
+        outline: none;
+    }
+</style>
+
 <form class="needs-validation" name="instance" id="instanceForm">
-    <center><p style="display: none; color:red;" id="infoText" style="color: red;"></p></center>
+    <center><p style="display: none; color:red;" id="infoText"></p></center>
+
     <div class="row">
         <div class="col-sm">
             <select class="form-control" id="chooseDatastructure" required>
@@ -15,34 +43,63 @@
         </div>
     </div>
     <br>
+
+    <div class="button-right">
+        <button class="btn-beautify" type="button" onclick="beautifyJSONInstance();">Beautify JSON</button>
+    </div>
+
     <div class="mb-3">
         <textarea class="form-control" id="createInstanceArea" placeholder="Enter JSON here" rows="15" required></textarea>
     </div>
 
+
     <button class="btn btn-primary" type="button" id="submitButton">Submit</button>
 </form>
 
+
+<script src="https://cdn.jsdelivr.net/npm/js-beautify@1.14.0/js/lib/beautify.js"></script>
+
 <script>
+    function beautifyJSONInstance() {
+        const inputArea = document.getElementById('createInstanceArea');
+        const infoText = document.getElementById('infoText');
+        const rawInput = inputArea.value;
+
+        try {
+
+            const parsedJSON = JSON.parse(rawInput);
+            const beautifiedJSON = js_beautify(JSON.stringify(parsedJSON), { indent_size: 4 });
+
+            inputArea.value = beautifiedJSON;
+
+
+            infoText.style.display = 'none';
+
+        } catch (error) {
+
+            infoText.textContent = 'Invalid JSON: ' + error.message;
+            infoText.style.display = 'block';
+        }
+    }
+
+    // Submit Button Handler
     document.getElementById('submitButton').addEventListener('click', function () {
         const datastructure = document.getElementById('chooseDatastructure').value;
         const createInstanceArea = document.getElementById('createInstanceArea').value;
         const infoText = document.getElementById('infoText');
 
-        // Clear previous error message
         infoText.style.display = "none";
 
-        // Validate datastructure selection
         if (!datastructure || datastructure === "") {
             infoText.textContent = "Please select a valid datastructure.";
             infoText.style.display = "block";
-            return; // Stop form submission
+            return;
         }
 
-        // Validate JSON textarea
         if (!createInstanceArea) {
             infoText.textContent = "Please enter valid JSON data.";
             infoText.style.display = "block";
-            return; // Stop form submission
+            return;
         }
 
         submit_instance('createInstanceArea');

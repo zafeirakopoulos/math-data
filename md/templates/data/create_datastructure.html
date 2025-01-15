@@ -2,16 +2,73 @@
 
 {% block content %}
 
+<style>
+       .button-left {
+        text-align: right;
+        margin-bottom: 10px;
+    }
+    .btn-beautify {
+        background-color: #28a745;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        font-size: 16px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    .btn-beautify:hover {
+        background-color: #1b692c;
+    }
+    .btn-beautify:focus {
+        outline: none;
+    }
+</style>
+
 <form class="needs-validation">
 
+    <div class="button-left">
+        <button class="btn-beautify" type="button" onclick="beautifyJSON();">Beautify JSON</button>
+    </div>
     <div class="mb-3">
         <p style="display: none; color:red;" id="infoText"></p>
+        
+
         <textarea class="form-control" id="createDatastructureArea" placeholder="Enter JSON here" rows="15" required></textarea>
     </div>
+
 
     <button class="btn btn-primary" type="button" onclick="submit_datastructure('createDatastructureArea');">Submit</button>
 
 </form>
 
+
+<script src="https://cdn.jsdelivr.net/npm/js-beautify@1.14.0/js/lib/beautify.js"></script>
+
+<script>
+    function beautifyJSON() {
+        const inputArea = document.getElementById('createDatastructureArea');
+        const infoText = document.getElementById('infoText');
+        const rawInput = inputArea.value;
+
+        try {
+
+            const parsedJSON = JSON.parse(rawInput);
+            const beautifiedJSON = js_beautify(JSON.stringify(parsedJSON), { indent_size: 4 });
+
+
+            inputArea.value = beautifiedJSON;
+
+
+            infoText.style.display = 'none';
+
+        } catch (error) {
+      
+            infoText.textContent = 'Invalid JSON: ' + error.message;
+            infoText.style.display = 'block';
+        }
+    }
+</script>
 
 {% endblock %}
