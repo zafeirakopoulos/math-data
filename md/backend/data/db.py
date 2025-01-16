@@ -1088,20 +1088,14 @@ class MathDataBase:
         # Instance and formatter can be in different repositories, but retriever functions handle that case
         # By choice we commit result to instance's repository
         self.cd_to_commit_repository(instance)
-
-        tmpfilename =  os.path.join(self.path,self.base_path,'scratch',instance+formatter+".py")
-        outfilename =  os.path.join(self.path,self.base_path,'scratch',instance+formatter+".txt")
-        with open(tmpfilename, "w") as tmp_file:
-            tmp_file.write("input="+ self.retrieve_instance(instance))
-            tmp_file.write("\n\n")
-            tmp_file.write(self.retrieve_formatter(formatter))
-            tmp_file.write("\n\n")
-            tmp_file.write("with open(\""+ outfilename + "\", \"w\") as out_file:\n")
-            tmp_file.write("    out_file.write(str(do_format(input)))")
-
-        subprocess.check_output(["python3",tmpfilename])
-        with open(outfilename, "r") as out_file:
-            return out_file.read()
+        print("hello")
+        print("Instance ==>",instance)
+        print("retrived instance:",self.retrieve_instance(instance))
+        namespace = {}
+        exec(self.retrieve_formatter(formatter), namespace)
+        
+        result = namespace['formatter'](json.loads(str(self.retrieve_instance(instance))))
+        return result
 
 
     ########################################################################

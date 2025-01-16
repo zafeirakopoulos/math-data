@@ -1,6 +1,8 @@
+import io
 from flask import Flask, Blueprint, request, json, render_template, jsonify
 from flask_login import current_user
 from flask_login import login_required
+from flask import send_file
 from md.views.data import data_app
 from md.core import logger
 from werkzeug.utils import secure_filename
@@ -707,7 +709,18 @@ def formaformat_instancet(instance,formatter):
     :param instance: ID of the instance to format
     :param formatter: ID of the formatter to apply
     :returns: Formatted instance based on the provided formatter"""
-    return data_app.active_mdb.format_instance(instance,formatter)
+    formatted_content = data_app.active_mdb.format_instance(instance, formatter)
+        
+    mem = io.BytesIO()
+    mem.write(formatted_content.encode('utf-8'))
+    mem.seek(0)
+    
+    return send_file(
+        mem,
+        mimetype='text/plain',
+        as_attachment=True,
+        attachment_filename=f'formatted_instance_{instance}.txt'
+    )
 
 
 ##############################################################################

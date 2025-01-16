@@ -400,7 +400,6 @@ function get_change(change_id, data_type) {
 function accept_change(change_id, data_type) {
     $.get('/data/change/accept/'+ change_id + '/' + data_type, {}).done(function(response) {
         document.getElementById("change-display-area").innerHTML =  "Accepted";
-        window.location.reload();
     }).fail(function(err) {
         document.getElementById("change-display-area").innerHTML = "{{ 'Error: Could not contact server.' }}";
         console.log(err);
@@ -457,12 +456,29 @@ function print_input_success(element) {
 
 
 
-function format_instance(instance,formatter) {
-
-  $.get('/data/format_instance/'+ instance + "/" + formatter, {}).done(function(response) {
-    // put the html that generated list of instances in the "data-display-area" div
-    document.getElementById("jsonArea").innerHTML = response;
-      }).fail(function() {
-      document.getElementById("list-display-area").innerHTML = "{{ 'Error: Could not contact server.' }}";
-  });
-}
+function format_instance(instance, formatter) {
+    $.get('/data/format_instance/' + instance + "/" + formatter, {})
+      .done(function(response) {
+        // Create a blob from the response text
+        const blob = new Blob([response], { type: 'text/plain' });
+        
+        // Create a temporary link element
+        const downloadLink = document.createElement('a');
+        downloadLink.href = window.URL.createObjectURL(blob);
+        
+        // Set the filename - using instance ID and formatter as part of filename
+        downloadLink.download = `formatted_instance_${instance}.txt`;
+        
+        // Append link to body, click it, and remove it
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+        document.body.removeChild(downloadLink);
+        
+        // Clean up the URL object
+        window.URL.revokeObjectURL(downloadLink.href);
+      })
+      .fail(function() {
+        document.getElementById("infoText").style.display = "block";
+        document.getElementById("infoText").innerText = "Error: Could not contact server.";
+      });
+  }
