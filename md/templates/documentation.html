@@ -230,7 +230,7 @@
             <p>A format specifies how data is structured and represented. Formats determine how data is organized, stored, and accessed, allowing for consistency in the way data is handled across different datasets and instances.</p>
 
             <h3 id="overview-formatter">Formatter</h3>
-            <p>A formatter is a tool or script that transforms data from one format to another. For example, a Python script can be used to convert a dataset in one format into a compatible format for processing or export. This allows for flexible data transformation and compatibility between different systems.</p>
+            <p>A formatter is script that transforms data from one format to another. A Python script be used to convert a dataset in one format into a compatible format for processing or export. This allows for flexible data transformation and compatibility between different systems.</p>
 
         </section>
 
@@ -288,8 +288,27 @@
         
             <section id="create-formatter">
                 <h3>Formatter</h3>
-                <p>Create new formatters to transform data between different formats.</p>
-            </section>
+                <p>
+                  Create new formatters to transform data between different formats. The script must be compatible with Python 3.7 and should include a function defined as:
+                </p>
+                <pre><code>
+              def formatter(input):
+                  """
+                  Transforms the input into the desired output format.
+              
+                  Parameters:
+                      input (any): The data to be transformed.
+              
+                  Returns:
+                      list: A list of suitable format.
+                  """
+                  
+                </code></pre>
+                <p>
+                  The function should return a list of JSON structures formatted according to the system's requirements if it is intended to create an instance.
+                </p>
+              </section>
+              
         </section>
         
         {% if current_user.has_role('admin') %}

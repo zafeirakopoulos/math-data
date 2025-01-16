@@ -1158,16 +1158,15 @@ class MathDataBase:
             self.add_instance(out_file.read(),"Imported")
 
 
-
-    def import_dataset(self,fname, split_script, from_format, to_format):
-        """Imports and formats a dataset using the specified formats.
+    def import_instances(self,datastructure,file, from_format, to_format):
+        """Imports and formats instances using the specified formats.
 
         This method extracts a dataset from a tar file, applies the corresponding formatter 
         (based on the provided from_format and to_format), and writes the result to an output 
         file. It then adds the formatted output as an instance.
 
-        :param fname: The name of the dataset to import.
-        :param split_script: The script used for splitting the dataset (currently not used in the code).
+        :param file: The file of the instances.
+        :param datastructure: The datastructure of the instances.
         :param from_format: The format of the input dataset.
         :param to_format: The target format to apply.
         :raises Exception: If no matching formatter is found."""
@@ -1188,30 +1187,73 @@ class MathDataBase:
             raise Exception("Formatter not found")
         print("about to create filename")
 
+        content = file.read()
+        
+        namespace = {}
+        if isinstance(content, bytes):
+            content = content.decode('utf-8')
+        exec(self.retrieve_formatter(formatter), namespace)
+        result = namespace['formatter'](content)
+        for instance in result:
+            instance["datastructure"] = datastructure
+            self.add_instance(json.dumps(instance),"Imported")
 
-        tarfilename=os.path.join(self.path,self.base_path,'import_scratch',fname,fname)
-        tar = tarfile.open(name=tarfilename, mode='r')
-        tarfolder =         tarfilename=os.path.join(self.path,self.base_path,'import_scratch',fname,"extract")
-        tar.extractall(path=tarfolder)
+    # def import_dataset(self,fname, split_script, from_format, to_format):
+    #     """Imports and formats a dataset using the specified formats.
+
+    #     This method extracts a dataset from a tar file, applies the corresponding formatter 
+    #     (based on the provided from_format and to_format), and writes the result to an output 
+    #     file. It then adds the formatted output as an instance.
+
+    #     :param fname: The name of the dataset to import.
+    #     :param split_script: The script used for splitting the dataset (currently not used in the code).
+    #     :param from_format: The format of the input dataset.
+    #     :param to_format: The target format to apply.
+    #     :raises Exception: If no matching formatter is found."""
+    #     os.chdir(self.base_path)
+
+    #     # Find the correct formatter
+    #     formatter=0
+    #     for f in self.get_formatters():
+    #         keys= f.split(" ")
+    #         print(keys)
+
+    #         if keys[0]==from_format and keys[1]==to_format:
+    #             formatter=keys[2]
+    #             break
+    #     print("done with loop")
+
+    #     if formatter==0:
+    #         raise Exception("Formatter not found")
+    #     print("about to create filename")
+
+    #     exec(self.retrieve_formatter(formatter))
+
+    #     formatter()
+
+        # tarfilename=os.path.join(self.path,self.base_path,'import_scratch',fname,fname)
+        # tar = tarfile.open(name=tarfilename, mode='r')
+        # tarfolder =         tarfilename=os.path.join(self.path,self.base_path,'import_scratch',fname,"extract")
+        # tar.extractall(path=tarfolder)
 
 
-        tmpfilename =  os.path.join(self.path,self.base_path,'import_scratch',fname,fname+formatter+".py")
-        outfilename =  os.path.join(self.path,self.base_path,'import_scratch',fname,fname+formatter+".txt")
-        print(tmpfilename)
-        print(outfilename)
+        # tmpfilename =  os.path.join(self.path,self.base_path,'import_scratch',fname,fname+formatter+".py")
+        # outfilename =  os.path.join(self.path,self.base_path,'import_scratch',fname,fname+formatter+".txt")
+        # print(tmpfilename)
+        # print(outfilename)
 
-        with open(tmpfilename, "w") as tmp_file:
-            with open(os.path.join(self.path,self.base_path,'import_scratch',fname,fname), "r") as input_file:
-                tmp_file.write("input="+ input_file.read() )
-                tmp_file.write("\n\n")
-                tmp_file.write(self.retrieve_formatter(formatter))
-                tmp_file.write("\n\n")
-                tmp_file.write("with open(\""+ outfilename + "\", \"w\") as out_file:\n")
-                tmp_file.write("    out_file.write(str(format(input)))")
+        # with open(tmpfilename, "w") as tmp_file:
+        #     with open(os.path.join(self.path,self.base_path,'import_scratch',fname,fname), "r") as input_file:
+        #         tmp_file.write("input="+ input_file.read() )
+        #         tmp_file.write("\n\n")
+        #         tmp_file.write(self.retrieve_formatter(formatter))
+        #         tmp_file.write("\n\n")
+        #         tmp_file.write("with open(\""+ outfilename + "\", \"w\") as out_file:\n")
+        #         tmp_file.write("    out_file.write(str(format(input)))")
 
-        subprocess.check_output(["python3",tmpfilename])
-        with open(outfilename, "r") as out_file:
-            self.add_instance(out_file.read(),"Imported")
+        # subprocess.check_output(["python3",tmpfilename])
+        # with open(outfilename, "r") as out_file:
+        #     self.add_instance(out_file.read(),"Imported")
 
 
     ########################################################################

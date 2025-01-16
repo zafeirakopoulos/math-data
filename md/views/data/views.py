@@ -721,11 +721,14 @@ def import_page():
     Method: GET
     Retrieves a list of formats from the database and displays them on the import page.
     Returns: Rendered HTML page with the list of formats."""
+    datastructures = {}
+    for key in data_app.active_mdb.get_datastructures():
+        datastructures[key]= json_beautifier.loads(data_app.active_mdb.retrieve_datastructure(key))["name"]
 
     formats = {}
     for key in data_app.active_mdb.get_formats():
         formats[key]= json_beautifier.loads(data_app.active_mdb.retrieve_format(key))["name"]
-    return render_template("data/import.html", formats=formats)
+    return render_template("data/import.html", formats=formats, datastructures=datastructures)
 
 @data_app.route('/import_file', methods=["POST"])
 def import_file():
@@ -759,25 +762,84 @@ def import_file():
     os.chdir(initial_directory)
     return "Import failed"
 
+# @data_app.route('/import_instances', methods=["POST"])
+# def import_instances():
+#     """Handles the uploading and importing of a dataset with progress updates.
+#     Route: /import_instances
+#     Method: POST
+#     :param file: The instances file uploaded by the user.
+#     :param from: The original format of the dataset.
+#     :param to: The target format for the dataset.
+#     Returns: Success message if the import is successful, failure message if an issue occurs."""
+#     if request.method == 'POST':
+#         try:
+#             file = request.files['file']
+            
+#             # Import the instances with the provided parameters
+#             data_app.active_mdb.import_instances(
+#                 request.form['datastructure'],
+#                 file,
+#                 request.form['from'],
+#                 request.form["to"]
+#             )
+            
+#             return Response(
+#                 'Imported successfully',
+#                 status=200,
+#                 mimetype='text/plain'
+#             )
+            
+#         except Exception as e:
+#             return Response(
+#                 f'Import failed: {str(e)}',
+#                 status=400,
+#                 mimetype='text/plain'
+#             )
+            
+#     return Response(
+#         "Method not allowed",
+#         status=405,
+#         mimetype='text/plain'
+#     )
 
-@data_app.route('/import_dataset', methods=["POST"])
-def import_dataset():
+@data_app.route('/import_instances', methods=["POST"])
+def import_instances():
     """Handles the uploading and importing of a dataset.
-    Route: /import_dataset
+    Route: /import_instances
     Method: POST
-    :param file: The dataset file uploaded by the user.
-    :param script: The script associated with the dataset import.
+    :param file: The instances file uploaded by the user.
     :param from: The original format of the dataset.
     :param to: The target format for the dataset.
-    Returns: Success message if the import is successful, failure message if an issue occurs."""
+    Returns: JSON response with appropriate HTTP status code."""
     if request.method == 'POST':
-          f = request.files['file']
-          fname = secure_filename(f.filename)
-          os.chdir("import_scratch")
-          os.mkdir(fname)
-          os.chdir(fname)
-          f.save(fname)
+        try:
+            file = request.files['file']
+            data_app.active_mdb.import_instances(
+                request.form['datastructure'],
+                file,
+                request.form['from'],
+                request.form["to"]
+            )
+            return jsonify({'message': 'Imported successfully'}), 200
+        except Exception as e:
+            # Log the error if needed
+            print(f"Import error: {str(e)}")
+            return jsonify({'message': 'Import failed', 'error': str(e)}), 400
+    return jsonify({'message': 'Method not allowed'}), 405
 
-          data_app.active_mdb.import_dataset(fname,  request.form['script'], request.form['from'], request.form["to"])
-          return 'Imported successfully'
-    return "Import failed"
+# @data_app.route('/import_dataset', methods=["POST"])
+# def import_dataset():
+#     """Handles the uploading and importing of a dataset.
+#     Route: /import_dataset
+#     Method: POST
+#     :param file: The dataset file uploaded by the user.
+#     :param script: The script associated with the dataset import.
+#     :param from: The original format of the dataset.
+#     :param to: The target format for the dataset.
+#     Returns: Success message if the import is successful, failure message if an issue occurs."""
+#     if request.method == 'POST':
+#           file = request.files['file']
+
+#           data_app.active_mdb.import_dataset(dataset, file,  request.form['script'], request.form['from'], request.form["to"])
+#           return 'Imported successfully'
+#     return "Import failed"
