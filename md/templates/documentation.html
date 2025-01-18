@@ -139,16 +139,17 @@
                     <li><a href="#overview-formatter">Formatter</a></li>
                 </ul>
             </div>
+
             <div class="nav-section">
-                <h3>Browse</h3>
+                <h3>Instructions</h3>
                 <ul>
-                    <li><a href="#browse-datastructure">Datastructure</a></li>
-                    <li><a href="#browse-instance">Instance</a></li>
-                    <li><a href="#browse-dataset">Dataset</a></li>
-                    <li><a href="#browse-format">Format</a></li>
-                    <li><a href="#browse-formatter">Formatter</a></li>
+                    <li><a href="#instructions-step1">Step 1</a></li>
+                    <li><a href="#instructions-step2">Step 2</a></li>
+                    <li><a href="#instructions-step3">Step 3</a></li>
+
                 </ul>
             </div>
+
             <div class="nav-section">
                 <h3>Create</h3>
                 <ul>
@@ -171,6 +172,7 @@
                 </ul>
             </div>
             {% endif %}
+            
         </div>
     </nav>
 
@@ -234,33 +236,26 @@
 
         </section>
 
-        <section id="browse" class="content-section">
-            <h2>Browse</h2>
-        
-            <section id="browse-datastructure">
-                <h3>Datastructure</h3>
-                <p>Navigate and view existing datastructures. Search and explore their details and relationships within the system.</p>
-            </section>
-        
-            <section id="browse-instance">
-                <h3>Instance</h3>
-                <p>Search and view instances associated with datastructures. Check their status and attributes.</p>
-            </section>
-        
-            <section id="browse-dataset">
-                <h3>Dataset</h3>
-                <p>Explore datasets linked to datastructures and instances. Filter and access datasets for further analysis.</p>
-            </section>
-        
-            <section id="browse-format">
-                <h3>Format</h3>
-                <p>View available formats. Check the structure and organization of data used in the system.</p>
-            </section>
-        
-            <section id="browse-formatter">
-                <h3>Formatter</h3>
-                <p>View existing formatters and their role in data transformation within the system.</p>
-            </section>
+        <section id="instructions" class="content-section">
+            <h2>Step-by-Step Instructions</h2>
+            
+            <b>For all steps, wait for approval before proceeding.</b>
+
+            <h3 id="instructions-step1">Step 1</h3>
+            <p>Create a structure that follows the example data structure provided above in <a href="#overview-datastructure">JSON format.</a></p>
+            
+            <h3 id="instructions-step2">Step2 </h3>
+            <p>To add an 
+                <a href="#create-instance">the instance</a>    
+                , you can either import it or create a single instance manually.
+                If you want to add it as a file, you need to define
+                <a href="#create-format">the format</a> and 
+                <a href="#create-formatter">formatter.</a></p>
+
+            <h3 id="instructions-step3">Step 3</h3>
+            <p>To add a 
+                <a href="#create-dataset">the dataset</a>    
+                , select the relevant data structure and choose the appropriate instances from the listed options.</p>
         </section>
         
         <section id="create" class="content-section">
@@ -278,18 +273,18 @@
         
             <section id="create-dataset">
                 <h3>Dataset</h3>
-                <p>Create new datasets and associate them with instances and datastructures.</p>
+                <p>Adding a dataset is done by selecting a data structure available in the system and choosing from the currently available instances.</p>
             </section>
         
             <section id="create-format">
                 <h3>Format</h3>
-                <p>Define new data formats to structure datasets and instances.</p>
+                <p>Define new data formats to structure datasets and instances. It gets name, datastructure and description as parameters</p>
             </section>
         
             <section id="create-formatter">
                 <h3>Formatter</h3>
                 <p>
-                  Create new formatters to transform data between different formats. The script must be compatible with Python 3.7 and should include a function defined as:
+                  It takes python script with the function formatter(parameter) that used to transform one format to another format. The script must be compatible with Python 3.7 and should include a function defined as:
                 </p>
                 <pre><code>
               def formatter(input):
@@ -342,7 +337,7 @@
         </section>
         {% endif %}
         
-
+        
     </main>
 
     <script>
