@@ -2,36 +2,71 @@
 
 {% block content %}
 
-<form class="needs-validation" name="formatter">
+<form class="needs-validation" name="formatter" id="formatterForm">
     <center><p style="display: none; color:red;" id="infoText"></p></center>
-      <div class="row">
-          <div class="col-sm">
-        <select class="form-control" id="chooseFrom">
-            <option selected>From</option>
-            {% for format in formats %}
-              <option value="{{format}}">{{formats[format]}}</option>
-            {% endfor %}
-          </select>
-      </div>
-      </div>
-      </br>
-      <div class="row">
-           <div class="col-sm">
-        <select class="form-control" id="chooseTo">
-            <option selected>To</option>
-            {% for format in formats %}
-              <option value="{{format}}">{{formats[format]}}</option>
-            {% endfor %}
-        </select>
-      </div>
-      </div>
-      </br>
+    <div class="row">
+        <div class="col-sm">
+            <select class="form-control" id="chooseFrom" required>
+                <option value="" selected disabled>From</option>
+                {% for format in formats %}
+                    <option value="{{format}}">{{formats[format]}}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+    <br>
+    <div class="row">
+        <div class="col-sm">
+            <select class="form-control" id="chooseTo" required>
+                <option value="" selected disabled>To</option>
+                {% for format in formats %}
+                    <option value="{{format}}">{{formats[format]}}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+    <br>
     <div class="mb-3">
-        <textarea class="form-control" id="createScriptArea" placeholder='The script' rows="15" required></textarea>
+        <textarea class="form-control" id="createScriptArea" placeholder="The script" rows="15" required></textarea>
+    </div>
+    <div class="mb-3">
+        <input class="form-control" id="formatterName" placeholder='Formatter name...' required></textarea>
     </div>
 
-    <button class="btn btn-primary" type="button" onclick="submit_formatter();">Submit</button>
+    <button class="btn btn-primary" type="button" id="submitButton">Submit</button>
 </form>
 
+<script>
+    document.getElementById('submitButton').addEventListener('click', function () {
+        const fromFormat = document.getElementById('chooseFrom').value;
+        const toFormat = document.getElementById('chooseTo').value;
+        const createScriptArea = document.getElementById('createScriptArea').value.trim();
+        const infoText = document.getElementById('infoText');
+
+        // Clear previous error messages
+        infoText.style.display = "none";
+
+        // Validate "From" and "To" selections
+        if (!fromFormat || fromFormat === "") {
+            infoText.textContent = "Please select a valid 'From' format.";
+            infoText.style.display = "block";
+            return; // Stop form submission
+        }
+
+        if (!toFormat || toFormat === "") {
+            infoText.textContent = "Please select a valid 'To' format.";
+            infoText.style.display = "block";
+            return; // Stop form submission
+        }
+
+        // Validate script area
+        if (!createScriptArea) {
+            infoText.textContent = "Please provide a script.";
+            infoText.style.display = "block";
+            return; // Stop form submission
+        }
+        submit_formatter();
+    });
+</script>
 
 {% endblock %}

@@ -2,16 +2,99 @@
 
 {% block content %}
 
+<style>
+    .button-left {
+        text-align: right;
+        margin-bottom: 10px;
+    }
+
+    .btn-beautify {
+        background-color: #28a745;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        font-size: 16px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    .btn-beautify:hover {
+        background-color: #1b692c;
+    }
+
+    .btn-beautify:focus {
+        outline: none;
+    }
+</style>
+
 <form class="needs-validation">
+
+    <div class="button-left">
+        <button class="btn-beautify" type="button" onclick="beautifyJSON();">Beautify JSON</button>
+    </div>
 
     <div class="mb-3">
         <p style="display: none; color:red;" id="infoText"></p>
+
         <textarea class="form-control" id="createDatastructureArea" placeholder="Enter JSON here" rows="15" required></textarea>
     </div>
 
-    <button class="btn btn-primary" type="button" onclick="submit_datastructure('createDatastructureArea');">Submit</button>
+    <button class="btn btn-primary" type="button" onclick="validateAndSubmit();">Submit</button>
 
 </form>
 
+<script src="https://cdn.jsdelivr.net/npm/js-beautify@1.14.0/js/lib/beautify.js"></script>
+
+<script>
+
+    function getElements() {
+        return {
+            inputArea: document.getElementById('createDatastructureArea'),
+            infoText: document.getElementById('infoText')
+        };
+    }
+
+
+    function beautifyJSON() {
+        const { inputArea, infoText } = getElements();
+
+        try {
+            const parsedJSON = JSON.parse(inputArea.value);
+            const beautifiedJSON = js_beautify(JSON.stringify(parsedJSON), { indent_size: 4 });
+            inputArea.value = beautifiedJSON;
+            infoText.style.display = 'none';
+        } catch (error) {
+            infoText.textContent = 'Invalid JSON: ' + error.message;
+            infoText.style.display = 'block';
+        }
+    }
+
+    function validateJSON() {
+        const { inputArea, infoText } = getElements();
+
+        try {
+            const parsedJSON = JSON.parse(inputArea.value);
+
+            if (!parsedJSON.hasOwnProperty('name') || !parsedJSON.name) {
+                throw new Error('The JSON must contain the "name" key and it cannot be empty.');
+            }
+
+            infoText.style.display = 'none';
+            return true;
+
+        } catch (error) {
+            infoText.textContent = 'Error: ' + error.message;
+            infoText.style.display = 'block';
+            return false;
+        }
+    }
+
+    function validateAndSubmit() {
+        if (validateJSON()) {
+            submit_datastructure('createDatastructureArea');
+        }
+    }
+</script>
 
 {% endblock %}

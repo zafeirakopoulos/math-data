@@ -145,3 +145,7 @@ live.git
 flask-app-db/
 postgres/
 app
+# repository information database
+md/backend/repository_database/test/md/backend/repository_database/index_db.sqlite
+md/backend/repository_database/index_db.sqlite
+/mdbase.git

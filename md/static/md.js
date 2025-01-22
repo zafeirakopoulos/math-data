@@ -95,6 +95,14 @@ function show_formats_for_datastructure(datastructure){
     });
 }
 
+function show_dataset(dataset){
+    $.get('/data/dataset/'+ dataset, {}).done(function(response) {
+      // put the html that generated list of instances in the "data-display-area" div
+      document.getElementById("list-display-area").innerHTML = response;
+        }).fail(function() {
+        document.getElementById("list-display-area").innerHTML = "{{ 'Error: Could not contact server.' }}";
+    });
+}
 
 function show_instances_for_creating_dataset(datastructure){
     $.get('/data/instances_by_datastructure_for_dataset/'+ datastructure, {}).done(function(response) {
@@ -220,7 +228,8 @@ function submit_datastructure(textAreaId) {
     let infoText = get_init_element("infoText");
 
     let body = $("#" + textAreaId).val();
-
+    console.log("");
+    console.log(body);
     if(!isValidJson(body)) {
         print_input_error(infoText);
         return;
@@ -270,6 +279,11 @@ function submit_formatter() {
 
     var e = document.getElementById("createScriptArea");
     let formatter = e.value;
+    if(formatter.length == 0 ){
+        alert("Script can't be empty");
+        console.log("Script can't be empty");
+        return;
+    }
 
     var e = document.getElementById("chooseFrom");
     let from_datastructure = e.options[e.selectedIndex].value;
@@ -277,6 +291,13 @@ function submit_formatter() {
     var e = document.getElementById("chooseTo");
     let to_datastructure = e.options[e.selectedIndex].value;
 
+    var e = document.getElementById("formatterName");
+    let formatterName = e.value;
+    if(formatterName.length == 0 ){
+        alert("Formatter name can't be empty");
+        console.log("Formatter name can't be empty");
+        return;
+    }
 
     // Check valid python, not JSON
     //if(!isValidJson(body)) {
@@ -286,8 +307,8 @@ function submit_formatter() {
 
     let url = '/data/add_formatter';
 
-    let data = {"formatter":formatter, "to_datastructure":to_datastructure, "from_datastructure":from_datastructure};
-
+    let data = {"formatter":formatter, "name":formatterName, "to_datastructure":to_datastructure, "from_datastructure":from_datastructure};
+    console.log(data);
     $.post(url, data).done(function(response) {
         print_input_success(infoText);
         document.formatter.reset();
@@ -308,12 +329,14 @@ function submit_format() {
     var e = document.getElementById("chooseDatastructure");
     let datastructure = e.options[e.selectedIndex].value;
 
-    var e = document.getElementById("formatDecription");
+    var e = document.getElementById("formatDescription");
     let description = e.value;
 
     let url = '/data/add_format';
 
     let data = {"name":name, "datastructure":datastructure, "description":description};
+
+    console.log(data);
 
     $.post(url, data).done(function(response) {
         print_input_success(infoText);
@@ -323,7 +346,17 @@ function submit_format() {
         console.log(err);
     });
 }
-
+//unused
+function submit_dataset(instanceListId) {
+    //let body = $("#" + instanceListId).val();
+    var e = document.getElementById(instanceListId);
+    //let instance = e.options[e.selectedIndex].value;
+    let firstChild = e.firstChild
+    console.log( firstChild )
+    for (const itItem of firstChild.options) {
+        console.log(itItem);
+    }
+}
 
 function add_definition(key){
     $.get('/data/definition/'+ key, {}).done(function(response) {
@@ -386,7 +419,11 @@ function reject_change(change_id, data_type) {
 }
 
 function isValidJson(text){
+    console.log(text);
+    console.log("TYPE ---->"+ typeof text);
     if (typeof text !== "string"){
+        
+
         return false;
     }
 
@@ -395,6 +432,7 @@ function isValidJson(text){
         return true;
     }
     catch (error){
+        console.log(text);
         return false;
     }
 }
@@ -419,12 +457,29 @@ function print_input_success(element) {
 
 
 
-function format_instance(instance,formatter) {
-
-  $.get('/data/format_instance/'+ instance + "/" + formatter, {}).done(function(response) {
-    // put the html that generated list of instances in the "data-display-area" div
-    document.getElementById("jsonArea").innerHTML = response;
-      }).fail(function() {
-      document.getElementById("list-display-area").innerHTML = "{{ 'Error: Could not contact server.' }}";
-  });
-}
+function format_instance(instance, formatter) {
+    $.get('/data/format_instance/' + instance + "/" + formatter, {})
+      .done(function(response) {
+        // Create a blob from the response text
+        const blob = new Blob([response], { type: 'text/plain' });
+        
+        // Create a temporary link element
+        const downloadLink = document.createElement('a');
+        downloadLink.href = window.URL.createObjectURL(blob);
+        
+        // Set the filename - using instance ID and formatter as part of filename
+        downloadLink.download = `formatted_instance_${instance}.txt`;
+        
+        // Append link to body, click it, and remove it
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+        document.body.removeChild(downloadLink);
+        
+        // Clean up the URL object
+        window.URL.revokeObjectURL(downloadLink.href);
+      })
+      .fail(function() {
+        document.getElementById("infoText").style.display = "block";
+        document.getElementById("infoText").innerText = "Error: Could not contact server.";
+      });
+  }

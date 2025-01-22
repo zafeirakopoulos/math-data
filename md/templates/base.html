@@ -8,7 +8,7 @@
     <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='styles/default.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='styles/md.css') }}">
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     {{ bootstrap.load_css() }}
 
     {% block style %}{% endblock %}
@@ -20,7 +20,19 @@
     <script src="{{ url_for('static', filename='renderjson.js') }}"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/sigma.js/1.2.1/sigma.min.js"></script>
 
-
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            document.querySelectorAll('textarea').forEach(function (textarea) {
+                textarea.addEventListener('keydown', function (e) {
+                    if (e.key === 'Tab') {
+                        e.preventDefault();  
+                        document.execCommand('insertText', false, '\t');
+                    }
+                });
+            });
+        });
+    </script>
+    
     <!-- <script>hljs.initHighlightingOnLoad();</script> -->
 
     <script type=text/javascript>
@@ -104,12 +116,19 @@
         <footer class="text-center mdb-footer">
             {% block footer %}
                 <small>
-                    &copy; 2020 <a href="http://mathdata.io" title="MathData team">MathData team</a>
+                    &copy; 2025 <a href="http://mathdata.io" title="MathData team">MathData team</a>
                 </small>
             {% endblock %}
         </footer>
     </main>
 
     {{ bootstrap.load_js() }}
+
+
+
+
+
+
+    
 </body>
 </html>

@@ -42,3 +42,8 @@ def get_persons():
 def documentation():
 
     return render_template('documentation.html')
+
+@home_app.route('/developermanual', methods=['GET'])
+def developer_manual():
+
+    return render_template('developermanual.html')

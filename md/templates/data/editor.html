@@ -26,6 +26,7 @@
                             </div>
                           </div>
                         </div>
+
                         <div class="card">
                           <div class="card-header" id="headingTwo">
                             <h5 class="mb-0">
@@ -116,5 +117,25 @@
 
 
     </div>
+
+    <!-- <script>
+      function delay(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+      }
+      async function acceptAllInstances() {
+        const instances = document.querySelectorAll('#collapseInstance .list-group-item-action');
+        
+        for (const instance of instances) {
+          const changeId = instance.textContent.trim();
+          accept_change(changeId, 'instance');
+          
+          await delay(1000); 
+        }
+        window.location.reload();
+
+      }
+      
+      
+      </script> -->
 
 {% endblock %}

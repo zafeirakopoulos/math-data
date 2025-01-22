@@ -1,0 +1,1339 @@
+{% set app = 'data' %}
+
+{% if current_user.is_authenticated and current_user.has_role('admin') %}
+{% block content %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>MathData Documentation</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .nav-container {
+            position: static;
+            top: 0;
+            background: #fff;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 40px;
+            z-index: 1000;
+        }
+
+        .nav-title {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+
+        .nav-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .nav-section {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .nav-section h3 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            padding-bottom: 5px;
+            border-bottom: 2px solid #3498db;
+        }
+
+        .nav-section ul {
+            list-style: none;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .nav-section li {
+            margin-bottom: 8px;
+        }
+
+        .nav-section a {
+            text-decoration: none;
+            color: #3498db;
+            transition: color 0.3s;
+            font-size: 14px;
+        }
+
+        .nav-section a:hover {
+            color: #2980b9;
+        }
+
+        .active-link {
+            font-weight: bold;
+            color: #421a70 !important;
+        }
+
+        .content-section {
+            margin-bottom: 40px;
+            padding: 20px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .content-section h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #3498db;
+        }
+
+        .function-block {
+            margin: 20px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 4px;
+            border-left: 4px solid #3498db;
+        }
+
+        .function-name {
+            color: #2c3e50;
+            font-weight: bold;
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+
+        .function-route {
+            color: #e74c3c;
+            font-family: monospace;
+            margin-bottom: 10px;
+        }
+
+        .function-method {
+            color: #27ae60;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .function-description {
+            margin-bottom: 10px;
+        }
+
+        .params-section {
+            margin-top: 10px;
+        }
+
+        .param {
+            margin-left: 20px;
+            color: #666;
+        }
+
+        #backToTop {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #343a40;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            padding: 10px;
+            font-size: 18px;
+            cursor: pointer;
+            display: none;
+            transition: opacity 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        #backToTop:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <section id="mathdata" class="content-section">
+        <h2>MathData Documentation</h2>
+        <p>Welcome to the MathData documentation. This documentation covers both the backend functionality and API endpoints of the system.</p>
+    </section>
+
+    <nav class="nav-container">
+        <h2 class="nav-title">Documentation Contents</h2>
+        <div class="nav-links">
+            <div class="nav-section">
+                <h3>Backend</h3>
+                <ul>
+                    <li><a href="#init">init</a></li>
+                    <li><a href="#init_and_set_directory">init_and_set_directory</a></li>
+                    <li><a href="#remove_hash_from_pending">remove_hash_from_pending</a></li>
+                    <li><a href="#add_datastructure">add_datastructure</a></li>
+                    <li><a href="#approve_datastructure">approve_datastructure</a></li>
+                    <li><a href="#reject_datastructure">reject_datastructure</a></li>
+                    <li><a href="#get_diff">get_diff</a></li>
+                    <li><a href="#pending_datastructures">pending_datastructures</a></li>
+                    <li><a href="#get_datastructures">get_datastructures</a></li>
+                    <li><a href="#retrieve_datastructure">retrieve_datastructure</a></li>
+                    <li><a href="#add_instance">add_instance</a></li>
+                    <li><a href="#approve_instance">approve_instance</a></li>
+                    <li><a href="#reject_instance">reject_instance</a></li>
+                    <li><a href="#pending_instances">pending_instances</a></li>
+                    <li><a href="#get_instances">get_instances</a></li>
+                    <li><a href="#get_instances_by_datastructure">get_instances_by_datastructure</a></li>
+                    <li><a href="#retrieve_instance">retrieve_instance</a></li>
+                    <li><a href="#add_dataset">add_dataset</a></li>
+                    <li><a href="#approve_dataset">approve_dataset</a></li>
+                    <li><a href="#reject_dataset">reject_dataset</a></li>
+                    <li><a href="#pending_datasets">pending_datasets</a></li>
+                    <li><a href="#get_datasets">get_datasets</a></li>
+                    <li><a href="#retrieve_dataset">retrieve_dataset</a></li>
+                    <li><a href="#add_format">add_format</a></li>
+                    <li><a href="#approve_format">approve_format</a></li>
+                    <li><a href="#reject_format">reject_format</a></li>
+                    <li><a href="#pending_formats">pending_formats</a></li>
+                    <li><a href="#get_formats">get_formats</a></li>
+                    <li><a href="#retrieve_format">retrieve_format</a></li>
+                    <li><a href="#get_formats_by_datastructure">get_formats_by_datastructure</a></li>
+                    <li><a href="#add_formatter">add_formatter</a></li>
+                    <li><a href="#reject_formatter">reject_formatter</a></li>
+                </ul>
+                
+            </div>
+            <div class="nav-section">
+                <h3>API Functions</h3>
+                <ul>
+                    <li><a href="#api_instance">api_instance</a></li>
+                    <li><a href="#api_instances">api_instances</a></li>
+                    <li><a href="#api_datastructures">api_datastructures</a></li>
+                    <li><a href="#api_pendings">api_pendings</a></li>
+                    <li><a href="#api_definition">api_definition</a></li>
+                    <li><a href="#api_definitions">api_definitions</a></li>
+                    <li><a href="#pp_json">pp_json</a></li>
+                    <li><a href="#instance">instance</a></li>
+                    <li><a href="#instances">instances</a></li>
+                    <li><a href="#instances_by_datastructure">instances_by_datastructure</a></li>
+                    <li><a href="#create_instance">create_instance</a></li>
+                    <li><a href="#instances_by_datastructure_for_dataset">instances_by_datastructure_for_dataset</a></li>
+                    <li><a href="#datastructure">datastructure</a></li>
+                    <li><a href="#datastructures">datastructures</a></li>
+                    <li><a href="#create_datastructure">create_datastructure</a></li>
+                    <li><a href="#dataset">dataset</a></li>
+                    <li><a href="#datasets">datasets</a></li>
+                    <li><a href="#create_dataset">create_dataset</a></li>
+                    <li><a href="#add_dataset">add_dataset</a></li>
+                    <li><a href="#create_formatter">create_formatter</a></li>
+                    <li><a href="#add_formatter">add_formatter</a></li>
+                    <li><a href="#formatters">formatters</a></li>
+                    <li><a href="#formatter">formatter</a></li>
+                    <li><a href="#formatters_by_datastructure">formatters_by_datastructure</a></li>
+                    <li><a href="#formatters_by_format">formatters_by_format</a></li>
+                    <li><a href="#create_format">create_format</a></li>
+                    <li><a href="#add_format">add_format</a></li>
+                    <li><a href="#formats">formats</a></li>
+                    <li><a href="#format">format</a></li>
+                    <li><a href="#formats_by_datastructure">formats_by_datastructure</a></li>
+                    <li><a href="#add_instance">add_instance</a></li>
+                    <li><a href="#add_datastructure">add_datastructure</a></li>
+                    <li><a href="#add_instance_data_field">add_instance_data_field</a></li>
+                    <li><a href="#edit_instance">edit_instance</a></li>
+                    <li><a href="#edit_datastructure">edit_datastructure</a></li>
+                    <li><a href="#editor_page">editor_page</a></li>
+                    <li><a href="#get_change">get_change</a></li>
+                    <li><a href="#accept_change">accept_change</a></li>
+                    <li><a href="#reject_change">reject_change</a></li>
+                    <li><a href="#format_instance">format_instance</a></li>
+                    <li><a href="#import_page">import_page</a></li>
+                    <li><a href="#import_file">import_file</a></li>
+                    <li><a href="#import_dataset">import_dataset</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <button id="backToTop">↑</button>
+    
+    <main>
+        <section class="content-section">
+            <h2>Backend Functions</h2>
+
+            <div class="function-documentation">
+                <div id="init" class="function-block">
+                    <div class="function-name">__init__</div>
+                    <div class="function-description">Initializes a MathDataBase given a definition, a path and a name.
+                        If no definition is given, it will return an existing MathDataBase.</div>
+                    <div class="params-section">
+                        <div class="param">Parameters:</div>
+                        <div class="param">-path: Path of the new MathDataBase in the filesystem</div>
+                        <div class="param">-name: Name of the MathDataBase (it will be the folder name)</div>
+                        <div class="param">-definition: A valid MathDataBase definiton as json string</div>
+                        <div class="param">Returns: A MathDataBase instance</div>
+                    </div>
+                </div>
+            
+                <div id="init_and_set_directory" class="function-block">
+                    <div class="function-name">init_and_set_directory</div>
+                    <div class="function-description">Initializes and configures the directory for the MathDataBase.
+                        Sets up a Git repository at the specified path, initializes files and folders,
+                        and configures the repository with the provided database definition.</div>
+                    <div class="params-section">
+                        <div class="param">Parameters:</div>
+                        <div class="param">-base_path: Path to the Git repository directory.</div>
+                        <div class="param">-mdb_def: (Optional) JSON string containing the MathDataBase definition.</div>
+                    </div>
+                </div>
+            
+                <div id="remove_hash_from_pending" class="function-block">
+                    <div class="function-name">remove_hash_from_pending</div>
+                    <div class="function-description">Removes a commit hash from the specified pending file.
+                        Reads the pending file, removes the specified hash, and updates the file.</div>
+                    <div class="params-section">
+                        <div class="param">Parameters:</div>
+                        <div class="param">-commit_hash: The commit hash to remove from the pending list.</div>
+                        <div class="param">-pending_file_name: Name of the pending file to modify.</div>
+                    </div>
+                </div>
+            
+                <div id="add_datastructure" class="function-block">
+                    <div class="function-name">add_datastructure</div>
+                    <div class="function-description">Register a datastructure in the MathDataBase.
+                        It is added in the pending list waiting for approval by an editor.</div>
+                    <div class="params-section">
+                        <div class="param">Parameters:</div>
+                        <div class="param">-datastructure: A JSON object as a string</div>
+                        <div class="param">-message: A description of the datastructure (the commit message)</div>
+                        <div class="param">Returns: The name of the branch in which the datastructure was commited</div>
+                    </div>
+                </div>
+            
+                <div id="approve_datastructure" class="function-block">
+                    <div class="function-name">approve_datastructure</div>
+                    <div class="function-description">Approves a datastructure by merging its commit into the default branch and updating the index.
+                        Removes the commit hash from the pending list, merges it, and logs it in the datastructure index.</div>
+                    <div class="params-section">
+                        <div class="param">Parameters:</div>
+                        <div class="param">-commit_hash: The commit hash of the datastructure to approve.</div>
+                        <div class="param">-message: The commit message for the merge operation.</div>
+                    </div>
+                </div>
+            
+                <div id="reject_datastructure" class="function-block">
+                    <div class="function-name">reject_datastructure</div>
+                    <div class="function-description">Rejects a datastructure by removing its commit hash from the pending list.</div>
+                    <div class="params-section">
+                        <div class="param">Parameters:</div>
+                        <div class="param">-commit_hash: The commit hash of the datastructure to reject.</div>
+                        <div class="param">-message: The reason for rejecting the datastructure (not used in the function).</div>
+                    </div>
+                </div>
+            
+                <div id="get_diff" class="function-block">
+                    <div class="function-name">get_diff</div>
+                    <div class="function-description">Fetches the diff of the specified commit hash.</div>
+                    <div class="params-section">
+                        <div class="param">Parameters:</div>
+                        <div class="param">-commit_hash: The commit hash to fetch the diff for.</div>
+                        <div class="param">Returns: The diff showing changes introduced by the specified commit.</div>
+                    </div>
+                </div>
+            
+                <div id="pending_datastructures" class="function-block">
+                    <div class="function-name">pending_datastructures</div>
+                    <div class="function-description">Retrieves the list of pending datastructures across multiple repositories.
+                        Reads the 'datastructure_pending.txt' file in each repository and accumulates the pending datastructure commit hashes.</div>
+                    <div class="params-section">
+                        <div class="param">Parameters:</div>
+                        <div class="param">-step: The current repository step to start from (default is 0).</div>
+                        <div class="param">-repo_count: The total number of repositories to check (default is 0).</div>
+                        <div class="param">Returns: A list of pending datastructure commit hashes.</div>
+                    </div>
+                </div>
+            
+                <div id="get_datastructures" class="function-block">
+                    <div class="function-name">get_datastructures</div>
+                    <div class="function-description">Retrieves the list of datastructures across multiple repositories.
+                        Reads the 'datastructure_index.txt' file in each repository and accumulates the datastructure commit hashes.</div>
+                    <div class="params-section">
+                        <div class="param">Parameters:</div>
+                        <div class="param">-step: The current repository step to start from (default is 0).</div>
+                        <div class="param">-repo_count: The total number of repositories to check (default is 0).</div>
+                        <div class="param">Returns: A list of datastructure commit hashes.</div>
+                    </div>
+                </div>
+            
+                <div id="retrieve_datastructure" class="function-block">
+                    <div class="function-name">retrieve_datastructure</div>
+                    <div class="function-description">Retrieves the content of the datastructure file from the specified commit hash.
+                        This method uses the `git diff-tree` command to identify the modified file in the commit
+                        and reads its content.</div>
+                    <div class="params-section">
+                        <div class="param">Parameters:</div>
+                        <div class="param">-hash: The commit hash to retrieve the datastructure from.</div>
+                        <div class="param">Returns: The content of the datastructure file, or a message if no file or more than one file is found.</div>
+                    </div>
+                </div>
+            
+                <div id="add_instance" class="function-block">
+                    <div class="function-name">add_instance</div>
+                    <div class="function-description">Register an instance in the MathDataBase.
+                        It is added in the pending list waiting for approval by an editor.</div>
+                    <div class="params-section">
+                        <div class="param">Parameters:</div>
+                        <div class="param">-instance: A JSON object as a string</div>
+                        <div class="param">-message: A description of the instance (the commit message)</div>
+                        <div class="param">Returns: The name of the branch in which the instance was commited</div>
+                    </div>
+                </div>
+            
+                <div id="approve_instance" class="function-block">
+                    <div class="function-name">approve_instance</div>
+                    <div class="function-description">Approves and merges an instance commit into the repository.
+                        Merges the specified commit into the default branch, removes it from the pending list,
+                        and updates the index file with the commit hash.</div>
+                    <div class="params-section">
+                        <div class="param">Parameters:</div>
+                        <div class="param">-commit_hash: The commit hash of the instance to approve.</div>
+                        <div class="param">-message: The commit message for the merge.</div>
+                        <div class="param">Returns: 0 if successful.</div>
+                    </div>
+                </div>
+            
+                <div id="reject_instance" class="function-block">
+                    <div class="function-name">reject_instance</div>
+                    <div class="function-description">Rejects an instance commit by removing it from the pending list.
+                        Removes the specified commit hash from the pending list, indicating rejection.</div>
+                    <div class="params-section">
+                        <div class="param">Parameters:</div>
+                        <div class="param">-commit_hash: The commit hash of the instance to reject.</div>
+                        <div class="param">-message: The commit message for rejection (not used in the function).</div>
+                    </div>
+                </div>
+            
+                <div id="pending_instances" class="function-block">
+                    <div class="function-name">pending_instances</div>
+                    <div class="function-description">Retrieves the list of pending instances from all repositories.
+                        Reads the 'instance_pending.txt' file in each repository and returns the commit hashes of pending instances.</div>
+                    <div class="params-section">
+                        <div class="param">Parameters:</div>
+                        <div class="param">-step: The current repository step to process (default is 0).</div>
+                        <div class="param">-repo_count: The total number of repositories to process (default is 0).</div>
+                        <div class="param">Returns: A list of commit hashes for pending instances.</div>
+                    </div>
+                </div>
+            
+                <div id="get_instances" class="function-block">
+                    <div class="function-name">get_instances</div>
+                    <div class="function-description">Retrieves the list of instances from all repositories.
+                        Reads the 'instance_index.txt' file in each repository and returns the commit hashes of instances.</div>
+                    <div class="params-section">
+                        <div class="param">Parameters:</div>
+                        <div class="param">-step: The current repository step to process (default is 0).</div>
+                        <div class="param">-repo_count: The total number of repositories to process (default is 0).</div>
+                        <div class="param">Returns: A list of commit hashes for instances.</div>
+                    </div>
+                </div>
+            
+                <div id="get_instances_by_datastructure" class="function-block">
+                    <div class="function-name">get_instances_by_datastructure</div>
+                    <div class="function-description">Retrieves the list of instances associated with a specific datastructure from all repositories.
+                        Checks each instance's datastructure and returns the commit hashes of instances that match the specified datastructure.</div>
+                    <div class="params-section">
+                        <div class="param">Parameters:</div>
+                        <div class="param">-datastructure: The datastructure to filter instances by.</div>
+                        <div class="param">-step: The current repository step to process (default is 0).</div>
+                        <div class="param">-repo_count: The total number of repositories to process (default is 0).</div>
+                        <div class="param">Returns: A list of commit hashes for instances that match the specified datastructure.</div>
+                    </div>
+                </div>
+            
+                <div id="retrieve_instance" class="function-block">
+                    <div class="function-name">retrieve_instance</div>
+                    <div class="function-description">Retrieves the instance data for a specific commit hash.
+                        Fetches the file associated with the commit hash and returns its content.</div>
+                    <div class="params-section">
+                        <div class="param">Parameters:</div>
+                        <div class="param">-hash: The commit hash to retrieve the associated instance.</div>
+                        <div class="param">Returns: The content of the file in the commit or an error message if no file or multiple files are found.</div>
+                    </div>
+                </div>
+            
+                <div id="add_dataset" class="function-block">
+                    <div class="function-name">add_dataset</div>
+                    <div class="function-description">Register a dataset in the MathDataBase.
+                        It is added in the pending list waiting for approval by an editor.</div>
+                    <div class="params-section">
+                        <div class="param">Parameters:</div>
+                        <div class="param">-dataset: A list of hashes of instances</div>
+                        <div class="param">-message: A description of the dataset (the commit message)</div>
+                        <div class="param">Returns: The name of the branch in which the dataset was commited</div>
+                    </div>
+                </div>
+            
+                <div id="approve_dataset" class="function-block">
+                    <div class="function-name">approve_dataset</div>
+                    <div class="function-description">Approves and merges a dataset commit.
+                        Merges the dataset commit into the current branch, removes it from the pending list, 
+                        and updates the dataset index file with the commit hash.</div>
+                    <div class="params-section">
+                        <div class="param">Parameters:</div>
+                        <div class="param">-commit_hash: The commit hash of the dataset to approve.</div>
+                        <div class="param">-message: The commit message for the merge.</div>
+                        <div class="param">Returns: 0 on success.</div>
+                    </div>
+                </div>
+            
+                <div id="reject_dataset" class="function-block">
+                    <div class="function-name">reject_dataset</div>
+                    <div class="function-description">Rejects a dataset commit and removes it from the pending list.
+                        The specified dataset commit is removed from the list of pending commits for the dataset.</div>
+                    <div class="params-section">
+                        <div class="param">Parameters:</div>
+                        <div class="param">-commit_hash: The commit hash of the dataset to reject.</div>
+                        <div class="param">-message: A message describing the reason for rejecting the dataset.</div>
+                    </div>
+                </div>
+            
+                <div id="pending_datasets" class="function-block">
+                    <div class="function-name">pending_datasets</div>
+                    <div class="function-description">Retrieves the list of pending datasets from the dataset_pending file.
+                        Reads the 'dataset_pending.txt' file and compiles a list of commit hashes for datasets that are pending approval.</div>
+                    <div class="params-section">
+                        <div class="param">Parameters:</div>
+                        <div class="param">-step: The current step/repository index for recursive processing.</div>
+                        <div class="param">-repo_count: The total number of repositories to process.</div>
+                        <div class="param">Returns: A list of commit hashes for pending datasets.</div>
+                    </div>
+                </div>
+            
+                <div id="get_datasets" class="function-block">
+                    <div class="function-name">get_datasets</div>
+                    <div class="function-description">Retrieves the list of datasets from the dataset_index file.
+                        Reads the 'dataset_index.txt' file and compiles a list of commit hashes for datasets.</div>
+                    <div class="params-section">
+                        <div class="param">Parameters:</div>
+                        <div class="param">-step: The current step/repository index for recursive processing.</div>
+                        <div class="param">-repo_count: The total number of repositories to process.</div>
+                        <div class="param">Returns: A list of commit hashes for datasets.</div>
+                    </div>
+                </div>
+            
+                <div id="retrieve_dataset" class="function-block">
+                    <div class="function-name">retrieve_dataset</div>
+                    <div class="function-description">Retrieves the dataset associated with a given commit hash.
+                        The method checks the files in the specified commit and returns the contents of the dataset file.</div>
+                    <div class="params-section">
+                        <div class="param">Parameters:</div>
+                        <div class="param">-hash: The commit hash to retrieve the dataset for.</div>
+                        <div class="param">Returns: The contents of the dataset file as a comma-separated string, or a message indicating no files or multiple files in the commit.</div>
+                    </div>
+                </div>
+            
+                <div id="add_format" class="function-block">
+                    <div class="function-name">add_format</div>
+                    <div class="function-description">Register a format in the MathDataBase.
+                        It is added in the pending list waiting for approval by an editor.</div>
+                    <div class="params-section">
+                        <div class="param">Parameters:</div>
+                        <div class="param">-format: A JSON object as a string</div>
+                        <div class="param">-message: A description of the dataset (the commit message)</div>
+                        <div class="param">Returns: The name of the branch in which the dataset was commited</div>
+                    </div>
+                </div>
+            
+                <div id="approve_format" class="function-block">
+                    <div class="function-name">approve_format</div>
+                    <div class="function-description">Approves and merges a format commit.
+                        Merges the format commit into the current branch, removes it from the pending list,
+                        and updates the format index file with the commit hash.</div>
+                    <div class="params-section">
+                        <div class="param">Parameters:</div>
+                        <div class="param">-commit_hash: The commit hash of the format to approve.</div>
+                        <div class="param">-message: The commit message for the merge.</div>
+                        <div class="param">Returns: 0 on success.</div>
+                    </div>
+                </div>
+            
+                <div id="reject_format" class="function-block">
+                    <div class="function-name">reject_format</div>
+                    <div class="function-description">Rejects a format commit.
+                        Removes the format commit from the pending list.</div>
+                    <div class="params-section">
+                        <div class="param">Parameters:</div>
+                        <div class="param">-commit_hash: The commit hash of the format to reject.</div>
+                        <div class="param">-message: The rejection message (not used in the function).</div>
+                        <div class="param">Returns: None.</div>
+                    </div>
+                </div>
+            
+                <div id="pending_formats" class="function-block">
+                    <div class="function-name">pending_formats</div>
+                    <div class="function-description">Retrieves a list of pending format commits.
+                        Reads the "format_pending.txt" file and retrieves the commit hashes of the pending formats.</div>
+                    <div class="params-section">
+                        <div class="param">Parameters:</div>
+                        <div class="param">-step: The current repository step (default is 0).</div>
+                        <div class="param">-repo_count: The total number of repositories (default is 0).</div>
+                        <div class="param">Returns: A list of commit hashes from the pending formats.</div>
+                    </div>
+                </div>
+            
+                <div id="get_formats" class="function-block">
+                    <div class="function-name">get_formats</div>
+                    <div class="function-description">Retrieves a list of format commit hashes.
+                        Reads the "format_index.txt" file and retrieves the commit hashes of the formats.</div>
+                    <div class="params-section">
+                        <div class="param">Parameters:</div>
+                        <div class="param">-step: The current repository step (default is 0).</div>
+                        <div class="param">-repo_count: The total number of repositories (default is 0).</div>
+                        <div class="param">Returns: A list of commit hashes from the format index.</div>
+                    </div>
+                </div>
+            
+                <div id="retrieve_format" class="function-block">
+                    <div class="function-name">retrieve_format</div>
+                    <div class="function-description">Retrieves the content of a format commit.
+                        Fetches the content of the format file associated with the provided commit hash.</div>
+                    <div class="params-section">
+                        <div class="param">Parameters:</div>
+                        <div class="param">-hash: The commit hash of the format.</div>
+                        <div class="param">Returns: The content of the format file.</div>
+                    </div>
+                </div>
+            
+                <div id="get_formats_by_datastructure" class="function-block">
+                    <div class="function-name">get_formats_by_datastructure</div>
+                    <div class="function-description">Retrieves format commit hashes by datastructure.
+                        Reads the "format_index.txt" file and retrieves the commit hashes of formats matching the specified datastructure.</div>
+                    <div class="params-section">
+                        <div class="param">Parameters:</div>
+                        <div class="param">-datastructure: The datastructure to filter by.</div>
+                        <div class="param">-step: The current repository step (default is 0).</div>
+                        <div class="param">-repo_count: The total number of repositories (default is 0).</div>
+                        <div class="param">Returns: A list of commit hashes that match the specified datastructure.</div>
+                    </div>
+                </div>
+            
+                <div id="add_formatter" class="function-block">
+                    <div class="function-name">add_formatter</div>
+                    <div class="function-description">Register a formatter in the MathDataBase.
+                        It is added in the pending list waiting for approval by an editor.</div>
+                    <div class="params-section">
+                        <div class="param">Parameters:</div>
+                        <div class="param">-formatter: A python script formatting data from one format to another.</div>
+                        <div class="param">-source_format: The format of the input (given by the commit-hash of the format)</div>
+                        <div class="param">-target_format: The format of the output (given by the commit-hash of the format)</div>
+                        <div class="param">Returns: The name of the branch in which the formatter was commited</div>
+                    </div>
+                </div>
+            
+                <div id="reject_formatter" class="function-block">
+                    <div class="function-name">reject_formatter</div>
+                    <div class="function-description">Rejects a formatter commit.</div>
+                    <div class="params-section">
+                        <div class="param">Parameters:</div>
+                        <div class="param">-commit_hash: The commit hash of the formatter to reject.</div>
+                        <div class="param">-message: The reason for rejecting the formatter (not used in the function)</div>
+                    </div>
+                </div>
+            
+                <div id="approve_formatter" class="function-block">
+                    <div class="function-name">approve_formatter</div>
+                    <div class="function-description">Approves and merges a formatter commit.
+                        Merges the given commit into the current branch and removes it from the pending list.</div>
+                    <div class="params-section">
+                        <div class="param">Parameters:</div>
+                        <div class="param">-commit_hash: The commit hash of the formatter to approve.</div>
+                        <div class="param">-message: The commit message for the merge.</div>
+                        <div class="param">Returns: 0 on success.</div>
+                    </div>
+                </div>
+            
+                <div id="pending_formatters" class="function-block">
+                    <div class="function-name">pending_formatters</div>
+                    <div class="function-description">Retrieves a list of pending formatter commit hashes.
+                        Reads the "formatter_pending.txt" file and retrieves the commit hashes of the pending formatters.</div>
+                    <div class="params-section">
+                        <div class="param">Parameters:</div>
+                        <div class="param">-step: The current repository step (default is 0).</div>
+                        <div class="param">-repo_count: The total number of repositories (default is 0).</div>
+                        <div class="param">Returns: A list of commit hashes from the pending formatter list.</div>
+                    </div>
+                </div>
+            
+                <div id="get_formatters" class="function-block">
+                    <div class="function-name">get_formatters</div>
+                    <div class="function-description">Retrieves a list of formatter commit hashes.
+                        Reads the "formatter_index.txt" file and retrieves the commit hashes of the formatters.</div>
+                    <div class="params-section">
+                        <div class="param">Parameters:</div>
+                        <div class="param">-step: The current repository step (default is 0).</div>
+                        <div class="param">-repo_count: The total number of repositories (default is 0).</div>
+                        <div class="param">Returns: A list of commit hashes from the formatter index.</div>
+                    </div>
+                </div>
+            
+                <div id="retrieve_formatter" class="function-block">
+                    <div class="function-name">retrieve_formatter</div>
+                    <div class="function-description">Retrieves the content of a formatter file from a commit.
+                        Given a commit hash, this method checks for the modified files in the commit and reads the content of the related formatter file.</div>
+                    <div class="params-section">
+                        <div class="param">Parameters:</div>
+                        <div class="param">-hash: The commit hash.</div>
+                        <div class="param">Returns: The content of the formatter file.</div>
+                        <div class="param">Raises: Exception if more than one file is modified in the commit.</div>
+                    </div>
+                </div>
+            
+                <div id="get_formatters_by_datastructure" class="function-block">
+                    <div class="function-name">get_formatters_by_datastructure</div>
+                    <div class="function-description">Retrieves formatters by datastructure type.
+                        This method iterates over repositories and retrieves formatter information from the "formatter_index.txt" file.</div>
+                    <div class="params-section">
+                        <div class="param">Parameters:</div>
+                        <div class="param">-datastructure: The datastructure type to filter formatters by.</div>
+                        <div class="param">-step: The current repository step (default is 0).</div>
+                        <div class="param">-repo_count: The total number of repositories (default is 0).</div>
+                        <div class="param">Returns: A list of formatters that match the given datastructure.</div>
+                    </div>
+                </div>
+            
+                <div id="get_formatters_by_format" class="function-block">
+                    <div class="function-name">get_formatters_by_format</div>
+                    <div class="function-description">Retrieves formatters by format type.
+                        This method iterates over repositories and retrieves formatter information from the "formatter_index.txt" file.</div>
+                    <div class="params-section">
+                        <div class="param">Parameters:</div>
+                        <div class="param">-format: The format type to filter formatters by.</div>
+                        <div class="param">-step: The current repository step (default is 0).</div>
+                        <div class="param">-repo_count: The total number of repositories (default is 0).</div>
+                        <div class="param">Returns: A list of formatters that match the given format type.</div>
+                    </div>
+                </div>
+            
+                <div id="format_instance" class="function-block">
+                    <div class="function-name">format_instance</div>
+                    <div class="function-description">Formats an instance using the specified formatter.
+                        This method writes a temporary Python script to apply the given formatter on the provided instance.</div>
+                    <div class="params-section">
+                        <div class="param">Parameters:</div>
+                        <div class="param">-instance: The instance to be formatted.</div>
+                        <div class="param">-formatter: The formatter to apply to the instance.</div>
+                        <div class="param">Returns: The result of the formatted instance.</div>
+                    </div>
+                </div>
+            
+                <div id="import_dataset" class="function-block">
+                    <div class="function-name">import_dataset</div>
+                    <div class="function-description">Imports and formats a dataset using the specified formats.
+                        This method extracts a dataset from a tar file and applies the corresponding formatter.</div>
+                    <div class="params-section">
+                        <div class="param">Parameters:</div>
+                        <div class="param">-fname: The name of the dataset to import.</div>
+                        <div class="param">-split_script: The script used for splitting the dataset (currently not used in the code).</div>
+                        <div class="param">-from_format: The format of the input dataset.</div>
+                        <div class="param">-to_format: The target format to apply.</div>
+                        <div class="param">Raises: Exception if no matching formatter is found.</div>
+                    </div>
+                </div>
+            
+                <div id="get_available_repository" class="function-block">
+                    <div class="function-name">get_available_repository</div>
+                    <div class="function-description">Checks the current repository size and decides whether to create a new repository or return the existing one.</div>
+                    <div class="params-section">
+                        <div class="param">Returns: A tuple containing the path to the available repository and its ID.</div>
+                    </div>
+                </div>
+            
+                <div id="create_new_repository" class="function-block">
+                    <div class="function-name">create_new_repository</div>
+                    <div class="function-description">Creates a new repository directory and initializes it as a Git repository.</div>
+                    <div class="params-section">
+                        <div class="param">Parameters:</div>
+                        <div class="param">-new_repository_id: The ID to assign to the new repository.</div>
+                        <div class="param">Returns: The path to the newly created repository.</div>
+                    </div>
+                </div>
+            
+                <div id="get_commit_path" class="function-block">
+                    <div class="function-name">get_commit_path</div>
+                    <div class="function-description">Returns the file path for the given commit hash.</div>
+                    <div class="params-section">
+                        <div class="param">Parameters:</div>
+                        <div class="param">-commit_hash: The commit hash to retrieve the path for.</div>
+                        <div class="param">Returns: The file path for the specified commit hash.</div>
+                    </div>
+                </div>
+            
+                <div id="cd_to_commit_repository" class="function-block">
+                    <div class="function-name">cd_to_commit_repository</div>
+                    <div class="function-description">Changes the current directory to the repository of the given commit hash.
+                        Side effect: Modifies the self.base_path and changes the current working directory to the commit's repository.</div>
+                    <div class="params-section">
+                        <div class="param">Parameters:</div>
+                        <div class="param">-commit_hash: The commit hash to change to the corresponding repository.</div>
+                    </div>
+                </div>
+
+        </section>
+        <section class="content-section">
+            <h2>API Functions</h2>
+
+            <div id="api_instance" class="function-block">
+                <div class="function-name">api_instance</div>
+                <div class="function-route">Route: /api/instance/&lt;key&gt;</div>
+                <div class="function-method">Methods: GET, POST</div>
+                <div class="function-description">Retrieves an instance from the database by its key.</div>
+                <div class="params-section">
+                    <div class="param">Parameters:</div>
+                    <div class="param">- key: The key for the instance to retrieve</div>
+                    <div class="param">Returns: The instance retrieved from the database as a JSON object</div>
+                </div>
+            </div>
+        
+            <div id="api_instances" class="function-block">
+                <div class="function-name">api_instances</div>
+                <div class="function-route">Route: /api/instances</div>
+                <div class="function-method">Methods: GET</div>
+                <div class="function-description">Retrieves all instances from the database.</div>
+                <div class="params-section">
+                    <div class="param">Parameters: None</div>
+                    <div class="param">Returns: A JSON array containing all instances</div>
+                </div>
+            </div>
+        
+            <div id="api_datastructures" class="function-block">
+                <div class="function-name">api_datastructures</div>
+                <div class="function-route">Route: /api/datastructures</div>
+                <div class="function-method">Methods: GET</div>
+                <div class="function-description">Retrieves all datastructures from the database.</div>
+                <div class="params-section">
+                    <div class="param">Parameters: None</div>
+                    <div class="param">Returns: A JSON array containing all datastructures</div>
+                </div>
+            </div>
+        
+            <div id="api_pendings" class="function-block">
+                <div class="function-name">api_pendings</div>
+                <div class="function-route">Route: /api/pendings</div>
+                <div class="function-method">Methods: GET, POST</div>
+                <div class="function-description">Retrieves a list of pending items, including datastructures, instances, formatters, datasets, and formats.</div>
+                <div class="params-section">
+                    <div class="param">Parameters: None</div>
+                    <div class="param">Returns: A JSON object with pending items grouped by type</div>
+                </div>
+            </div>
+        
+            <div id="api_definition" class="function-block">
+                <div class="function-name">api_definition</div>
+                <div class="function-route">Route: /api/definition/&lt;key&gt;</div>
+                <div class="function-method">Methods: GET, POST</div>
+                <div class="function-description">Retrieves a definition from the database by its key.</div>
+                <div class="params-section">
+                    <div class="param">Parameters:</div>
+                    <div class="param">- key: The key for the definition to retrieve</div>
+                    <div class="param">Returns: The definition retrieved from the database as a JSON object</div>
+                </div>
+            </div>
+        
+            <div id="api_definitions" class="function-block">
+                <div class="function-name">api_definitions</div>
+                <div class="function-route">Route: /api/definitions</div>
+                <div class="function-method">Methods: GET</div>
+                <div class="function-description">Retrieves all definitions from the database.</div>
+                <div class="params-section">
+                    <div class="param">Parameters: None</div>
+                    <div class="param">Returns: A list of all definitions</div>
+                </div>
+            </div>
+        
+            <div id="pp_json" class="function-block">
+                <div class="function-name">pp_json</div>
+                <div class="function-method">Methods: Internal</div>
+                <div class="function-description">Pretty-prints a JSON object with custom indentation and sorting options.</div>
+                <div class="params-section">
+                    <div class="param">Parameters:</div>
+                    <div class="param">- json_thing: The JSON object to format</div>
+                    <div class="param">- sort: Boolean indicating whether to sort keys in the output</div>
+                    <div class="param">- indents: Number of spaces to use for indentation</div>
+                    <div class="param">Returns: A formatted JSON string</div>
+                </div>
+            </div>
+        
+            <div id="instance" class="function-block">
+                <div class="function-name">instance</div>
+                <div class="function-route">Route: /instance/&lt;key&gt;</div>
+                <div class="function-method">Methods: GET, POST</div>
+                <div class="function-description">Retrieves an instance object by its key and returns both its HTML representation and JSON data.</div>
+                <div class="params-section">
+                    <div class="param">Parameters:</div>
+                    <div class="param">- key: The key of the instance to retrieve</div>
+                    <div class="param">Returns: A JSON object containing the instance data and its HTML representation</div>
+                </div>
+            </div>
+        
+            <div id="instances" class="function-block">
+                <div class="function-name">instances</div>
+                <div class="function-route">Route: /instances</div>
+                <div class="function-method">Methods: GET</div>
+                <div class="function-description">Lists all instances and renders an HTML page displaying the instances and their associated datastructures.</div>
+                <div class="params-section">
+                    <div class="param">Parameters: None</div>
+                    <div class="param">Returns: An HTML page displaying a dictionary of datastructure key-name pairs</div>
+                </div>
+            </div>
+        
+            <div id="instances_by_datastructure" class="function-block">
+                <div class="function-name">instances_by_datastructure</div>
+                <div class="function-route">Route: /instances_by_datastructure/&lt;datastructure&gt;</div>
+                <div class="function-method">Methods: GET, POST</div>
+                <div class="function-description">Retrieves instances associated with a specific datastructure and renders an HTML list of those instances.</div>
+                <div class="params-section">
+                    <div class="param">Parameters:</div>
+                    <div class="param">- datastructure: The datastructure to filter instances by</div>
+                    <div class="param">Returns: An HTML page displaying a list of instances with their names</div>
+                </div>
+            </div>
+        
+            <div id="create_instance" class="function-block">
+                <div class="function-name">create_instance</div>
+                <div class="function-route">Route: /create_instance/</div>
+                <div class="function-method">Methods: GET, POST</div>
+                <div class="function-description">Displays a form to create a new instance, including a list of available datastructures.</div>
+                <div class="params-section">
+                    <div class="param">Parameters: None</div>
+                    <div class="param">Returns: An HTML form for creating an instance, with available datastructures</div>
+                </div>
+            </div>
+        
+            <div id="instances_by_datastructure_for_dataset" class="function-block">
+                <div class="function-name">instances_by_datastructure_for_dataset</div>
+                <div class="function-route">Route: /instances_by_datastructure_for_dataset/&lt;datastructure&gt;</div>
+                <div class="function-method">Methods: GET</div>
+                <div class="function-description">Displays a list of instances for a specific datastructure, for use with datasets.</div>
+                <div class="params-section">
+                    <div class="param">Parameters:</div>
+                    <div class="param">- datastructure: The datastructure to filter instances by</div>
+                    <div class="param">Returns: An HTML page displaying a list of instances for the specified datastructure</div>
+                </div>
+            </div>
+        
+            <div id="datastructure" class="function-block">
+                <div class="function-name">datastructure</div>
+                <div class="function-route">Route: /datastructure/&lt;key&gt;</div>
+                <div class="function-method">Methods: GET, POST</div>
+                <div class="function-description">Retrieves and displays a datastructure based on the provided key.</div>
+                <div class="params-section">
+                    <div class="param">Parameters:</div>
+                    <div class="param">- key: The key of the datastructure to retrieve</div>
+                    <div class="param">Returns: A JSON object and an HTML page displaying the datastructure</div>
+                </div>
+            </div>
+        
+            <div id="datastructures" class="function-block">
+                <div class="function-name">datastructures</div>
+                <div class="function-route">Route: /datastructures</div>
+                <div class="function-method">Methods: GET</div>
+                <div class="function-description">Retrieves and displays all datastructures.</div>
+                <div class="params-section">
+                    <div class="param">Parameters: None</div>
+                    <div class="param">Returns: A rendered HTML page displaying all datastructures</div>
+                </div>
+            </div>
+        
+            <div id="create_datastructure" class="function-block">
+                <div class="function-name">create_datastructure</div>
+                <div class="function-route">Route: /create_datastructure/</div>
+                <div class="function-method">Methods: GET, POST</div>
+                <div class="function-description">Displays the page for creating a new datastructure.</div>
+                <div class="params-section">
+                    <div class="param">Parameters: None</div>
+                    <div class="param">Returns: A rendered HTML page for creating a new datastructure</div>
+                </div>
+            </div>
+        
+            <div id="dataset" class="function-block">
+                <div class="function-name">dataset</div>
+                <div class="function-route">Route: /dataset/&lt;key&gt;</div>
+                <div class="function-method">Methods: GET, POST</div>
+                <div class="function-description">Retrieves and displays a dataset by its key.</div>
+                <div class="params-section">
+                    <div class="param">Parameters:</div>
+                    <div class="param">- key: The key of the dataset to retrieve</div>
+                    <div class="param">Returns: A rendered HTML page displaying the dataset</div>
+                </div>
+            </div>
+        
+            <div id="datasets" class="function-block">
+                <div class="function-name">datasets</div>
+                <div class="function-route">Route: /datasets/</div>
+                <div class="function-method">Methods: GET</div>
+                <div class="function-description">Displays all datasets available.</div>
+                <div class="params-section">
+                    <div class="param">Parameters: None</div>
+                    <div class="param">Returns: A rendered HTML page displaying all datasets</div>
+                </div>
+            </div>
+        
+            <div id="create_dataset" class="function-block">
+                <div class="function-name">create_dataset</div>
+                <div class="function-route">Route: /create_dataset/</div>
+                <div class="function-method">Methods: GET, POST</div>
+                <div class="function-description">Displays a page to create a new dataset with available datastructures.</div>
+                <div class="params-section">
+                    <div class="param">Parameters: None</div>
+                    <div class="param">Returns: A rendered HTML page to create a new dataset</div>
+                </div>
+            </div>
+        
+            <div id="add_dataset" class="function-block">
+                <div class="function-name">add_dataset</div>
+                <div class="function-route">Route: /add_dataset</div>
+                <div class="function-method">Methods: POST</div>
+                <div class="function-description">Adds a new dataset with selected instances.</div>
+                <div class="params-section">
+                    <div class="param">Parameters: None</div>
+                    <div class="param">Returns: A confirmation response</div>
+                </div>
+            </div>
+        
+            <div id="create_formatter" class="function-block">
+                <div class="function-name">create_formatter</div>
+                <div class="function-route">Route: /create_formatter/</div>
+                <div class="function-method">Methods: GET, POST</div>
+                <div class="function-description">Displays a page to create a new formatter with available formats.</div>
+                <div class="params-section">
+                    <div class="param">Parameters: None</div>
+                    <div class="param">Returns: A rendered HTML page to create a new formatter</div>
+                </div>
+            </div>
+        
+            <div id="add_formatter" class="function-block">
+                <div class="function-name">add_formatter</div>
+                <div class="function-route">Route: /add_formatter</div>
+                <div class="function-method">Methods: POST</div>
+                <div class="function-description">Adds a new formatter with selected details.</div>
+                <div class="params-section">
+                    <div class="param">Parameters: None</div>
+                    <div class="param">Returns: A response with the result of adding the formatter</div>
+                </div>
+            </div>
+        
+            <div id="formatters" class="function-block">
+                <div class="function-name">formatters</div>
+                <div class="function-route">Route: /formatters</div>
+                <div class="function-method">Methods: GET</div>
+                <div class="function-description">Displays a list of available formatters.</div>
+                <div class="params-section">
+                    <div class="param">Parameters: None</div>
+                    <div class="param">Returns: A rendered HTML page with a list of available formatters</div>
+                </div>
+            </div>
+        
+            <div id="formatter" class="function-block">
+                <div class="function-name">formatter</div>
+                <div class="function-route">Route: /formatter/&lt;key&gt;</div>
+                <div class="function-method">Methods: GET, POST</div>
+                <div class="function-description">Retrieves a formatter object by its key.</div>
+                <div class="params-section">
+                    <div class="param">Parameters:</div>
+                    <div class="param">- key: The key of the formatter to retrieve</div>
+                    <div class="param">Returns: A JSON response containing the formatter object and its HTML representation</div>
+                </div>
+            </div>
+        
+            <div id="formatters_by_datastructure" class="function-block">
+                <div class="function-name">formatters_by_datastructure</div>
+                <div class="function-route">Route: /formatters_by_datastructure/&lt;datastructure&gt;</div>
+                <div class="function-method">Methods: GET</div>
+                <div class="function-description">Lists all formatters of a specific datastructure.</div>
+                <div class="params-section">
+                    <div class="param">Parameters:</div>
+                    <div class="param">- datastructure: The datastructure to list formatters for</div>
+                    <div class="param">Returns: An HTML page displaying all formatters for the given datastructure</div>
+                </div>
+            </div>
+            
+            <div id="formatters_by_format" class="function-block">
+                <div class="function-name">formatters_by_format</div>
+                <div class="function-route">Route: /formatters_by_format/&lt;format&gt;</div>
+                <div class="function-method">Methods: GET</div>
+                <div class="function-description">Lists all formatters for a specific format.</div>
+                <div class="params-section">
+                    <div class="param">Parameters:</div>
+                    <div class="param">- format: The format to list formatters for</div>
+                    <div class="param">Returns: An HTML page displaying all formatters for the given format</div>
+                </div>
+            </div>
+            
+            <div id="create_format" class="function-block">
+                <div class="function-name">create_format</div>
+                <div class="function-route">Route: /create_format/</div>
+                <div class="function-method">Methods: GET, POST</div>
+                <div class="function-description">Handles the creation of a new format.</div>
+                <div class="params-section">
+                    <div class="param">Parameters: None</div>
+                    <div class="param">Returns: Renders the template for creating a format with a list of datastructures</div>
+                </div>
+            </div>
+            
+            <div id="add_format" class="function-block">
+                <div class="function-name">add_format</div>
+                <div class="function-route">Route: /add_format</div>
+                <div class="function-method">Methods: POST</div>
+                <div class="function-description">Adds a new format.</div>
+                <div class="params-section">
+                    <div class="param">Parameters: None</div>
+                    <div class="param">Returns: The response after attempting to add the format</div>
+                </div>
+            </div>
+            
+            <div id="formats" class="function-block">
+                <div class="function-name">formats</div>
+                <div class="function-route">Route: /formats</div>
+                <div class="function-method">Methods: GET</div>
+                <div class="function-description">Lists all the datastructures for formatters.</div>
+                <div class="params-section">
+                    <div class="param">Parameters: None</div>
+                    <div class="param">Returns: Renders the formats page with a dictionary of datastructures</div>
+                </div>
+            </div>
+            
+            <div id="format" class="function-block">
+                <div class="function-name">format</div>
+                <div class="function-route">Route: /format/&lt;key&gt;</div>
+                <div class="function-method">Methods: GET, POST</div>
+                <div class="function-description">Retrieves a specific format object.</div>
+                <div class="params-section">
+                    <div class="param">Parameters:</div>
+                    <div class="param">- key: The key of the format to retrieve</div>
+                    <div class="param">Returns: A JSON representation of the format with HTML page</div>
+                </div>
+            </div>
+            
+            <div id="formats_by_datastructure" class="function-block">
+                <div class="function-name">formats_by_datastructure</div>
+                <div class="function-route">Route: /formats_by_datastructure/&lt;datastructure&gt;</div>
+                <div class="function-method">Methods: GET</div>
+                <div class="function-description">Lists all formats of a specific datastructure.</div>
+                <div class="params-section">
+                    <div class="param">Parameters:</div>
+                    <div class="param">- datastructure: The datastructure to list formats for</div>
+                    <div class="param">Returns: Renders the formats list page with a dictionary of formats</div>
+                </div>
+            </div>
+            
+            <div id="add_instance" class="function-block">
+                <div class="function-name">add_instance</div>
+                <div class="function-route">Route: /add_instance</div>
+                <div class="function-method">Methods: POST</div>
+                <div class="function-description">Adds a new instance to the database.</div>
+                <div class="params-section">
+                    <div class="param">Parameters: None</div>
+                    <div class="param">Returns: Response indicating success or failure</div>
+                </div>
+            </div>
+            
+            <div id="add_datastructure" class="function-block">
+                <div class="function-name">add_datastructure</div>
+                <div class="function-route">Route: /add_datastructure</div>
+                <div class="function-method">Methods: POST</div>
+                <div class="function-description">Adds a new datastructure to the database.</div>
+                <div class="params-section">
+                    <div class="param">Parameters: None</div>
+                    <div class="param">Returns: Response indicating success or failure</div>
+                </div>
+            </div>
+            
+            <div id="add_instance_data_field" class="function-block">
+                <div class="function-name">add_instance_data_field</div>
+                <div class="function-route">Route: /add_instance_data_field</div>
+                <div class="function-method">Methods: GET</div>
+                <div class="function-description">Renders the page to add a data field to an instance.</div>
+                <div class="params-section">
+                    <div class="param">Parameters: None</div>
+                    <div class="param">Returns: Renders the data field add instance page</div>
+                </div>
+            </div>
+            
+            <div id="edit_instance" class="function-block">
+                <div class="function-name">edit_instance</div>
+                <div class="function-route">Route: /edit_instance</div>
+                <div class="function-method">Methods: POST</div>
+                <div class="function-description">Edits an existing instance in the database.</div>
+                <div class="params-section">
+                    <div class="param">Parameters: None</div>
+                    <div class="param">Returns: Response indicating success or failure</div>
+                </div>
+            </div>
+            
+            <div id="edit_datastructure" class="function-block">
+                <div class="function-name">edit_datastructure</div>
+                <div class="function-route">Route: /edit_datastructure</div>
+                <div class="function-method">Methods: POST</div>
+                <div class="function-description">Edits an existing datastructure in the database.</div>
+                <div class="params-section">
+                    <div class="param">Parameters: None</div>
+                    <div class="param">Returns: Response indicating success or failure</div>
+                </div>
+            </div>
+            
+            <div id="editor_page" class="function-block">
+                <div class="function-name">editor_page</div>
+                <div class="function-route">Route: /editor</div>
+                <div class="function-method">Methods: GET, POST</div>
+                <div class="function-description">Displays the editor page with all the pending changes in different categories.</div>
+                <div class="params-section">
+                    <div class="param">Parameters: None</div>
+                    <div class="param">Returns: Rendered editor page with pending changes</div>
+                </div>
+            </div>
+            
+            <div id="get_change" class="function-block">
+                <div class="function-name">get_change</div>
+                <div class="function-route">Route: /change/&lt;change_id&gt;/&lt;data_type&gt;</div>
+                <div class="function-method">Methods: GET</div>
+                <div class="function-description">Displays the details of a specific change based on its change_id and data_type.</div>
+                <div class="params-section">
+                    <div class="param">Parameters:</div>
+                    <div class="param">- change_id: ID of the change to fetch</div>
+                    <div class="param">- data_type: Type of the data being changed</div>
+                    <div class="param">Returns: Rendered change page with details of the change</div>
+                </div>
+            </div>
+            
+            <div id="accept_change" class="function-block">
+                <div class="function-name">accept_change</div>
+                <div class="function-route">Route: /change/accept/&lt;change_id&gt;/&lt;data_type&gt;</div>
+                <div class="function-method">Methods: GET</div>
+                <div class="function-description">Handles the acceptance of a change.</div>
+                <div class="params-section">
+                    <div class="param">Parameters:</div>
+                    <div class="param">- change_id: ID of the change to accept</div>
+                    <div class="param">- data_type: Type of the data being changed (datastructure, instance, formatter, dataset, format)</div>
+                    <div class="param">Returns: Success message indicating change acceptance</div>
+                </div>
+            </div>
+            
+            <div id="reject_change" class="function-block">
+                <div class="function-name">reject_change</div>
+                <div class="function-route">Route: /change/reject/&lt;change_id&gt;/&lt;data_type&gt;</div>
+                <div class="function-method">Methods: GET</div>
+                <div class="function-description">Handles the rejection of a change.</div>
+                <div class="params-section">
+                    <div class="param">Parameters:</div>
+                    <div class="param">- change_id: ID of the change to reject</div>
+                    <div class="param">- data_type: Type of the data being changed (datastructure, instance, formatter, dataset)</div>
+                    <div class="param">Returns: Success message indicating change rejection</div>
+                </div>
+            </div>
+            
+            <div id="format_instance" class="function-block">
+                <div class="function-name">format_instance</div>
+                <div class="function-route">Route: /format_instance/&lt;instance&gt;/&lt;formatter&gt;</div>
+                <div class="function-method">Methods: GET</div>
+                <div class="function-description">Applies a formatter to the specified instance.</div>
+                <div class="params-section">
+                    <div class="param">Parameters:</div>
+                    <div class="param">- instance: ID of the instance to format</div>
+                    <div class="param">- formatter: ID of the formatter to apply</div>
+                    <div class="param">Returns: Formatted instance based on the provided formatter</div>
+                </div>
+            </div>
+            
+            <div id="import_page" class="function-block">
+                <div class="function-name">import_page</div>
+                <div class="function-route">Route: /import</div>
+                <div class="function-method">Methods: GET</div>
+                <div class="function-description">Renders the import page with a list of available formats.</div>
+                <div class="params-section">
+                    <div class="param">Parameters: None</div>
+                    <div class="param">Returns: Rendered HTML page with the list of formats</div>
+                </div>
+            </div>
+            
+            <div id="import_file" class="function-block">
+                <div class="function-name">import_file</div>
+                <div class="function-route">Route: /import_file</div>
+                <div class="function-method">Methods: POST</div>
+                <div class="function-description">Handles the uploading and formatting of files based on user selections.</div>
+                <div class="params-section">
+                    <div class="param">Parameters:</div>
+                    <div class="param">- files: Files uploaded by the user to be imported and formatted</div>
+                    <div class="param">- from: The original format of the file</div>
+                    <div class="param">- to: The target format to which the file should be converted</div>
+                    <div class="param">Returns: Success message if the import and formatting are successful, error message if any issue occurs</div>
+                </div>
+            </div>
+            
+            <div id="import_dataset" class="function-block">
+                <div class="function-name">import_dataset</div>
+                <div class="function-route">Route: /import_dataset</div>
+                <div class="function-method">Methods: POST</div>
+                <div class="function-description">Handles the uploading and importing of a dataset.</div>
+                <div class="params-section">
+                    <div class="param">Parameters:</div>
+                    <div class="param">- file: The dataset file uploaded by the user</div>
+                    <div class="param">- script: The script associated with the dataset import</div>
+                    <div class="param">- from: The original format of the dataset</div>
+                    <div class="param">- to: The target format for the dataset</div>
+                    <div class="param">Returns: Success message if the import is successful, failure message if an issue occurs</div>
+                </div>
+            </div>
+            
+        </section>
+    </main>
+
+    <script>
+        function highlightLink(clickedLink) {
+            document.querySelectorAll('.active-link').forEach(link => {
+                link.classList.remove('active-link');
+            });
+            clickedLink.classList.add("active-link");
+        }
+
+        document.querySelectorAll("a[href^='#']").forEach((link) => {
+            link.addEventListener("click", (e) => {
+                e.preventDefault();
+                
+                const targetId = link.getAttribute("href");
+                const targetElement = document.querySelector(targetId);
+                
+                if (targetElement) {
+                    targetElement.scrollIntoView({
+                        behavior: "smooth",
+                        block: "start",
+                    });
+
+                    history.pushState(null, null, targetId);
+                    highlightLink(link);
+                }
+            });
+        });
+
+        const backToTopButton = document.getElementById('backToTop');
+
+        window.onscroll = function () {
+            if (document.body.scrollTop > 50 || document.documentElement.scrollTop > 50) {
+                backToTopButton.style.display = 'block';
+            } else {
+                backToTopButton.style.display = 'none';
+            }
+        };
+
+        backToTopButton.onclick = function () {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        };
+    </script>
+</body>
+</html>
+
+{% endblock %}
+{% endif %}
